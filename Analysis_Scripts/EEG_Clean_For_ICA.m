@@ -1,5 +1,5 @@
 %function EEG_Clean_For_ICA(subject,session,jobRAM,processInParallel)
-function EEG_Clean_For_ICA(subject,session,processInParallel)
+function EEG_Clean_For_ICA(subject,session,processInParallel,analysisType)
 
 %{
 ========================================================================
@@ -26,7 +26,11 @@ Parent_dir = '/home/bullock/BOSS/CPT_Adaptation/';
 scriptsDir = [Parent_dir 'Analysis_Scripts'];
 eeglabDir = '/home/bullock/matlab_2016b/TOOLBOXES/eeglab14_1_1b';
 EEGraw_dir = [Parent_dir 'EEG_CPT_Prepro/'];
-EEG_clean = [Parent_dir 'EEG_Processed_Cleaned_For_ICA'];
+if analysisType==1
+    EEG_clean = [Parent_dir 'EEG_Processed_Cleaned_For_ICA'];
+else
+    EEG_clean = [Parent_dir 'EEG_Processed_Cleaned_No_Downsample'];
+end
 taskOrder = [Parent_dir 'Data_Compiled/'];
 addpath(genpath(scriptsDir))
 
@@ -51,8 +55,12 @@ end
 EEG=EEGO;
 clear EEGO
 
-%% high-pass filter + downsample
-EEG = my_fxtrap(EEG,1,0,.1,0,0,250); %hp,lp,transition,rectif,smooth, resamp
+%% high-pass filter + downsample (for main analysis only)
+if analysisType==1
+    EEG = my_fxtrap(EEG,1,0,.1,0,0,250); %hp,lp,transition,rectif,smooth, resamp
+else
+    EEG = my_fxtrap(EEG,1,0,.1,0,0,0); %hp,lp,transition,rectif,smooth, resamp
+end
 %EEG = pop_eegfilt(EEG,1,0); % eeglab filter alternative
 %EEG = pop_resample(EEG,250); % eeglab downsample alternative
 

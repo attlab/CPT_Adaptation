@@ -61,7 +61,7 @@ for iSession=1:2
     % anything that isn't brain
     cnt=0;
     for i=1:length(EEG.etc.ic_classification.ICLabel.classifications)
-        if EEG.etc.ic_classification.ICLabel.classifications(i,1)>.75
+        if EEG.etc.ic_classification.ICLabel.classifications(i,2)<.8
             cnt=cnt+1;
             goodComps(cnt) = i;
         end

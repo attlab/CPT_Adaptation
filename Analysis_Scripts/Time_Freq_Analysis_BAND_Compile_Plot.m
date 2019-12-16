@@ -52,7 +52,7 @@ parietal={'CP5','CP3','CP1','CPz','CP2','CP4','CP6','P7','P5','P3','P1','Pz','P2
 occipital={'PO7','PO3','POz','PO2','PO4','PO8','O1','Oz','O2'};
 
 clear theseChans
-theseChans=occipital
+theseChans=central
 
 
 cnt=0;

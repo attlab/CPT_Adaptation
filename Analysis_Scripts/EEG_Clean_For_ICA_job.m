@@ -13,6 +13,9 @@ subjects = CPT_SUBJECTS;
 % if run on local machine(0), else if run on cluster(1)
 processInParallel=1;
 
+% downsample (for main analyses = 1) or not (for muscle noise analysis = 0)
+analysisType=0;
+
 % cluster settings
 if processInParallel
     
@@ -38,10 +41,10 @@ for iSub = 1:length(subjects)
             %job.createTask(@EEG_Clean_For_ICA,0,{subject,session,processInParallel})
             
             % new cluster
-            createTask(job,@EEG_Clean_For_ICA,0,{subject,session,processInParallel})
+            createTask(job,@EEG_Clean_For_ICA,0,{subject,session,processInParallel,analysisType})
             
         else
-            EEG_Clean_For_ICA(subject,session,processInParallel)
+            EEG_Clean_For_ICA(subject,session,processInParallel,analysisType)
         end
         
     end

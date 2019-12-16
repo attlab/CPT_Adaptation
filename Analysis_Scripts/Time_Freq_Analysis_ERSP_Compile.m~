@@ -4,10 +4,8 @@ Author: Tom Bullock, UCSB Attention Lab
 Date: 05.25.19
 %}
 
-function Time_Freq_Analysis_ERSP_Compile
+function Time_Freq_Analysis_ERSP_Compile(analysisType)
 
-
-analysisType=3
 
 clear erspAll chanlocs times freqs
 
@@ -17,11 +15,8 @@ if analysisType==0
 elseif analysisType==1
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-100Hz';
     destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
-elseif analysisType==2
+elseif analysisType>1
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-30Hz_ICA_Occ_Rej';
-    destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
-elseif analysisType==3
-    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-30Hz_ICA_Brain_80';
     destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 end
 
@@ -42,8 +37,8 @@ for iSub=1:length(subjects)
         load([sourceDir '/' sprintf('sj%d_ersp_1-500Hz.mat',sjNum)])
     elseif analysisType==1
         load([sourceDir '/' sprintf('sj%d_ersp_1-100Hz.mat',sjNum)])
-    elseif analysisType>1
-        load([sourceDir '/' sprintf('sj%d_ersp_1-30Hz.mat',sjNum)])
+    elseif analysisType==2
+        %load([sourceDir '/' sprintf('sj%d_ersp_100.mat',sjNum)])
     end
     erspAll(iSub,:,:,:,:,:) = ersp;
 end
@@ -52,10 +47,6 @@ if analysisType==0
     save([destDir '/' 'GRAND_ERSP_1-500Hz.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')
 elseif analysisType==1
     save([destDir '/' 'GRAND_ERSP_1-100Hz.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')
-elseif analysisType==2
-    save([destDir '/' 'GRAND_ERSP_1-30Hz_ICA_Occ_Rej.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')
-elseif analysisType==3
-    save([destDir '/' 'GRAND_ERSP_1-30Hz_ICA_Brain_80.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')
 end
 
 % if analysisType==1

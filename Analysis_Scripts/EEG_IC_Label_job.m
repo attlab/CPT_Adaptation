@@ -1,3 +1,12 @@
+%{
+EEG_IC_Label_job
+Author: Tom Bullock, UCSB Attention Lab
+Date: 12.12.19
+
+Run EEG_IC_Label script
+
+%}
+
 clear 
 close all
 
@@ -15,7 +24,7 @@ end
 
 % set dirs 
 parentDir = '/home/bullock/BOSS/CPT_Adaptation';
-sourceDir = [parentDir '/' 'EEG_ICA_COMPS_LABELLED'];
+sourceDir = [parentDir '/' 'EEG_ICA'];
 scriptsDir = [parentDir '/' 'Analysis_Scripts'];
 
 % get files
