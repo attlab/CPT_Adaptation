@@ -17,11 +17,15 @@ sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
 %% remove bad subjects
-%badSubs = [103,105,108,109,115,116,117,118,128,136,138,140,146,147,148,154,157,158];
-%[a,b] = setdiff(subjects,badSubs);
-%paMatAll = paMatAll(b,:,:,:,:);
+badSubs = [103,105,108,109,115,116,117,118,128,136,138,140,146,147,148,154,157,158];
 
+[a,b] = setdiff(subjects,badSubs)
 
+paMatAll = paMatAll(b,:
+
+cnt
+for i=1:length(subjects)
+    if ismember(subjects(i),badSubs)
         
 
 %% baseline correction [Note that Event times are 1,20000,32500,77500,97500]

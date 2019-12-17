@@ -14,7 +14,6 @@ Move Prepro EEG data from BOSS MASTER structure to EEG_CPT_Prepro file here.
 
 
 
-
 ## EEG Analyses
 
 ERSP (newtimef), BAND (bandpass) or FFT (simple spectral)
@@ -24,6 +23,15 @@ ERSP (newtimef), BAND (bandpass) or FFT (simple spectral)
 `Time_Freq_Analysis_BAND.m` [+ job + compile/plot] Run bandpass filters on EEG data to extract delta,theta,alpha,beta, compile, plot
 
 `Time_Freq_Analysis_FFT.m` [+ job + compile] Run fft averaged across specific timepoints.
+
+
+## EYE Analysis
+
+**Move compiled EYE_CPT_Master.mat file from BOSS>ICB cluster**
+
+`EYE_Plot_Pupil_Group.m` Group pupil diameter plots
+
+'EYE_Plot_Pupil_Individual.m` Individual pupil diameter plots
 
 
 
