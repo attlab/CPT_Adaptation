@@ -25,13 +25,26 @@ ERSP (newtimef), BAND (bandpass) or FFT (simple spectral)
 `Time_Freq_Analysis_FFT.m` [+ job + compile] Run fft averaged across specific timepoints.
 
 
+
 ## EYE Analysis
 
 **Move compiled EYE_CPT_Master.mat file from BOSS>ICB cluster**
 
 `EYE_Plot_Pupil_Group.m` Group pupil diameter plots
 
-'EYE_Plot_Pupil_Individual.m` Individual pupil diameter plots
+'EYE_Plot_Pupil_Individual.m` Individual pupil diameter plots (saves images in subfolders in plots)
+
+
+
+## Self Report
+
+`Self_Report_Plot.m` Plot self-reported pain ratings (currently all subjects)
+
+
+## Cortisol 
+
+
+
 
 
 
