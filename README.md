@@ -38,12 +38,12 @@ ERSP (newtimef), BAND (bandpass) or FFT (simple spectral)
 
 ## Self Report
 
-`Self_Report_Plot.m` Plot self-reported pain ratings (currently all subjects)
+`Self_Report_Plot.m` Plot self-reported pain ratings (currently all n=50 subjects)
 
 
 ## Cortisol 
 
-
+`Cortisol_Plot.m` Plot cortisol results (currently all subjects)
 
 
 
