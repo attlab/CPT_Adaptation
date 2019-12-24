@@ -13,7 +13,7 @@ eeglabDir = '/home/bullock/matlab_2016b/TOOLBOXES/eeglab14_1_1b';
 addpath(genpath(scriptsDir))
 
 cleanDataDir = [Parent_dir 'EEG_Processed_Cleaned_For_ICA/'];
-EEG_ica_dir = [Parent_dir 'EEG_ICA/'];
+EEG_ica_dir = [Parent_dir 'EEG_ICA_Notch/'];
 
 cd(eeglabDir)
 eeglab

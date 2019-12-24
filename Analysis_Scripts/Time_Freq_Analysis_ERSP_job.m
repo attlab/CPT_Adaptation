@@ -11,7 +11,7 @@ close all
 runInParallel = 1;
 
 %% select analysis type (0=1-500 Hz no ICA, 1=1-100 Hz no ICA, 2=1-30Hz ICA Reject Occular Arts only, )
-analysisType=3;
+analysisType=2;
 
 %% set up cluster
 if runInParallel  

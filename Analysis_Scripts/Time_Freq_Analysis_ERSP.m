@@ -47,11 +47,17 @@ elseif analysisType==1 % generate 1-100 Hz ERSPs
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_Processed_Cleaned_No_Downsample';
     destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-100Hz';
 elseif analysisType==2 % generate 1-30 Hz ICA Occular artifacts rejected only
-    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_IC_Label';
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_Notch_IC_Label'; % use notch data
     destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-30Hz_ICA_Occ_Rej';
 elseif analysisType==3
-    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_IC_Label';
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_Notch_IC_Label';
     destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-30Hz_ICA_Brain_80';
+elseif analysisType==4
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_IC_Label';
+    destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-30Hz_ICA_Brain_60';
+elseif analysisType==5
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_IC_Label';
+    destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-30Hz_ICA_Brain_Other_Top';
 end
     
     
@@ -78,7 +84,8 @@ for iSession=1:2
     EEG.icaact = (EEG.icaweights*EEG.icasphere)*EEG.data(EEG.icachansind,:);
     
     
-    if analysisType==2 % remove occular artifacts identifier by IC Label    
+    if analysisType==2 % remove occular artifacts identifier by IC Label 
+        badCompsICLabel=[];
         cnt=0;
         for i=1:length(EEG.etc.ic_classification.ICLabel.classifications)
             if EEG.etc.ic_classification.ICLabel.classifications(i,3)>.8
@@ -98,6 +105,34 @@ for iSession=1:2
         end
         badCompsICLabel = setdiff(1:length(EEG.etc.ic_classification.ICLabel.classifications),goodComps);
     end
+    
+    if analysisType==4  % remove anything that ICLabel classifier isn't 80% confident brain      
+        cnt=0;
+        for i=1:length(EEG.etc.ic_classification.ICLabel.classifications)
+            if EEG.etc.ic_classification.ICLabel.classifications(i,1)>.6
+                cnt=cnt+1;
+                goodComps(cnt) = i;
+            end
+        end
+        badCompsICLabel = setdiff(1:length(EEG.etc.ic_classification.ICLabel.classifications),goodComps);
+    end
+    
+    if analysisType==5 % keep component if classified as either brain or other
+        icClasses=[];
+        goodComps=[]; a=[]; b=[];
+        icClasses=EEG.etc.ic_classification.ICLabel.classifications;
+        cnt=0;
+        for c=1:size(icClasses,1)
+            [a,b]=sort(icClasses(c,:),'descend');
+            if ismember(b(1),[1,7]) % if highest classification is "brain" or "other"
+                cnt=cnt+1;
+                goodComps(cnt)=c;
+            end
+        end
+        badCompsICLabel = setdiff(1:length(EEG.etc.ic_classification.ICLabel.classifications),goodComps);
+    end
+    
+    
     
     % remove bad ICA components
     if analysisType>1

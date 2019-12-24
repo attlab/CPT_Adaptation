@@ -24,6 +24,9 @@ destDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
 % load compiled data
 load([sourceDir '/' 'PHYSIO_MASTER.mat' ])
 
+% load resampled stats data
+load([sourceDir '/' 'STATS_Physio_Resampled_Bl_Corrected.mat'],'allCardioStats')
+
 % load task order (only useful to ID individual subs data file)
 sourceDirTaskOrder = sourceDir;
 load([sourceDirTaskOrder '/' 'Task_Order.mat'])
@@ -147,11 +150,11 @@ for iMeasure = 1:6
     
     for iPlot=1:5
         
-        if      iPlot==1; thisColor = 'r';
-        elseif  iPlot==2; thisColor = 'b';
-        elseif  iPlot==3; thisColor = 'g';
-        elseif  iPlot==4; thisColor = 'm';
-        elseif  iPlot==5; thisColor = 'c';
+        if      iPlot==1; thisColor = [255,0,0];
+        elseif  iPlot==2; thisColor = [252,226,5];
+        elseif  iPlot==3; thisColor = [255,192,203];
+        elseif  iPlot==4; thisColor = [0,255,0];
+        elseif  iPlot==5; thisColor = [255,140,0];
         end
            
         
@@ -168,19 +171,63 @@ for iMeasure = 1:6
             thisX = 1:195;
         end
         
-        plot(thisX,smooth(squeeze(nanmean(theseData_diff(:,iPlot,thisX),1)),10),...
+        plot(thisX,smooth(squeeze(nanmean(theseData_diff(:,iPlot,thisX),1)),5),...
             'linewidth',4,...
-            'Color',thisColor); hold on
+            'Color',thisColor./255); hold on
         
-        [hResults,pResults,CIresults,statsResults] = ttest(theseData(:,iPlot,1,:),theseData(:,iPlot,2,:));
-        hResults = squeeze(hResults);
+        
+        
+        
+%         [hResults,pResults,CIresults,statsResults] = ttest(theseData(:,iPlot,1,:),theseData(:,iPlot,2,:));
+%         hResults = squeeze(hResults);
+%         
+        
+        
+        
+        % which stats to use? (0=regular, 1=resampled)
+        pairwiseCompType=1;
+        if pairwiseCompType==1
+            if      iMeasure==1; hResults = allCardioStats.bp_sigVec(:,iPlot);
+            elseif  iMeasure==2; hResults = allCardioStats.hr_sigVec(:,iPlot);
+            elseif  iMeasure==3; hResults = allCardioStats.lvet_sigVec(:,iPlot);
+            elseif  iMeasure==4; hResults = allCardioStats.pep_sigVec(:,iPlot);
+            elseif  iMeasure==5; hResults = allCardioStats.sv_sigVec(:,iPlot);
+            elseif  iMeasure==6; hResults = allCardioStats.hf_sigVec(:,iPlot);
+            end
+        else
+            [hResults,pResults,CIresults,statsResults] = ttest(theseData(:,iPlot,1,:),theseData(:,iPlot,2,:));
+            hResults = squeeze(hResults);
+        end
+        
+        % null fake results for first 32 secs of HFHRV
+        if iMeasure==6
+           
+            hResults (1:32) = NaN;
+            
+        end
+        
+        
+%         
+%         if      iMeasure==1; theseData_diff=all_BP_diff; theseData = all_BP;
+%     elseif  iMeasure==2; theseData_diff=all_HR_diff; theseData = all_HR;
+%     elseif  iMeasure==3; theseData_diff=all_LVET_diff; theseData = all_LVET;
+%     elseif  iMeasure==4; theseData_diff=all_PEP_diff; theseData = all_PEP;
+%     elseif  iMeasure==5; theseData_diff=all_SV_diff; theseData = all_SV;
+%     elseif  iMeasure==6; theseData_diff=all_HF_diff; theseData = all_HF;
+%     end
+    
+        
+        
+        
+        
+        
         
         % add lines for t-test results
         statLineYpos = statLineYpos-.05;
         
         for s=1:length(hResults)
             if hResults(s)==1
-            line([s,s+1],[statLineYpos,statLineYpos],'linewidth',6,'color',thisColor);
+            line([s,s+1],[statLineYpos,statLineYpos],'linewidth',6,'color',thisColor./255);
             end
         end
         
@@ -210,14 +257,15 @@ for iMeasure = 1:6
     
     set(gca,...
         'box','off',...
-        'linewidth',2.5,...
+        'linewidth',1.5,...
         'xlim',[1,194],...
         'XTick',[1,40,65,95,125,155,194],...
         'XTickLabel',[1,40,65,95,125,155,195],...
         'ylim',theseYlims,...
+        'ytick',[0,.2,.4,.6,.8,1],...
         'fontsize',18)
     
-    pbaspect([1.5,1,1])
+    pbaspect([2,1,1])
         
         %'xlim',[1,194],'XTick',[1,40,65,155,194],'XTickLabel',[1,40,65,155,195])
     

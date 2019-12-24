@@ -37,12 +37,21 @@ addpath(genpath('/home/bullock/BOSS/CPT_Adaptation/Analysis_Scripts'))
 %end
 
 % define analysis type
-analysisType=1;
+analysisType=3;
 %sourceDir='/Users/tombullock/Documents/Psychology/BOSS/CPT/EEG_ICA'; % local
-sourceDir='/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_COMPS_LABELLED'; % icb
-if analysisType==1
-    %destDir= '/Users/tombullock/Documents/Psychology/BOSS/CPT/ERSP_ICA_OCC_30Hz_LPF';
-    destDir='/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_Band_IC_Label';
+%sourceDir='/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_COMPS_LABELLED'; % icb
+if analysisType==2
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_IC_Label';
+    destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_Band';
+elseif analysisType==3
+    %sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_IC_Label';
+    %destDir='/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_Band_IC_Label';
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_Notch_IC_Label';
+    destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_Band_1-30Hz_ICA_Brain_80';
+    
+elseif analysisType==5
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_IC_Label';
+    destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_Band_1-30Hz_ICA_Brain_Other_Top';
 end
     
 %% loop through sessions (1=treatment, 2=control) and CPT exposures (tasks)
@@ -57,20 +66,67 @@ for iSession=1:2
     EEG.icaact = (EEG.icaweights*EEG.icasphere)*EEG.data(EEG.icachansind,:); %% ADDED THIS COZ icaact is currently [] QUERY???
     
     
-    % get bad components from IC Label classification matrix and remove
-    % anything that isn't brain
-    cnt=0;
-    for i=1:length(EEG.etc.ic_classification.ICLabel.classifications)
-        if EEG.etc.ic_classification.ICLabel.classifications(i,2)<.8
-            cnt=cnt+1;
-            goodComps(cnt) = i;
+%     % get bad components from IC Label classification matrix and remove
+%     % anything that isn't brain  
+%     cnt=0;
+%     for i=1:length(EEG.etc.ic_classification.ICLabel.classifications)
+%         if EEG.etc.ic_classification.ICLabel.classifications(i,1)>.8
+%             cnt=cnt+1;
+%             goodComps(cnt) = i;
+%         end
+%     end
+%     badCompsICLabel = setdiff(1:length(EEG.etc.ic_classification.ICLabel.classifications),goodComps);
+    
+    
+    % calculate the ICA activations and remove bad components (occ only)
+    EEG.icaact = (EEG.icaweights*EEG.icasphere)*EEG.data(EEG.icachansind,:);
+    
+    
+    if analysisType==2 % remove occular artifacts identifier by IC Label    
+        cnt=0;
+        for i=1:length(EEG.etc.ic_classification.ICLabel.classifications)
+            if EEG.etc.ic_classification.ICLabel.classifications(i,3)>.8
+                cnt=cnt+1;
+                badCompsICLabel(cnt)=i;
+            end
         end
+        goodComps=[];
     end
-    badCompsICLabel = setdiff(1:length(EEG.etc.ic_classification.ICLabel.classifications),goodComps)
+    
+    if analysisType==3  % remove anything that ICLabel classifier isn't 80% confident brain      
+        cnt=0;
+        for i=1:length(EEG.etc.ic_classification.ICLabel.classifications)
+            if EEG.etc.ic_classification.ICLabel.classifications(i,1)>.8
+                cnt=cnt+1;
+                goodComps(cnt) = i;
+            end
+        end
+        badCompsICLabel = setdiff(1:length(EEG.etc.ic_classification.ICLabel.classifications),goodComps);
+    end
+    
+    
+    if analysisType==5 % keep component if classified as either brain or other
+        icClasses=[];
+        goodComps=[]; a=[]; b=[];
+        icClasses=EEG.etc.ic_classification.ICLabel.classifications;
+        cnt=0;
+        for c=1:size(icClasses,1)
+            [a,b]=sort(icClasses(c,:),'descend');
+            if ismember(b(1),[1,7]) % if highest classification is "brain" or "other"
+                cnt=cnt+1;
+                goodComps(cnt)=c;
+            end
+        end
+        badCompsICLabel = setdiff(1:length(EEG.etc.ic_classification.ICLabel.classifications),goodComps);
+    end
+    
+    
+    
+    % remove comps
     EEG=pop_subcomp(EEG,badCompsICLabel,0);
     
-    %% get bad comps from manual IC labeling (tom - just eye and ekg)
-    %EEG=pop_subcomp(EEG,bad_comps_occ_ekg,0);
+    
+    
     
     
     
@@ -98,30 +154,42 @@ for iSession=1:2
         clear eegs data tempEEG 
         
         disp(['Bandpass Filtering between ' num2str(freqs(f,1)),' and ' num2str(freqs(f,2)) ' Hz'])
-    
-    
-        %% BUTTERWORTH FILTER
-        filterorder = 3;
-        type = 'bandpass';
-        [z1,p1] = butter(filterorder, [freqs(f,1), freqs(f,2)]./(EEG.srate/2),type);
         
-        data = double(EEG.data);
-        tempEEG = NaN(size(data,1),EEG.pnts,size(data,3));
-        for x = 1:size(data,1) % loop through chans
-            for y = 1:size(data,3) % loop through trials
-                dataFilt1 = filtfilt(z1,p1,data(x,:,y)); % was filtfilt
-                tempEEG(x,:,y) = dataFilt1; % tymp = chans x times x trials
-            end
+        %% TRAPZ FILTER
+        for t=1:5         
+            tmpEEG = pop_select(EEG,'trial',t);
+            tmpEEG = my_fxtrap(tmpEEG,freqs(f,1), freqs(f,2),.1,0,0,0);
+            eegs(:,:,t) = tmpEEG.data;
         end
+        eegs=double(eegs);
+    
+%         %% BUTTERWORTH FILTER
+%         filterorder = 3;
+%         type = 'bandpass';
+%         [z1,p1] = butter(filterorder, [freqs(f,1), freqs(f,2)]./(EEG.srate/2),type);
+%         
+%         data = double(EEG.data);
+%         tempEEG = NaN(size(data,1),EEG.pnts,size(data,3));
+%         for x = 1:size(data,1) % loop through chans
+%             for y = 1:size(data,3) % loop through trials
+%                 dataFilt1 = filtfilt(z1,p1,data(x,:,y)); % was filtfilt
+%                 tempEEG(x,:,y) = dataFilt1; % tymp = chans x times x trials
+%             end
+%         end
+%         
+%         %% apply hilbert to each channel and epoch in turn (try not doing
+%         %this for now)
+%         eegs = [];
+%         for j=1:size(tempEEG,1) % chan loop
+%             for i=1:size(tempEEG,3) % trial loop
+%                 eegs(j,:,i) = hilbert(squeeze(tempEEG(j,:,i)));
+%             end
+%         end
         
-        %% apply hilbert to each channel and epoch in turn (try not doing
-        %this for now)
-        eegs = [];
-        for j=1:size(tempEEG,1) % chan loop
-            for i=1:size(tempEEG,3) % trial loop
-                eegs(j,:,i) = hilbert(squeeze(tempEEG(j,:,i)));
-            end
-        end
+        
+        
+        
+        
         
         % convert to power
         eegs = abs(eegs).^2;
@@ -146,6 +214,6 @@ for iSession=1:2
 end
 
 % save data
-save([destDir '/' sprintf('sj%d_band.mat',sjNum)],'EEG_band','chanlocs')
+save([destDir '/' sprintf('sj%d_band.mat',sjNum)],'EEG_band','chanlocs','goodComps')
 
 return

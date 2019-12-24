@@ -71,8 +71,8 @@ EEG=pop_chanedit(EEG, 'lookup','/home/bullock/matlab_2016b/TOOLBOXES/eeglab14_1_
 EEG = pop_select(EEG,'nochannel',{'ECG'});
 
 %remove line noise using CleanLine function (slow)
-EEG = pop_cleanline(EEG,'SignalType','Channels','ChanCompIndices',[1:EEG.nbchan]);
-%EEG = my_fxcomb(EEG,[60],1,.3,0,0,0,0); % notch filter alternative
+%EEG = pop_cleanline(EEG,'SignalType','Channels','ChanCompIndices',[1:EEG.nbchan]);
+EEG = my_fxcomb(EEG,[60],1,.3,0,0,0,0); % notch filter alternative
 
 % Apply clean_rawdata() to reject bad channels (turn off highpass, ASR, bad "window" rejection)
 originalEEG = EEG;
@@ -80,7 +80,7 @@ if processInParallel
     %EEG = clean_rawdata(EEG,5,-1,.80,4,-1,-1,'WindowCriterionTolerances','off','availableRAM_GB',jobRAM);
     EEG = clean_rawdata(EEG,5,-1,.80,4,-1,-1,'WindowCriterionTolerances','off');
 else
-    EEG = clean_rawdata(EEG,5,-1,.80,4,-1,-1,'WindowCriterionTolerances','off'); 
+    EEG = clean_rawdata(EEG,5,-1,.80,4,-1,-1,'WindowCriterionTolerances','off'); % note corr was orig set to .80
 end
 
 % % visualize original vs. cleaned data (reality check)

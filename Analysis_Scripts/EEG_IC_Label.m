@@ -13,8 +13,8 @@ function EEG_IC_Label(filename)
 
 % set dirs and load EEGLAB
 parentDir = '/home/bullock/BOSS/CPT_Adaptation';
-sourceDir = [parentDir '/' 'EEG_ICA'];
-destDir = [parentDir '/' 'EEG_ICA_IC_Label'];
+sourceDir = [parentDir '/' 'EEG_ICA_Notch'];
+destDir = [parentDir '/' 'EEG_ICA_Notch_IC_Label'];
 scriptsDir = [parentDir '/' 'Analysis_Scripts'];
 eeglabDir = '/home/bullock/Toolboxes/eeglab2019_1';
 

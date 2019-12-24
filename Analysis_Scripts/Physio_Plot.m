@@ -17,12 +17,22 @@ close all
 % add paths
 %addpath(genpath('/data/DATA_ANALYSIS/All_Dependencies'))
 
+% do baseline correction?
+plotBlCorrectedPhysio = 1;
+
 % set dirs
 sourceDir =  '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 destDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
 
 % load compiled data
 load([sourceDir '/' 'PHYSIO_MASTER.mat' ])
+
+% load resampled stats
+if plotBlCorrectedPhysio==1
+    load([sourceDir '/' 'STATS_Physio_Resampled_Bl_Corrected.mat'],'allCardioStats')
+else
+    load([sourceDir '/' 'STATS_Physio_Resampled_Uncorrected.mat'],'allCardioStats')
+end
 
 % load task order (only useful to ID individual subs data file)
 sourceDirTaskOrder = sourceDir;
@@ -52,8 +62,7 @@ end
 % x-axis length(should be 195 secs, but was restricted to 190?)
 xAxisLength=195;
 
-% do baseline correction?
-plotBlCorrectedPhysio = 1;
+
 
 % if plotting average, remove NaN subs (just BP and TPR have this issue)
 if plotType==1
@@ -81,14 +90,14 @@ plotErrorBars=1;
 % do baseline correction on all measures (correcting to mean 20-40 secs
 % period in baseline)
 if plotBlCorrectedPhysio
-    all_BP = all_BP-mean(all_BP(:,:,:,20:40),4);
-    all_CO = all_CO-mean(all_CO(:,:,:,2000:4000),4);
-    all_HR = all_HR-mean(all_HR(:,:,:,2000:4000),4);
-    all_LVET = all_LVET-mean(all_LVET(:,:,:,2000:4000),4);
-    all_PEP = all_PEP-mean(all_PEP(:,:,:,2000:4000),4);
-    all_SV = all_SV-mean(all_SV(:,:,:,2000:4000),4);
-    all_TPR = all_TPR-mean(all_TPR(:,:,:,2000:4000),4);
-    all_HF = all_HF-nanmean(all_HF(:,:,:,3200:4200),4);% [nan for first 30 secs coz classifier training...address this?] 
+    all_BP = all_BP-mean(all_BP(:,:,:,25:40),4);
+    all_CO = all_CO-mean(all_CO(:,:,:,2500:4000),4);
+    all_HR = all_HR-mean(all_HR(:,:,:,2500:4000),4);
+    all_LVET = all_LVET-mean(all_LVET(:,:,:,2500:4000),4);
+    all_PEP = all_PEP-mean(all_PEP(:,:,:,2500:4000),4);
+    all_SV = all_SV-mean(all_SV(:,:,:,2500:4000),4);
+    all_TPR = all_TPR-mean(all_TPR(:,:,:,2500:4000),4);
+    all_HF = all_HF-nanmean(all_HF(:,:,:,3200:4000),4);% [nan for first 30 secs coz classifier training...address this?] 
 end
 
 % downsample to reduce figure size (mbs)
@@ -200,14 +209,29 @@ for iMeasure=[2:5,7,8]
 
         set(gca,'fontsize',18,'box','off','linewidth',1.5,'xlim',[1,194],'XTick',[1,40,65,155,194],'XTickLabel',[1,40,65,155,195])
         
-        
-        % do t-test to determine if lines are different (downsample to reduce number of tests)
-        %if iMeasure==7
+        % which stats to use? (0=regular, 1=resampled)
+        pairwiseCompType=1;
+        if pairwiseCompType==1
+            if      iMeasure==2; hResults = allCardioStats.hr_sigVec(:,iOrder);
+            elseif  iMeasure==3; hResults = allCardioStats.lvet_sigVec(:,iOrder);
+            elseif  iMeasure==4; hResults = allCardioStats.pep_sigVec(:,iOrder);
+            elseif  iMeasure==5; hResults = allCardioStats.sv_sigVec(:,iOrder);
+            elseif  iMeasure==7; hResults = allCardioStats.bp_sigVec(:,iOrder);
+            elseif  iMeasure==8; hResults = allCardioStats.hf_sigVec(:,iOrder);
+            end
+        else
             [hResults,pResults,CIresults,statsResults] = ttest(allPhysio(:,iOrder,1,:),allPhysio(:,iOrder,2,:));
-        %else
-         %   [hResults,pResults,CIresults,statsResults]= ttest(allPhysio(:,iOrder,1,1:100:end),allPhysio(:,iOrder,2,1:100:end));
-        %end
-        hResults = squeeze(hResults);
+            hResults = squeeze(hResults);
+        end
+        
+        % null fake results for first 32 secs of HFHRV
+        if iMeasure==8
+           
+            hResults (1:32) = NaN;
+            
+        end
+        
+        
         
         % add line for t-test results to base of plots
         for s = 1:length(hResults)

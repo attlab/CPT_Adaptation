@@ -14,7 +14,7 @@ subjects = CPT_SUBJECTS;
 processInParallel=1;
 
 % downsample (for main analyses = 1) or not (for muscle noise analysis = 0)
-analysisType=0;
+analysisType=1;
 
 % cluster settings
 if processInParallel

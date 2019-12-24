@@ -13,7 +13,7 @@ close all
 sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 
 %% select analysis type and load data (0=1-500 Hz, 1=1-100 Hz, 2...)
-analysisType=3; 
+analysisType=1; 
 
 if analysisType==0
     load([sourceDir '/' 'GRAND_ERSP_1-500Hz.mat'])
@@ -23,7 +23,10 @@ elseif analysisType==2
     load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_Occ_Rej.mat'])
 elseif analysisType==3
     load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_Brain_80.mat'])
-
+elseif analysisType==4
+    load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_Brain_60.mat'])
+elseif analysisType==5
+    load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_Brain_Other_Top.mat'])
 % elseif analysisType==1
 %     load([sourceDir '/' 'GRAND_ERSP_1-30Hz.mat'])
 end

@@ -24,7 +24,7 @@ end
 
 % set dirs 
 parentDir = '/home/bullock/BOSS/CPT_Adaptation';
-sourceDir = [parentDir '/' 'EEG_ICA'];
+sourceDir = [parentDir '/' 'EEG_ICA_Notch'];
 scriptsDir = [parentDir '/' 'Analysis_Scripts'];
 
 % get files

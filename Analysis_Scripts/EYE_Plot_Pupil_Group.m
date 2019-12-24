@@ -16,10 +16,13 @@ sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 %% load compiled EYE Data (paMatAll = sub,session,task,eye,timepoint)
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
-%% remove bad subjects
-%badSubs = [103,105,108,109,115,116,117,118,128,136,138,140,146,147,148,154,157,158];
-%[a,b] = setdiff(subjects,badSubs);
-%paMatAll = paMatAll(b,:,:,:,:);
+%% load resampled stats
+load([sourceDir '/' 'STATS_Resampled_EYE_n25.mat'],'sigVec')
+
+% remove bad subjects
+badSubs = [103,105,108,109,115,116,117,118,128,136,138,140,146,147,148,154,157,158];
+[a,b] = setdiff(subjects,badSubs);
+paMatAll = paMatAll(b,:,:,:,:);
 
 
         
@@ -83,10 +86,18 @@ for iOrder=1:5
         
     end
     
-    % do t-test to determine if lines are different (CHECK WHAT IS
-    % HAPPENING WITH NAN DATAPOINTS)
-    [hResults,pResults,~,theseStats] = ttest(nanmean(paMatAll(:,1,iOrder,thisEye,:),4),nanmean(paMatAll(:,2,iOrder,thisEye,:),4));
-    hResults = squeeze(hResults);
+    
+    % use regular t-tests (0) or resampled t-tests (1) (imported)
+    pairwiseCompType=1;
+    if pairwiseCompType==0 % regular t-tests
+        [hResults,pResults,~,theseStats] = ttest(nanmean(paMatAll(:,1,iOrder,thisEye,:),4),nanmean(paMatAll(:,2,iOrder,thisEye,:),4));
+        hResults = squeeze(hResults);
+    else % resampled t-tests (from another script)
+        hResults = sigVec(:,iOrder);
+        disp('USING RESAMPLED PAIRWISE COMPARISONS!!!!')
+    end
+    
+    
     
     % add line for t-test results to base of plots
     for s = 1:length(hResults)
