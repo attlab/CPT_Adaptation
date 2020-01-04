@@ -4,10 +4,10 @@ Author: Tom Bullock, UCSB Attention Lab
 Date: 05.25.19
 %}
 
-function Time_Freq_Analysis_ERSP_Compile
+function Time_Freq_Analysis_ERSP_Compile(analysisType)
 
 
-analysisType=2;
+%analysisType=2;
 
 clear erspAll chanlocs times freqs
 
@@ -57,7 +57,7 @@ end
 if analysisType==0
     save([destDir '/' 'GRAND_ERSP_1-500Hz.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')
 elseif analysisType==1
-    save([destDir '/' 'GRAND_ERSP_1-100Hz.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')
+    save([destDir '/' 'GRAND_ERSP_1-100Hz.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs','-v7.3')
 elseif analysisType==2
     save([destDir '/' 'GRAND_ERSP_1-30Hz_ICA_Occ_Rej.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')
 elseif analysisType==3

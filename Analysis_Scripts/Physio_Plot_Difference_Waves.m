@@ -43,11 +43,11 @@ end
 
 % if plotting averages, option to remove subjects with short recovery
 % periods (120,123)
-badSubjectsIdx=[];
-if plotType==1
-    badSubjectsIdx(1) = find(subjects==120);
-    badSubjectsIdx(2) = find(subjects==123);
-end
+% badSubjectsIdx=[];
+% if plotType==1
+%     badSubjectsIdx(1) = find(subjects==120);
+%     badSubjectsIdx(2) = find(subjects==123);
+% end
 
 % choose which measure(s) to plot (1:7)
 %plotMeasures = 1:7;
@@ -133,6 +133,19 @@ for iMeasure = 1:6
     elseif  iMeasure==4; theseData_diff=all_PEP_diff; theseData = all_PEP;
     elseif  iMeasure==5; theseData_diff=all_SV_diff; theseData = all_SV;
     elseif  iMeasure==6; theseData_diff=all_HF_diff; theseData = all_HF;
+    end
+    
+        % if plotting averages, option to remove subjects with short recovery
+    % periods (120,123)
+    badSubjectsIdx=[];
+    if plotType==1 && iMeasure~=6
+        badSubjectsIdx(1) = find(subjects==120);
+        badSubjectsIdx(2) = find(subjects==123);
+    elseif plotType==1 && iMeasure==6
+        badSubjectsIdx(1) = find(subjects==120);
+        badSubjectsIdx(2) = find(subjects==123);
+        badSubjectsIdx(3) = find(subjects==133);
+        badSubjectsIdx(4) = find(subjects==157);
     end
     
     % remove bad subs
@@ -260,7 +273,7 @@ for iMeasure = 1:6
         'linewidth',1.5,...
         'xlim',[1,194],...
         'XTick',[1,40,65,95,125,155,194],...
-        'XTickLabel',[1,40,65,95,125,155,195],...
+        'XTickLabel',[0,40,65,95,125,155,195],...
         'ylim',theseYlims,...
         'ytick',[0,.2,.4,.6,.8,1],...
         'fontsize',18)

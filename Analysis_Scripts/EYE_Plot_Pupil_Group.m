@@ -108,7 +108,7 @@ for iOrder=1:5
                 thisYpos=[250,250];
             end
             thisYpos = [-.1,-.1];
-             line([s,s+1],thisYpos,'linewidth',4,'color',[9,112,84]./255);
+             line([s,s+1],thisYpos,'linewidth',6,'color',[9,112,84]./255);
         end
     end
     
@@ -118,7 +118,7 @@ for iOrder=1:5
     t3=65; % start CPT (immerse feet - 90 s)
     t4=155; % recovery (feet out, start recovery baseline - 40 s)
     
-    for iLine=1:4
+    for iLine=2:4
         if iLine==1; tx=t1;thisText = 'Baseline';
         elseif iLine==2; tx=t2; thisText = 'Prep';
         elseif iLine==3; tx=t3; thisText = 'CPT';
@@ -130,18 +130,23 @@ for iOrder=1:5
     
     % add T1, T2 etc labels on left
     thisTime = ['T' num2str(iOrder)];
-    text(-25,0, thisTime,'fontsize',34)
+    %text(-25,0, thisTime,'fontsize',34)
     
-    xlabel('Time (s)','fontsize',18)
-    ylabel('P.Area (norm.)')
+    %xlabel('Time (s)','fontsize',18)
+    %ylabel('P.Area (norm.)')
     set(gca,...
         'xlim',theseXlims,...
         'XTick',theseXticks,...
         'ylim',theseYlims,...
         'box','off',...
-        'fontsize',18,...
+        'fontsize',26,...
         'linewidth',1.5)
     
     %legend('ICE','WARM')
     
+end
+
+% save data
+if baselineCorrect==1
+    save([sourceDir '/' 'EYE_FOR_PREDICTIVE_ANALYSIS.mat'],'subjects','badSubs','paMatAll')
 end

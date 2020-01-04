@@ -17,6 +17,14 @@ addpath(genpath('/home/bullock/matlab_2016b/TOOLBOXES/plotSpread'))
 % load data
 load([sourceDir '/' 'Cortisol_CPT_Master.mat'])
 
+% load subs list
+[~,subjects] = CPT_SUBJECTS
+subjects(1)=[]; % get rid of 102;
+
+% apply subs list
+subIdx = ismember(cortisol_CPT(:,1)',subjects);
+cortisol_CPT(~subIdx,:) = [];
+
 % plot data
 errorbar(mean(cortisol_CPT(:,4:6),1),std(cortisol_CPT(:,4:6),0,1)./sqrt(size(cortisol_CPT,1)),...
     'LineWidth',2.5,...
@@ -34,6 +42,5 @@ set(gca,'LineWidth',1.5,...
     'xlim',[0.8,3.2],...
     'box','off',...
     'xTick',[1,2,3],...
-    'xTickLabel',{'T1','T3','T5'})
-    
-    
+    'xTickLabel',{'Sample 1','Sample 2','Sample 3'},...
+    'ylim',[2,14])

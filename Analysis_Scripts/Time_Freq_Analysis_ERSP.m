@@ -160,14 +160,15 @@ for iSession=1:2
         erspSettings.timesout=200;
     elseif analysisType==1
         erspSettings.freqs=[1,100];
-        erspSettings.nFreqs=50;
+        erspSettings.nFreqs=100;
         erspSettings.winsize=1000;
-        erspSettings.timesout=200;
+        erspSettings.timesout= find(EEG.times==1):1000:EEG.times(end);
     elseif analysisType>1
         erspSettings.freqs=[1,30];
         erspSettings.nFreqs=30;
         erspSettings.winsize=1000;
-        erspSettings.timesout=200;
+        %erspSettings.timesout=200;
+        erspSettings.timesout= find(EEG.times==4):1000:EEG.times(end); % actually 2002 to 192002
     else
 
     end

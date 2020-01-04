@@ -11,7 +11,7 @@ close all
 runInParallel = 1;
 
 %% select analysis type (0=1-500 Hz no ICA, 1=1-100 Hz no ICA, 2=1-30Hz ICA Reject Occular Arts only, )
-analysisType=2;
+analysisType=1;
 
 %% set up cluster
 if runInParallel  
@@ -39,6 +39,11 @@ end
 %% submit jobs (if running in parallel)
 if runInParallel
     submit(job)
-    %wait(job,'finished');
-    %results = getAllOutputArguments(job);
+    wait(job,'finished');
+    results = getAllOutputArguments(job);
 end
+
+%% Compile ERSPS
+Time_Freq_Analysis_ERSP_Compile(analysisType)
+disp('ERSPs COMPILED')
+

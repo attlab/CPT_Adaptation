@@ -76,7 +76,7 @@ if plotType==1
     all_BP(tmp>0,:,:,:)=[];
     
     % log BP subjects
-    badSubjects_BP = subjects(tmp>0);
+    subjects_bad_BP = subjects(tmp>0);
     
 end
 
@@ -131,7 +131,7 @@ all_HF = all_HF(:,:,:,1:100:19000); %% FIX TO 195!
 
 
 % plot measures across all five CPTs and two sessions
-for iMeasure=[2:5,7,8]
+for iMeasure=7;%[2:5,7,8]
     %h=figureFullScreen;
     %h=figure;
     h=figure('units','normalized','outerposition',[0 0 .3 1]);
@@ -167,14 +167,12 @@ for iMeasure=[2:5,7,8]
     if plotType==1 && ismember(iMeasure,[2:5])
         badSubjectsIdx(1) = find(subjects==120);
         badSubjectsIdx(2) = find(subjects==123);
-        
         badSubjects_HR_LVET_PEP_SV = [120,123];
     elseif plotType==1 && iMeasure==8
         badSubjectsIdx(1) = find(subjects==120);
         badSubjectsIdx(2) = find(subjects==123);
         badSubjectsIdx(3) = find(subjects==133);
         badSubjectsIdx(4) = find(subjects==157);
-        
         badSubjects_HF = [120,123,133,157];
     end
    
@@ -361,7 +359,7 @@ end
 
 % save downsampled, baseline corrected physio data
 if plotBlCorrectedPhysio
-    save([sourceDir '/' 'PHYSIO_FOR_PREDICTIVE_ANALYSIS.mat'],'all_BP','all_HR','all_LVET','all_PEP','all_HF','all_SV','subjects','badSubjects_BP','badSubjects_HF','badSubjects_HR_LVET_PEP_SV')
+    save([sourceDir '/' ' '],'all_BP','all_HR','all_LVET','all_PEP','all_HF','all_SV')
 end
 
 

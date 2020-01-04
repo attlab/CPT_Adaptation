@@ -1,0 +1,18 @@
+finding closest frequencies: 970 freqs removed
+Computing the mean baseline spectrum
+Note: Add output variables to command line call in history to
+      retrieve results and use the tftopo function to replot them
+Warning: 'nfreqs' input overwrite 'padratio'
+Computing Event-Related Spectral Perturbation (ERSP) and
+  Inter-Trial Phase Coherence (ITC) images based on 1 trials
+  of 48725 frames sampled at 250 Hz.
+Each trial contains samples from 0 ms before to
+  194896 ms after the timelocking event.
+  Image frequency direction: normal
+Using hanning FFT tapering
+Warning: 4 out of 195 time values were removed (now 2002.00 to 192002.00 ms) so the lowest
+         frequency could be computed with the requested accuracy
+Finding closest points for time variable
+Time values for time/freq decomposition is not perfectly uniformly distributed
+The window size used is 1000 samples (4000 ms) wide.
+Estimating 30 linear-spaced frequencies from 1.0 Hz to 30.0 Hz.

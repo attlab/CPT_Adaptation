@@ -5,7 +5,7 @@ Date: 09.15.18
 %}
 
 clear
-close all
+%close all
 
 %% set dirs
 %sourceDir = '/data/DATA_ANALYSIS/BOSS_PREPROCESSING/EEG/CPT/Data_Compiled';
@@ -19,6 +19,7 @@ if analysisType==0
     load([sourceDir '/' 'GRAND_ERSP_1-500Hz.mat'])
 elseif analysisType==1
     load([sourceDir '/' 'GRAND_ERSP_1-100Hz.mat'])
+    load([sourceDir '/' 'STATS_EEG_ERSP_1-100Hz.mat'])
 elseif analysisType==2
     load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_Occ_Rej.mat'])
 elseif analysisType==3
@@ -34,14 +35,23 @@ end
 %% baseline correct?
 baselineCorrect=1;
 if baselineCorrect
-    erspBL = mean(erspAll(:,:,:,:,:,25:40),6); % this is a little off, fix
+    
+    if analysisType>1
+        baselineCorrectTimepoints = 24:39;
+    else
+        baselineCorrectTimepoints = 25:40;
+    end
+    
+    erspBL = mean(erspAll(:,:,:,:,:,baselineCorrectTimepoints),6); % this is a little off, fix
     ersp = erspAll - erspBL;
 else
     ersp = erspAll;
 end
 
+
+
 %% plot ersps
-for iElects=1:5
+for iElects=5;%1:5
     
     % electrode region groups (split front to back in four sections)
     frontal={'Fp1','Fp2','AF3','AF4','AF7','AF8','F7','F5','F3','F1','Fz','F2','F4','F6','F8'};
@@ -104,9 +114,9 @@ for iElects=1:5
             
             
             % find mean and plot data
-            dataMean = squeeze(mean(mean(mean(ersp(:,iSession,iOrder,theseElects,:,5:195),1),3),4));
+            dataMean = squeeze(mean(mean(mean(ersp(:,iSession,iOrder,theseElects,:,:),1),3),4));
             imagesc(dataMean,thisCbar)
-            
+            thisXtick = [1,40,65,95,125,155,194];
             if analysisType==0
                 thisYtick = linspace(1,50,6);
                 thisYtickLabel = [1,100,200,300,400,500];
@@ -114,8 +124,10 @@ for iElects=1:5
                 thisYtick = linspace(1,50,6);
                 thisYtickLabel = [1,20,40,60,80,100];
             elseif analysisType>1
-                thisYtick = linspace(1,30,6);
-                thisYtickLabel = [1,4,8,12,20,30];
+                thisYtick = [0,4,8,14,22,30];%  linspace(1,30,5);           
+                thisYtickLabel = [0,4,8,14,22,30];
+                thisXtick = [1,39,64,94,124,154,191];
+       
             end
             
 %             if analysisType==2
@@ -127,10 +139,17 @@ for iElects=1:5
 %             end
             
             set(gca,'ydir','normal',...
-                'fontsize',14,...
-                'xtick',[1,20,40,60,80,100,120,140,160,180,195],...
+                'fontsize',18,...
+                'xtick',thisXtick,...
+                'XTickLabel',[0,40,65,95,125,155,195],...
                 'YTick',thisYtick,...
-                'YTickLabel',thisYtickLabel)
+                'YTickLabel',thisYtickLabel,...
+                'lineWidth',1.5)
+            
+            ax=gca;
+            ax.LineWidth = 2;
+            
+            %set(gca, 'YScale','log')
             
             % add lines
             t1=1; % start pre baseline ( 40 s)
@@ -138,37 +157,37 @@ for iElects=1:5
             t3=65; % start CPT (immerse feet - 90 s)
             t4=155; % recovery (feet out, start recovery baseline - 40 s)
             
-            for iLine=1:4
+            for iLine=2:4
                 if iLine==1; tx=t1;thisText = 'Baseline';
                 elseif iLine==2; tx=t2; thisText = 'Prep';
                 elseif iLine==3; tx=t3; thisText = 'CPT';
                 elseif iLine==4; tx=t4; thisText = 'Recovery';
                 end
-                line([tx,tx],[1,size(erspAll,5)],'color','w','linewidth',4,'linestyle',':');
+                line([tx,tx],[1,size(erspAll,5)],'color','k','linewidth',4,'linestyle',':');
                 %text(tx,35,thisText,'fontsize',18)
             end
             
-            % add title at top
-            if iOrder==1
-                th = title(thisTitle,'fontsize',24);
-                titlePos = get(th,'position');
-                set(th,'position',titlePos+1.5)
-            end
+%             % add title at top
+%             if iOrder==1
+%                 th = title(thisTitle,'fontsize',24);
+%                 titlePos = get(th,'position');
+%                 set(th,'position',titlePos+1.5)
+%             end
             
-            % add T1, T2 etc labels on left
-            if iSession==1
-                text(-65,20, thisTime,'fontsize',36)
-            end
+%             % add T1, T2 etc labels on left
+%             if iSession==1
+%                 text(-65,20, thisTime,'fontsize',36)
+%             end
 
-            if iOrder==5
-                xlabel('Time (s)','fontsize',18)
-            end
-            ylabel('Freq (Hz)')
+%             if iOrder==5
+%                 xlabel('Time (s)','fontsize',18)
+%             end
+%             ylabel('Freq (Hz)')
             
             pbaspect([3,1,1])
             
             % plot colorbar
-            cbar
+            %cbar
             
         end
     end
@@ -188,21 +207,37 @@ for iElects=1:5
         % do t-tests between conditions
         erspAllChans = squeeze(mean(ersp(:,:,:,theseElects,:,:),4)); % isolate this T and avg over channels
         
-        tMat = [];
-        for f=1:size(erspAllChans,4)
-            for t=1:size(erspAllChans,5)
-                
-                tResult = [];
-                tResult = ttest(erspAllChans(:,1,iOrder,f,t), erspAllChans(:,2,iOrder,f,t));
-                tMat(f,t) = tResult;
-                
+        
+        % plot regular (0) or resampled t-tests (1)
+        plotTestType=1;
+        
+        if plotTestType==0
+            
+            tMat = [];
+            for f=1:size(erspAllChans,4)
+                for t=1:size(erspAllChans,5)
+                    
+                    tResult = [];
+                    tResult = ttest(erspAllChans(:,1,iOrder,f,t), erspAllChans(:,2,iOrder,f,t));
+                    tMat(f,t) = tResult;
+                    
+                end
             end
+            
+        elseif plotTestType==1 && analysisType==1
+         
+            tMat = squeeze(sigVec(iOrder,:,:));
+            disp('RESAMPLED T-TESTS!')
         end
+        
+        
+        
+        
         
         % generate t-plot
         imagesc(tMat)
           
-        
+        thisXtick = [1,40,65,95,125,155,194];
         if analysisType==0
             thisYtick = linspace(1,50,6);
             thisYtickLabel = [1,100,200,300,400,500];
@@ -210,8 +245,11 @@ for iElects=1:5
             thisYtick = linspace(1,50,6);
             thisYtickLabel = [1,20,40,60,80,100];
         elseif analysisType>1
-            thisYtick = linspace(1,30,6);
-            thisYtickLabel = [1,4,8,12,20,30];
+                %thisYtick = linspace(1,30,5);
+                thisYtick = [0,4,8,14,22,30];%  linspace(1,30,5);           
+
+                thisYtickLabel = [0,4,8,14,22,30];
+                thisXtick = [1,39,64,94,124,154,191];
         end
         
 %         if analysisType==2
@@ -223,10 +261,14 @@ for iElects=1:5
 %         end
         
         set(gca,'ydir','normal',...
-            'fontsize',14,...
-            'xtick',[1,20,40,60,80,100,120,140,160,180,195],...
+            'fontsize',18,...
+            'xtick',thisXtick,...
+            'XTickLabel',[0,40,65,95,125,155,195],...
             'YTick',thisYtick,...
-            'YTickLabel',thisYtickLabel)
+            'YTickLabel',thisYtickLabel,...
+            'LineWidth',1.5)
+        
+        
         
         
         % add lines
@@ -235,7 +277,7 @@ for iElects=1:5
         t3=65; % start CPT (immerse feet - 90 s)
         t4=155; % recovery (feet out, start recovery baseline - 40 s)
         
-        for iLine=1:4
+        for iLine=2:4
             if iLine==1; tx=t1;thisText = 'Baseline';
             elseif iLine==2; tx=t2; thisText = 'Prep';
             elseif iLine==3; tx=t3; thisText = 'CPT';
@@ -246,21 +288,21 @@ for iElects=1:5
         end
         
         % add title at top
-        if iOrder==1
-            th = title(thisTitle,'fontsize',24);
-            titlePos = get(th,'position');
-            set(th,'position',titlePos+1.5)
-        end
+%         if iOrder==1
+%             th = title(thisTitle,'fontsize',24);
+%             titlePos = get(th,'position');
+%             set(th,'position',titlePos+1.5)
+%         end
         
-        % add T1, T2 etc labels on left
-        if iSession==1
-            text(0,0, thisTime,'fontsize',36)
-        end
-  
-        if iOrder==5
-            xlabel('Time (s)','fontsize',18)
-        end
-        ylabel('Freq (Hz)')
+%         % add T1, T2 etc labels on left
+%         if iSession==1
+%             text(0,0, thisTime,'fontsize',36)
+%         end
+%   
+%         if iOrder==5
+%             xlabel('Time (s)','fontsize',18)
+%         end
+%         ylabel('Freq (Hz)')
         
         pbaspect([3,1,1])
         
@@ -268,6 +310,13 @@ for iElects=1:5
         colormap('jet')
         
     end
+    
+    
+    
+    
+    
+    
+    
     
 %     %% plot differences between T1 and T5
 %     h=figure('units','normalized','outerposition',[0 0 1 1]);
