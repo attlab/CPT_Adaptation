@@ -2,7 +2,7 @@
 Classify_Stress_Plot
 Author: Tom Bullock
 Date: 01.04.20
-
+v
 %}
 
 clear
@@ -22,15 +22,27 @@ statLineYpos=.43;
 for iPlot=1:8
     
      % determine color      
+%     if      iPlot==1; thisColor = [255,0,0]; %BP (red)
+%     elseif  iPlot==2; thisColor = [252,226,5]; %HF (yellow)
+%     elseif  iPlot==3; thisColor = [255,192,203]; %HR (pink)
+%     elseif  iPlot==4; thisColor = [0,255,0]; %LVET (green)
+%     elseif  iPlot==5; thisColor = [255,140,0]; %PEP (orange)
+%     elseif  iPlot==6; thisColor = [255,0,255]; %SV (purple)
+%     elseif  iPlot==7; thisColor = [0,0,255]; %PUPIL (blue)
+%     elseif  iPlot==8; thisColor = [0,0,0]; %EEG (black)
+%     end
+    
     if      iPlot==1; thisColor = [255,0,0]; %BP (red)
-    elseif  iPlot==2; thisColor = [252,226,5]; %HF (yellow)
-    elseif  iPlot==3; thisColor = [255,192,203]; %HR (pink)
+    elseif  iPlot==2; thisColor = [255,140,0]; %HF (orange)
+    elseif  iPlot==3; thisColor = [252,226,5]; %HR (yellow)
     elseif  iPlot==4; thisColor = [0,255,0]; %LVET (green)
-    elseif  iPlot==5; thisColor = [255,140,0]; %PEP (orange)
-    elseif  iPlot==6; thisColor = [255,0,255]; %SV (purple)
-    elseif  iPlot==7; thisColor = [0,0,255]; %PUPIL (blue)
+    elseif  iPlot==5; thisColor = [0,0,255]; %PEP (blue)
+    elseif  iPlot==6; thisColor = [29,0,52]; %SV (indigo)
+    elseif  iPlot==7; thisColor = [238,130,238]; %PUPIL (violet)
     elseif  iPlot==8; thisColor = [0,0,0]; %EEG (black)
     end
+    
+    
     
     clear accData accDataPerm
     accData=classStruct(iPlot).accData;
@@ -84,6 +96,8 @@ set(gca,'linewidth',1.5,...
     'ylim',[.33,.85],...
     'ytick',[.4,.5,.6,.7,.8],...
     'box','off')
+
+pbaspect([3,1,1])
 
 % add lines
 t2=40; % immersion period (position feet for immersion -25 s)

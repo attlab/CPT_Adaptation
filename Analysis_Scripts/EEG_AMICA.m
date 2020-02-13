@@ -1,9 +1,8 @@
 function EEG_AMICA(subNum,session)
 %{ 
-==========================================================================
-Run AMICA on CPT Data (Neil's scripts adapted by Tom Bullock for CPT)
-
-==========================================================================
+EEG AMICA
+Author: Neil (adapted by Tom for CPT)
+Date: 01.09.20
 %}
 
 %% add dirs, paths etc.

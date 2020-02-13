@@ -163,11 +163,18 @@ for iMeasure = 1:6
     
     for iPlot=1:5
         
-        if      iPlot==1; thisColor = [255,0,0];
-        elseif  iPlot==2; thisColor = [252,226,5];
-        elseif  iPlot==3; thisColor = [255,192,203];
-        elseif  iPlot==4; thisColor = [0,255,0];
-        elseif  iPlot==5; thisColor = [255,140,0];
+%         if      iPlot==1; thisColor = [255,0,0];
+%         elseif  iPlot==2; thisColor = [252,226,5];
+%         elseif  iPlot==3; thisColor = [255,192,203];
+%         elseif  iPlot==4; thisColor = [0,255,0];
+%         elseif  iPlot==5; thisColor = [255,140,0];
+%         end
+        
+        if      iPlot==1; thisColor = [255,0,0]; %red
+        elseif  iPlot==2; thisColor = [255,140,0];% orange ;
+        elseif  iPlot==3; thisColor = [252,226,5]; % yellow[255,192,203];
+        elseif  iPlot==4; thisColor = [0,255,0]; % green
+        elseif  iPlot==5; thisColor = [0,0,255]; %blue
         end
            
         

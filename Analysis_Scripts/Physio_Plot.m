@@ -28,7 +28,7 @@ close all
 %addpath(genpath('/data/DATA_ANALYSIS/All_Dependencies'))
 
 % do baseline correction?
-plotBlCorrectedPhysio = 1;
+plotBlCorrectedPhysio = 0%1;
 
 % set dirs
 sourceDir =  '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
@@ -131,7 +131,7 @@ all_HF = all_HF(:,:,:,1:100:19000); %% FIX TO 195!
 
 
 % plot measures across all five CPTs and two sessions
-for iMeasure=[2:5,7,8]
+for iMeasure=6;%[2:5,7,8]
     %h=figureFullScreen;
     %h=figure;
     h=figure('units','normalized','outerposition',[0 0 .3 1]);
@@ -155,7 +155,7 @@ for iMeasure=[2:5,7,8]
         elseif  iMeasure==3; allPhysio = all_LVET; thisTitle1  = 'LVET'; thisYlim=[250,310]; thisYlinePos = 255; thisYtick = [250:20:310];
         elseif  iMeasure==4; allPhysio = all_PEP; thisTitle1= 'PEP'; thisYlim = [60,90]; thisYlinePos = 65; thisYtick = [60:10:90];
         elseif  iMeasure==5; allPhysio = all_SV; thisTitle1 = 'SV'; thisYlim = [25,45]; thisYlinePos = 28; thisYtick = [25:10:45];
-        elseif  iMeasure==6; allPhysio = all_TPR; thisTitle1 = 'TPR'; thisYlim = [-800,200]; 
+        elseif  iMeasure==6; allPhysio = all_TPR; thisTitle1 = 'TPR'; thisYlim = [2000,4000]; thisYlinePos = 28; thisYtick = [25:10:45];
         elseif  iMeasure==7; allPhysio = all_BP; thisTitle1 = 'BP';thisYlim = [60,110]; thisYlinePos = 65; thisYtick = [70:20:110];
         elseif  iMeasure==8; allPhysio = all_HF; thisTitle1 = 'HF'; thisYlim = [3,9]; thisYlinePos = 3.5; thisYtick = [3:2:9];
         end
@@ -209,7 +209,7 @@ for iMeasure=[2:5,7,8]
         
         subplot(5,1,iOrder)
         
-        if plotErrorBars==0 || iMeasure==6
+        if plotErrorBars==0 %|| iMeasure==6
             plot(linspace(1,xAxisLength,size(allPhysio,4)),squeeze(nanmean(allPhysio(:,iOrder,1,:),1)),'color',[51,153,255]./255,'linewidth',2);hold on
             plot(linspace(1,xAxisLength,size(allPhysio,4)),squeeze(nanmean(allPhysio(:,iOrder,2,:),1)),'color',[255,51,51]./255,'linewidth',2);
         else
@@ -251,6 +251,8 @@ for iMeasure=[2:5,7,8]
             if plotType==1
             set(gca,'ylim',thisYlim)
             end
+                        %%thisYtick = [0:.5:1]
+
         end
 
         set(gca,'fontsize',18,'box','off','linewidth',1.5,'xlim',[1,194],'XTick',[0,40,65,155,194],'XTickLabel',[0,40,65,155,195],'YTick',thisYtick)
@@ -258,7 +260,13 @@ for iMeasure=[2:5,7,8]
         
         
         % which stats to use? (0=regular, 1=resampled)
-        pairwiseCompType=1;
+        pairwiseCompType=0;
+        if pairwiseCompType==0
+            disp('NOT RESAMPLED STATS!')
+        else
+            disp('RESAMPLED STATS!')
+        end
+        
         if pairwiseCompType==1
             if      iMeasure==2; hResults = allCardioStats.hr_sigVec(:,iOrder);
             elseif  iMeasure==3; hResults = allCardioStats.lvet_sigVec(:,iOrder);

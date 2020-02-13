@@ -1,4 +1,8 @@
-%function EEG_AMICA_job
+%{
+EEG_AMICA_job
+Author(s): Neil (modified by Tom)
+Date: 01.09.20
+%}
 
 clear
 close all
@@ -10,14 +14,8 @@ subjects = CPT_SUBJECTS;
 runInParallel=1;
 
 if runInParallel
-    
     cluster=parcluster();
     job = createJob(cluster);
-
-    %s = parcluster;
-    %s.ResourceTemplate='-l nodes=^N^:ppn=1,mem=24GB';
-    %job=createJob(s,'Name','Jordan_Job');
-    %job.AttachedFiles = {'EEG_AMICA.m','sendEmailToMe.m'};
 end
 
 %% Task 
@@ -59,6 +57,3 @@ catch e
     error(message)
     
 end
-
-
-%return
