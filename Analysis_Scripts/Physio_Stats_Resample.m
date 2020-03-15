@@ -11,8 +11,9 @@ Note: if plotting shaded error bars, need to do this in stages OR matlab
 crashes
 %}
 
-clear
-close all
+%clear
+%close all
+function Physio_Stats_Resample(plotBlCorrectedPhysio) % 0 or 1
 
 % add paths
 %addpath(genpath('/data/DATA_ANALYSIS/All_Dependencies'))
@@ -53,15 +54,54 @@ end
 xAxisLength=195;
 
 % do baseline correction?
-plotBlCorrectedPhysio = 0;
+%plotBlCorrectedPhysio = 1;%1;  % RUN 1 next!!!
 
-% if plotting average, remove NaN subs (just BP and TPR have this issue)
+% % if plotting average, remove NaN subs (just BP and TPR have this issue)
+% if plotType==1
+%     tmp = [];
+%     tmp = isnan(all_BP);
+%     tmp = sum(sum(sum(tmp,2),3),4);
+%     all_BP(tmp>0,:,:,:)=[];
+% end
+
+
+% remove bad subjects (120, 123) as they have short recovery periods
+badSubjectsIdx(1) = find(subjects==120);
+badSubjectsIdx(2) = find(subjects==123);
+
+%all_BP(badSubjectsIdx,:,:,:) = [];
+all_CO(badSubjectsIdx,:,:,:) = [];
+all_HR(badSubjectsIdx,:,:,:) = [];
+all_LVET(badSubjectsIdx,:,:,:) = [];
+all_PEP(badSubjectsIdx,:,:,:) = [];
+all_SV(badSubjectsIdx,:,:,:) = [];
+%all_TPR(badSubjectsIdx,:,:,:) = [];
+
+% remove additional bad subjects (133,157) from HF data because noise
+badSubjectsIdx(1) = find(subjects==120);
+badSubjectsIdx(2) = find(subjects==123);
+badSubjectsIdx(3) = find(subjects==133);
+badSubjectsIdx(4) = find(subjects==157);
+
+all_HF(badSubjectsIdx,:,:,:) = [];
+
+% remove bad subjects from BP (if they have NaNs) and TPR
 if plotType==1
     tmp = [];
     tmp = isnan(all_BP);
     tmp = sum(sum(sum(tmp,2),3),4);
     all_BP(tmp>0,:,:,:)=[];
+    badSubsBP = subjects(tmp>0);
+    all_TPR(tmp>0,:,:,:)=[];
 end
+
+
+
+
+
+
+
+
 
 % if plotting average, do regular plots or shaded error bars?
 plotErrorBars=1;
@@ -81,7 +121,7 @@ plotErrorBars=1;
 % do baseline correction on all measures (correcting to mean 20-40 secs
 % period in baseline)
 if plotBlCorrectedPhysio
-    all_BP = all_BP-mean(all_BP(:,:,:,15:40),4);
+    all_BP = all_BP-mean(all_BP(:,:,:,25:40),4);
     all_CO = all_CO-mean(all_CO(:,:,:,2500:4000),4);
     all_HR = all_HR-mean(all_HR(:,:,:,2500:4000),4);
     all_LVET = all_LVET-mean(all_LVET(:,:,:,2500:4000),4);
@@ -103,7 +143,9 @@ all_HF = all_HF(:,:,:,1:100:19000); %% FIX TO 195!
 
 
 % plot measures across all five CPTs and two sessions
-for iMeasure=[2:5,7,8]
+for iMeasure=1:8;%[2:5,7,8]
+    
+    disp(['Measure: ' num2str(iMeasure)])
     
     allPhysio=[];
     if plotBlCorrectedPhysio
@@ -128,16 +170,49 @@ for iMeasure=[2:5,7,8]
         end
     end
     
-    % select subject if plotting individual
-    if plotType==0
-        allPhysio = allPhysio(sjIdx,:,:,:);
-    end
-    
-    % remove select subjects if plotting averages
-    if plotType==1
-        allPhysio(badSubjectsIdx,:,:,:) = [];
-    end
-    
+%     % select subject if plotting individual
+%     if plotType==0
+%         allPhysio = allPhysio(sjIdx,:,:,:);
+%     end
+%     
+%     % remove select subjects if plotting averages
+%     if plotType==1
+%         allPhysio(badSubjectsIdx,:,:,:) = [];
+%     end
+% 
+%     % if plotting averages, option to remove subjects with short recovery
+%     % periods (120,123)
+%     badSubjectsIdx=[];
+%     if plotType==1 && ismember(iMeasure,[1:7])
+%         badSubjectsIdx(1) = find(subjects==120);
+%         badSubjectsIdx(2) = find(subjects==123);
+%         
+%         badSubjects_CO_HR_LVET_PEP_SV = [120,123];
+%         
+% %     elseif plotType==1 && iMeasure==6
+% %         badSubjectsIdx
+%         
+%     elseif plotType==1 && iMeasure==8
+%         badSubjectsIdx(1) = find(subjects==120);
+%         badSubjectsIdx(2) = find(subjects==123);
+%         badSubjectsIdx(3) = find(subjects==133);
+%         badSubjectsIdx(4) = find(subjects==157);
+%         
+%         badSubjects_HF = [120,123,133,157];
+%         
+%     end
+%    
+%     
+%     % select subject if plotting individual
+%     if plotType==0
+%         allPhysio = allPhysio(sjIdx,:,:,:);
+%     end
+%     
+%     % remove select subjects if plotting averages
+%     if plotType==1
+%         allPhysio(badSubjectsIdx,:,:,:) = [];
+%     end
+%     
     
     
     
@@ -146,7 +221,7 @@ for iMeasure=[2:5,7,8]
     % iteration loop (null data)
     for i=1:1000
         
-        disp(['Null Iteration ' num2str(i)])
+        %disp(['Null Iteration ' num2str(i)])
         
         % sample (timepoint) loop
         for j=1:size(allPhysio,4)
@@ -217,11 +292,15 @@ for iMeasure=[2:5,7,8]
         end
     end
     
-    if      iMeasure==2 
+    if      iMeasure==1
+        allCardioStats.co_sigVec=sigVec;
+        allCardioStats.co_tValsObs=tValsObs;
+        allCardioStats.co_tValsNull=tValsNull;
+    elseif  iMeasure==2
         allCardioStats.hr_sigVec=sigVec;
         allCardioStats.hr_tValsObs=tValsObs;
         allCardioStats.hr_tValsNull=tValsNull;
-    elseif  iMeasure==3 
+    elseif  iMeasure==3
         allCardioStats.lvet_sigVec=sigVec;
         allCardioStats.lvet_tValsObs=tValsObs;
         allCardioStats.lvet_tValsNull=tValsNull;
@@ -233,6 +312,10 @@ for iMeasure=[2:5,7,8]
         allCardioStats.sv_sigVec=sigVec;
         allCardioStats.sv_tValsObs=tValsObs;
         allCardioStats.sv_tValsNull=tValsNull;
+    elseif  iMeasure==6
+        allCardioStats.tpr_sigVec=sigVec;
+        allCardioStats.tpr_tValsObs=tValsObs;
+        allCardioStats.tpr_tValsNull=tValsNull;
     elseif  iMeasure==7 
         allCardioStats.bp_sigVec=sigVec;
         allCardioStats.bp_tValsObs=tValsObs;

@@ -55,6 +55,21 @@ try
     EEG.icasphere  = EEG.etc.amica.S;
     EEG = eeg_checkset(EEG, 'ica');
     
+        %     % Estimate single equivalent dipoles
+    % 	% Havent used below lines for anything yet
+    %     templateChannelFilePath = [eeglab_dipDir 'standard_BESA/standard-10-5-cap385.elp'];
+    %     hdmFilePath  = [eeglab_dipDir 'standard_BEM/standard_vol.mat'];
+    %     EEG = pop_dipfit_settings( EEG, 'hdmfile',[eeglab_dipDir 'standard_BEM/standard_vol.mat'],...
+    %         'coordformat','MNI','mrifile',...
+    %         [eeglab_dipDir 'standard_BEM/standard_mri.mat'],'chanfile',...
+    %         [eeglab_dipDir 'standard_BEM/elec/standard_1005.elc'],'coord_transform',...
+    %         [0.83215 -15.6287 2.4114 0.081214 0.00093739 -1.5732 1.1742 1.0601 1.1485] ,'chansel',[1:63] );
+    %     EEG = pop_multifit(EEG, 1:EEG.nbchan,'threshold', 100, 'dipplot','off','plotopt',{'normlen' 'on'});
+    %
+    %     % Search for and estimate symmetrically constrained bilateral dipoles
+    %     EEG = fitTwoDipoles(EEG, 'LRR', 35);
+    
+    
     
     save([EEG_ica_dir sprintf('sj%02d_se%02d_EEG_clean_ica.mat',subNum,session+1)], 'EEG','-v7.3');
     

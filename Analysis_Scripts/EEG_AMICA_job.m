@@ -11,7 +11,7 @@ close all
 subjects = CPT_SUBJECTS;
 
 % run in serial (0) or parallel (1)
-runInParallel=1;
+runInParallel=0;
 
 if runInParallel
     cluster=parcluster();

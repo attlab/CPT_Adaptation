@@ -24,11 +24,8 @@ everything...remove these from HF analyses reporrting
 clear
 close all
 
-% add paths
-%addpath(genpath('/data/DATA_ANALYSIS/All_Dependencies'))
-
-% do baseline correction?
-plotBlCorrectedPhysio = 0%1;
+% do baseline correction? (0=no, 1=yes)
+plotBlCorrectedPhysio = 1;
 
 % set dirs
 sourceDir =  '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
@@ -48,7 +45,6 @@ end
 sourceDirTaskOrder = sourceDir;
 load([sourceDirTaskOrder '/' 'Task_Order.mat'])
 
-
 % plot averaged data (1) or individuals (0)
 plotType=1;
 
@@ -58,44 +54,87 @@ if plotType==0
     disp(['Displaying SjNum ' num2str(subjects(sjIdx))])
 end
 
-
-
-% choose which measure(s) to plot (1:7)
-%plotMeasures = 1:7;
-
 % x-axis length(should be 195 secs, but was restricted to 190?)
 xAxisLength=195;
 
 
+% remove bad subjects (120, 123) as they have short recovery periods
+badSubjectsIdx(1) = find(subjects==120);
+badSubjectsIdx(2) = find(subjects==123);
 
-% if plotting average, remove NaN subs (just BP and TPR have this issue)
+all_CO(badSubjectsIdx,:,:,:) = [];
+all_HR(badSubjectsIdx,:,:,:) = [];
+all_LVET(badSubjectsIdx,:,:,:) = [];
+all_PEP(badSubjectsIdx,:,:,:) = [];
+all_SV(badSubjectsIdx,:,:,:) = [];
+
+
+
+% remove additional bad subjects (133,157) from HF data because noise
+badSubjectsIdx = [];
+badSubjectsIdx(1) = find(subjects==120);
+badSubjectsIdx(2) = find(subjects==123);
+badSubjectsIdx(3) = find(subjects==133);
+badSubjectsIdx(4) = find(subjects==157);
+
+all_HF(badSubjectsIdx,:,:,:) = [];
+
+% remove bad subjects from BP (if they have NaNs) and TPR
 if plotType==1
     tmp = [];
     tmp = isnan(all_BP);
     tmp = sum(sum(sum(tmp,2),3),4);
     all_BP(tmp>0,:,:,:)=[];
-    
-    % log BP subjects
-    badSubjects_BP = subjects(tmp>0);
-    
+    all_TPR(tmp>0,:,:,:)=[];
+    badSubjects_BP_TPR = subjects(tmp>0); % store vector of bad subs
 end
+
+
+badSubjects_CO_HR_LVET_PEP_SV = [120,123]; % store vectors of bad subs
+badSubjects_HF = [120,123,133,157];
+
+
+
+
+
+%  % if plotting averages, option to remove subjects with short recovery
+%     % periods (120,123)
+%     badSubjectsIdx=[];
+%     if plotType==1 && ismember(iMeasure,[1:7])
+%         badSubjectsIdx(1) = find(subjects==120);
+%         badSubjectsIdx(2) = find(subjects==123);
+%         
+%         badSubjects_CO_HR_LVET_PEP_SV = [120,123];
+%         
+% %     elseif plotType==1 && iMeasure==6
+% %         badSubjectsIdx
+%         
+%     elseif plotType==1 && iMeasure==8
+%         badSubjectsIdx(1) = find(subjects==120);
+%         badSubjectsIdx(2) = find(subjects==123);
+%         badSubjectsIdx(3) = find(subjects==133);
+%         badSubjectsIdx(4) = find(subjects==157);
+%         
+%         badSubjects_HF = [120,123,133,157];
+%         
+%     end
+%     
+%     % remove select subjects if plotting averages
+%     if plotType==1
+%         allPhysio(badSubjectsIdx,:,:,:) = [];
+%     end
+
+
+
+
+
+
+
 
 
 
 % if plotting average, do regular plots or shaded error bars?
 plotErrorBars=1;
-
-
-
-% tmp = [];
-% tmp = isnan(all_CO(:,:,:,1:195));
-% tmp = sum(sum(sum(tmp,2),3),4);
-% all_CO(tmp>0,:,:,:)=[];
-
-% tmp = [];
-% tmp = isnan(all_TPR);
-% tmp = sum(sum(sum(tmp,2),3),4);
-% all_TPR(tmp>0,:,:,:)=[];
 
 % do baseline correction on all measures (correcting to mean 20-40 secs
 % period in baseline)
@@ -121,20 +160,12 @@ all_HF = all_HF(:,:,:,1:100:19000); %% FIX TO 195!
 
 
 
-% % set y axes (larger for individuals, smaller for group level stuff)
-% if plotType~=1
-%     setYaxesForGroup=0;
-% else
-%     setYaxesForGroup=1;
-% end
-
-
 
 % plot measures across all five CPTs and two sessions
-for iMeasure=6;%[2:5,7,8]
+for iMeasure=1:8
     %h=figureFullScreen;
     %h=figure;
-    h=figure('units','normalized','outerposition',[0 0 .3 1]);
+    h=figure('units','normalized','outerposition',[0 0 .3 2]); % was .3 1
     
     allPhysio=[];
     if plotBlCorrectedPhysio
@@ -150,44 +181,28 @@ for iMeasure=6;%[2:5,7,8]
         thisYlim = [-.3,1];
         thisYlinePos = [-.2];
     else
-        if      iMeasure==1; allPhysio = all_CO; thisTitle1 = 'CO'; thisYlim = [-1.5,1]; 
+        if      iMeasure==1; allPhysio = all_CO; thisTitle1 = 'CO'; thisYlim = [1.5,3.2]; thisYlinePos = 1; thisYtick = [1,2,3]; 
         elseif  iMeasure==2; allPhysio = all_HR; thisTitle1 = 'HR'; thisYlim = [50,100]; thisYlinePos = 55; thisYtick = [60:20:100];
         elseif  iMeasure==3; allPhysio = all_LVET; thisTitle1  = 'LVET'; thisYlim=[250,310]; thisYlinePos = 255; thisYtick = [250:20:310];
         elseif  iMeasure==4; allPhysio = all_PEP; thisTitle1= 'PEP'; thisYlim = [60,90]; thisYlinePos = 65; thisYtick = [60:10:90];
         elseif  iMeasure==5; allPhysio = all_SV; thisTitle1 = 'SV'; thisYlim = [25,45]; thisYlinePos = 28; thisYtick = [25:10:45];
-        elseif  iMeasure==6; allPhysio = all_TPR; thisTitle1 = 'TPR'; thisYlim = [2000,4000]; thisYlinePos = 28; thisYtick = [25:10:45];
+        elseif  iMeasure==6; allPhysio = all_TPR; thisTitle1 = 'TPR'; thisYlim = [2000,4200]; thisYlinePos = 2200; thisYtick = [2000:1000:4000];
         elseif  iMeasure==7; allPhysio = all_BP; thisTitle1 = 'BP';thisYlim = [60,110]; thisYlinePos = 65; thisYtick = [70:20:110];
         elseif  iMeasure==8; allPhysio = all_HF; thisTitle1 = 'HF'; thisYlim = [3,9]; thisYlinePos = 3.5; thisYtick = [3:2:9];
         end
     end
     
-    % if plotting averages, option to remove subjects with short recovery
-    % periods (120,123)
-    badSubjectsIdx=[];
-    if plotType==1 && ismember(iMeasure,[2:5])
-        badSubjectsIdx(1) = find(subjects==120);
-        badSubjectsIdx(2) = find(subjects==123);
-        
-        badSubjects_HR_LVET_PEP_SV = [120,123];
-    elseif plotType==1 && iMeasure==8
-        badSubjectsIdx(1) = find(subjects==120);
-        badSubjectsIdx(2) = find(subjects==123);
-        badSubjectsIdx(3) = find(subjects==133);
-        badSubjectsIdx(4) = find(subjects==157);
-        
-        badSubjects_HF = [120,123,133,157];
-    end
    
+    
+    
+    
     
     % select subject if plotting individual
     if plotType==0
         allPhysio = allPhysio(sjIdx,:,:,:);
     end
     
-    % remove select subjects if plotting averages
-    if plotType==1
-        allPhysio(badSubjectsIdx,:,:,:) = [];
-    end
+
     
     % null the first few seconds
     allPhysio(:,:,:,1:2) = NaN;
@@ -249,7 +264,7 @@ for iMeasure=6;%[2:5,7,8]
         else
             %thisYlim = [60,90];
             if plotType==1
-            set(gca,'ylim',thisYlim)
+                set(gca,'ylim',thisYlim)
             end
                         %%thisYtick = [0:.5:1]
 
@@ -260,7 +275,7 @@ for iMeasure=6;%[2:5,7,8]
         
         
         % which stats to use? (0=regular, 1=resampled)
-        pairwiseCompType=0;
+        pairwiseCompType=1;
         if pairwiseCompType==0
             disp('NOT RESAMPLED STATS!')
         else
@@ -268,10 +283,12 @@ for iMeasure=6;%[2:5,7,8]
         end
         
         if pairwiseCompType==1
-            if      iMeasure==2; hResults = allCardioStats.hr_sigVec(:,iOrder);
+            if      iMeasure==1; hResults = allCardioStats.co_sigVec(:,iOrder);
+            elseif  iMeasure==2; hResults = allCardioStats.hr_sigVec(:,iOrder);
             elseif  iMeasure==3; hResults = allCardioStats.lvet_sigVec(:,iOrder);
             elseif  iMeasure==4; hResults = allCardioStats.pep_sigVec(:,iOrder);
             elseif  iMeasure==5; hResults = allCardioStats.sv_sigVec(:,iOrder);
+            elseif  iMeasure==6; hResults = allCardioStats.tpr_sigVec(:,iOrder);
             elseif  iMeasure==7; hResults = allCardioStats.bp_sigVec(:,iOrder);
             elseif  iMeasure==8; hResults = allCardioStats.hf_sigVec(:,iOrder);
             end
@@ -369,7 +386,9 @@ end
 
 % save downsampled, baseline corrected physio data
 if plotBlCorrectedPhysio
-    save([sourceDir '/' 'PHYSIO_FOR_PREDICTIVE_ANALYSIS.mat'],'all_BP','all_HR','all_LVET','all_PEP','all_HF','all_SV','subjects','badSubjects_BP','badSubjects_HF','badSubjects_HR_LVET_PEP_SV')
+    save([sourceDir '/' 'PHYSIO_Clean_Bl_Corr_Norm.mat'],'all_BP','all_HR','all_LVET','all_PEP','all_HF','all_SV','all_CO','all_TPR','subjects','badSubjects_BP_TPR','badSubjects_CO_HR_LVET_PEP_SV','badSubjects_HF')
+else
+    save([sourceDir '/' 'PHYSIO_Clean_Uncorr.mat'],'all_BP','all_HR','all_LVET','all_PEP','all_HF','all_SV','all_CO','all_TPR','subjects','badSubjects_BP_TPR','badSubjects_CO_HR_LVET_PEP_SV','badSubjects_HF')
 end
 
 
