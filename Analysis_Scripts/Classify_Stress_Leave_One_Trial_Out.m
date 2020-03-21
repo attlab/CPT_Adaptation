@@ -43,110 +43,122 @@ clear idx
 [~,idx] = setdiff(goodSubjects_HF,badSubjectsAllMeasures);
 all_HF = all_HF(idx,:,:,:);
 
-% isolate specific chunk of time for classification and restructure data
-% (subjects/trials x measures)
-t = 81:140;
 
-allData = [...
-    reshape(nanmean(all_BP(:,:,:,t),4),[280,1]),...
-    reshape(nanmean(all_CO(:,:,:,t),4),[280,1]),...
-    reshape(nanmean(all_HR(:,:,:,t),4),[280,1]),...
-    reshape(nanmean(all_LVET(:,:,:,t),4),[280,1]),...
-    reshape(nanmean(all_PEP(:,:,:,t),4),[280,1]),...
-    reshape(nanmean(all_SV(:,:,:,t),4),[280,1]),...
-    reshape(nanmean(all_TPR(:,:,:,t),4),[280,1]),...
-    ];
 
-% LEAVING OUT HF FOR NOW BECAUE NAN VALUES!?!
-%reshape(nanmean(all_HF(:,:,:,t),4),[280,1]),...
-
+for theseTimes=1:2
+    % isolate specific chunk of time for classification and restructure data
+    % (subjects/trials x measures)
+    if theseTimes==1
+        t=26:40;
+    elseif theseTimes==2
+        t = 81:140;
+    end
     
- 
-% set number of trials
-
-% set original data
-originalData = allData;
-
-% run classifier (all subjects in, leave one trial out)
-
-for permuteLabels=1:2
     
-    for iLeaveOutMeasure=1:7
+    allData = [...
+        reshape(nanmean(all_BP(:,:,:,t),4),[280,1]),...
+        reshape(nanmean(all_CO(:,:,:,t),4),[280,1]),...
+        reshape(nanmean(all_HR(:,:,:,t),4),[280,1]),...
+        reshape(nanmean(all_LVET(:,:,:,t),4),[280,1]),...
+        reshape(nanmean(all_PEP(:,:,:,t),4),[280,1]),...
+        reshape(nanmean(all_SV(:,:,:,t),4),[280,1]),...
+        reshape(nanmean(all_TPR(:,:,:,t),4),[280,1]),...
+        ];
+    
+    % LEAVING OUT HF FOR NOW BECAUE NAN VALUES!?!
+    %reshape(nanmean(all_HF(:,:,:,t),4),[280,1]),...
+    
+    
+    
+    % set number of trials
+    
+    % set original data
+    originalData = allData;
+    
+    % run classifier (all subjects in, leave one trial out)
+    
+    for permuteLabels=1:2
         
-        keepMeasure =1:7;
-        keepMeasure(iLeaveOutMeasure)=[];
-        
-        allData = originalData(:,keepMeasure);
-        
-        % permute condition labels if requested
-        % set condition labels
-        condLabels=repmat([1,1,1,1,1,2,2,2,2,2]',[28,1]);
-        nTrials = length(condLabels);
-
-
-        
-        
-        % if permuting labels, then run xx iterations
-        if permuteLabels==2
-            nIter=1000;
-        else
-            nIter=1;
-        end
-        
-        for iter=1:nIter
+        for iLeaveOutMeasure=1:7
             
-            iter
+            keepMeasure =1:7;
+            keepMeasure(iLeaveOutMeasure)=[];
             
+            allData = originalData(:,keepMeasure);
+            
+            % permute condition labels if requested
+            % set condition labels
+            condLabels=repmat([1,1,1,1,1,2,2,2,2,2]',[28,1]);
+            nTrials = length(condLabels);
+            
+            
+            
+            
+            % if permuting labels, then run xx iterations
             if permuteLabels==2
-                for i=1:7
-                    condLabels = condLabels(randperm(size(condLabels,1)));
-                end
+                nIter=1000;
+            else
+                nIter=1;
             end
             
-            
-            correctTrials=0;
-            for iTrial=1:nTrials
+            for iter=1:nIter
                 
-                testData = allData(iTrial,:);
-                testMember = condLabels(iTrial);
-                trainIdx = setdiff(1:nTrials,iTrial);
-                trainData = allData(trainIdx,:);
-                trainMember = condLabels(trainIdx);
+                iter
                 
-                p=repmat(1/2,1,2);
-                
-                Labels=classify(testData,trainData,trainMember,'lin',p);
-                
-                if length(Labels)==1
-                    if Labels==testMember
-                        correctTrials=correctTrials+1;
+                if permuteLabels==2
+                    for i=1:7
+                        condLabels = condLabels(randperm(size(condLabels,1)));
                     end
-                else
-                    correctTrials=correctTrials+length(find(Labels==testMember));
                 end
+                
+                
+                correctTrials=0;
+                for iTrial=1:nTrials
+                    
+                    testData = allData(iTrial,:);
+                    testMember = condLabels(iTrial);
+                    trainIdx = setdiff(1:nTrials,iTrial);
+                    trainData = allData(trainIdx,:);
+                    trainMember = condLabels(trainIdx);
+                    
+                    p=repmat(1/2,1,2);
+                    
+                    Labels=classify(testData,trainData,trainMember,'lin',p);
+                    
+                    if length(Labels)==1
+                        if Labels==testMember
+                            correctTrials=correctTrials+1;
+                        end
+                    else
+                        correctTrials=correctTrials+length(find(Labels==testMember));
+                    end
+                    
+                end
+                
+                % compute accuracy
+                accData(iter,iLeaveOutMeasure)=correctTrials/nTrials;
                 
             end
             
-            % compute accuracy
-            accData(iter,iLeaveOutMeasure)=correctTrials/nTrials;
+            clear allData
             
         end
         
-        clear allData
+        if permuteLabels==1
+            classResults(theseTimes).real = accData;
+        else
+            classResults(theseTimes).perm = accData;
+        end
+        
+        clear accData
         
     end
-    
-    if permuteLabels==1
-        classResults.real = accData;
-    else
-        classResults.perm = accData;
-    end
-    
-    clear accData
     
 end
 
 save([destDir '/' 'Classification_Results_LOA_All_Trials.mat'],'classResults')
+
+
 
 
 
