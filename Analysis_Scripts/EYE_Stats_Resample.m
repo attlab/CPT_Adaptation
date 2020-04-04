@@ -15,7 +15,9 @@ sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
 % remove bad subjects
-badSubs = [103,105,108,109,115,116,117,118,128,136,138,140,146,147,148,154,157,158];
+%badSubs = [103,105,108,109,115,116,117,118,128,136,138,140,146,147,148,154,157,158];
+badSubs = [103,105,108,109,115,116,117,118,126,128,135,136,138,139,140,146,147,148,154,157,158,159];
+
 [a,b] = setdiff(subjects,badSubs);
 paMatAll = paMatAll(b,:,:,:,:);
  
@@ -25,7 +27,7 @@ theseXlims=[0,195];
 theseXticks=[0,40,65,155,195];
 
 if baselineCorrect==1
-    paMatBL= nanmean(paMatAll(:,:,:,:,round(25000/2):round(40000/2)),5);
+    paMatBL= nanmean(paMatAll(:,:,:,:,round(26000/2):round(40000/2)),5);
     paMatAll = paMatAll - paMatBL;
 end
 
@@ -113,8 +115,11 @@ for j=1:size(tStatIdx,1)
 end
 
 % save data
-save([sourceDir '/' 'STATS_Resampled_EYE_n25.mat'],'sigVec','tValsObs','tValsNull','subjects','badSubs')
-
+if baselineCorrect==0
+    save([sourceDir '/' 'STATS_Resampled_EYE_n21_raw.mat'],'sigVec','tValsObs','tValsNull','subjects','badSubs')
+else
+    save([sourceDir '/' 'STATS_Resampled_EYE_n21_bln.mat'],'sigVec','tValsObs','tValsNull','subjects','badSubs')
+end
 
 
 

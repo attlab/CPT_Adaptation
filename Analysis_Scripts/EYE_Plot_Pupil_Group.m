@@ -12,28 +12,35 @@ close all
 
 %% set dirs
 sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
+plotDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
 
 %% load compiled EYE Data (paMatAll = sub,session,task,eye,timepoint)
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
+%% baseline correction [Note that Event times are 1,20000,32500,77500,97500]
+baselineCorrect=1;
+
 %% load resampled stats
-load([sourceDir '/' 'STATS_Resampled_EYE_n25.mat'],'sigVec')
+if baselineCorrect==0
+    load([sourceDir '/' 'STATS_Resampled_EYE_n21_raw.mat'],'sigVec')
+else
+    load([sourceDir '/' 'STATS_Resampled_EYE_n21_bln.mat'],'sigVec')
+end
 
 % remove bad subjects
-badSubs = [103,105,108,109,115,116,117,118,128,136,138,140,146,147,148,154,157,158];
+badSubs = [103,105,108,109,115,116,117,118,126,128,135,136,138,139,140,146,147,148,154,157,158,159];
 [a,b] = setdiff(subjects,badSubs);
 paMatAll = paMatAll(b,:,:,:,:);
 
 
         
 
-%% baseline correction [Note that Event times are 1,20000,32500,77500,97500]
-baselineCorrect=1;
+
 theseXlims=[0,195];
 theseXticks=[0,40,65,155,195];
 
 if baselineCorrect==1
-    paMatBL= nanmean(paMatAll(:,:,:,:,round(25000/2):round(40000/2)),5);
+    paMatBL= nanmean(paMatAll(:,:,:,:,round(26000/2):round(40000/2)),5);
     paMatAll = paMatAll - paMatBL;
 end
 
@@ -52,7 +59,7 @@ minPA = squeeze(min(min(min(min(nanmean(paMatAll,1))))));
 paMatAll = (paMatAll-minPA)/(maxPA-minPA);
 
 %% plot T1-T5 on separate plots
-h=figure;
+h=figure('units','normalized','outerposition',[0 0 1.5 1.5]);
 plotCnt=0;
 for iOrder=1:5
     
@@ -88,7 +95,7 @@ for iOrder=1:5
     
     
     % use regular t-tests (0) or resampled t-tests (1) (imported)
-    pairwiseCompType=1;
+    pairwiseCompType=0;
     if pairwiseCompType==0 % regular t-tests
         [hResults,pResults,~,theseStats] = ttest(nanmean(paMatAll(:,1,iOrder,thisEye,:),4),nanmean(paMatAll(:,2,iOrder,thisEye,:),4));
         hResults = squeeze(hResults);
@@ -149,4 +156,8 @@ end
 % save data
 if baselineCorrect==1
     save([sourceDir '/' 'EYE_FOR_PREDICTIVE_ANALYSIS.mat'],'subjects','badSubs','paMatAll')
+    saveas(h,[plotDir '/' 'Eye_Normalized_Resampled_Bln.eps'],'epsc')
+else
+    save([sourceDir '/' 'EYE_FOR_PREDICTIVE_ANALYSIS_RAW.mat'],'subjects','badSubs','paMatAll')
+    saveas(h,[plotDir '/' 'Eye_Normalized_Resampled_Raw.eps'],'epsc')
 end

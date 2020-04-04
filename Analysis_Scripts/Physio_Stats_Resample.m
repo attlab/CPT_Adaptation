@@ -23,7 +23,7 @@ sourceDir =  '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 destDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
 
 % load compiled data
-load([sourceDir '/' 'PHYSIO_MASTER.mat' ])
+load([sourceDir '/' 'PHYSIO_MASTER_RESP_CORR.mat' ])
 
 % load task order (only useful to ID individual subs data file)
 sourceDirTaskOrder = sourceDir;

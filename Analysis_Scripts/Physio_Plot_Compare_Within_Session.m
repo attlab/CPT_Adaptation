@@ -26,14 +26,14 @@ close all
 
 
 % plot measures across all five CPTs and two sessions
-for iMeasure=[2:8]
+for iMeasure=[1:8]
     
     plotCnt=0;
     
     
     %h=figureFullScreen;
     %h=figure;
-    h=figure('units','normalized','outerposition',[0 0 1 1]);
+    h=figure('units','normalized','outerposition',[0 0 0.5 0.8]);
     
     % do baseline correction?
     for plotBlCorrectedPhysio = 0:1
@@ -43,7 +43,9 @@ for iMeasure=[2:8]
         destDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
         
         % load compiled data
-        load([sourceDir '/' 'PHYSIO_MASTER.mat' ])
+        %load([sourceDir '/' 'PHYSIO_MASTER.mat' ])
+        load([sourceDir '/' 'PHYSIO_MASTER_RESP_CORR.mat' ])
+
         
         % load resampled stats
         if plotBlCorrectedPhysio==1
@@ -156,7 +158,7 @@ for iMeasure=[2:8]
             thisYlim = [-.3,1];
             thisYlinePos = [-.2];
         else
-            if      iMeasure==1; allPhysio = all_CO; thisTitle1 = 'CO'; thisYlim = [-1.5,1];
+            if      iMeasure==1; allPhysio = all_CO; thisTitle1 = 'CO'; thisYlim = [2,3]; thisYlinePos = 2; thisYtick =2:.2:3;
             elseif  iMeasure==2; allPhysio = all_HR; thisTitle1 = 'HR'; thisYlim = [50,100]; thisYlinePos = 55; thisYtick = [60:20:100];
             elseif  iMeasure==3; allPhysio = all_LVET; thisTitle1  = 'LVET'; thisYlim=[250,310]; thisYlinePos = 255; thisYtick = [250:20:310];
             elseif  iMeasure==4; allPhysio = all_PEP; thisTitle1= 'PEP'; thisYlim = [60,90]; thisYlinePos = 65; thisYtick = [60:10:90];
@@ -218,11 +220,17 @@ for iMeasure=[2:8]
             elseif  iCond==2; thisSession='WPT';
             end
             
+            if plotBlCorrectedPhysio==0
+                rawBlTitle = 'Raw';
+            else
+                rawBlTitle = 'Bln';
+            end
+            
             
             % set plot title
-            thisTitle = [thisSession ' ' thisTitle1  ' (n = ' num2str(size(allPhysio,1)) ')'];
+            thisTitle = [rawBlTitle  ' ' thisTitle1 ' ' thisSession ];
             
-            for iOrder=1:5
+            for iOrder=[5,4,3,2,1]
                 
                 if      iOrder==1; thisColor = [255,0,0]; %red
                 elseif  iOrder==2; thisColor = [255,140,0];% orange ;
@@ -376,7 +384,7 @@ for iMeasure=[2:8]
                 
                 
                 % change aspect ratio
-                pbaspect([3,1,1])
+                pbaspect([2,1,1])
                 
                 
             end
@@ -388,11 +396,11 @@ for iMeasure=[2:8]
     % save image
     if plotType==1
         if plotBlCorrectedPhysio
-            %saveas(h,[destDir '/' 'Physio_Within_Session' thisTitle1 '.eps'],'epsc')
-            saveas(h,[destDir '/' 'Physio_Within_Session' thisTitle1 '.jpeg'],'jpeg')
+            saveas(h,[destDir '/' 'Physio_Within_Session' thisTitle1 '.eps'],'epsc')
+            %saveas(h,[destDir '/' 'Physio_Within_Session' thisTitle1 '.jpeg'],'jpeg')
         else
-            %saveas(h,[destDir '/' 'Physio_Raw_Within_Session' thisTitle1 '.eps'],'epsc')
-            saveas(h,[destDir '/' 'Physio_Raw_Within_Session' thisTitle1 '.jpeg'],'jpeg')
+            saveas(h,[destDir '/' 'Physio_Raw_Within_Session' thisTitle1 '.eps'],'epsc')
+            %saveas(h,[destDir '/' 'Physio_Raw_Within_Session' thisTitle1 '.jpeg'],'jpeg')
         end
     end
 

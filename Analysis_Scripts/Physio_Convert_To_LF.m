@@ -10,7 +10,7 @@ close all
 sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled/LF_DATA';
 
-whichData = 1; % 0=raw uncorrected, 1= baseline corrected norm'd
+whichData = 0; % 0=raw uncorrected, 1= baseline corrected norm'd
 
 if whichData==0
     load([sourceDir '/' 'PHYSIO_Clean_Uncorr.mat'])
