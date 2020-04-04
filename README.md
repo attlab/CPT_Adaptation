@@ -56,7 +56,7 @@ Last updated: 04.04.20
 
 `EYE_Plot_Pupil_Group.m` Group pupil diameter plots
 
-'EYE_Plot_Pupil_Individual.m` Individual pupil diameter plots (saves images in subfolders in plots)
+`EYE_Plot_Pupil_Individual.m` Individual pupil diameter plots (saves images in subfolders in plots)
 
 `EYE_Stats_Resample.m` Do resampled stats for eye data
 
