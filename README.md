@@ -12,7 +12,7 @@ Last updated: 04.04.20
 
 ## EEG Preprocessing
 
-Move Prepro EEG data from BOSS MASTER structure to EEG_CPT_Prepro file here.
+*Move Prepro EEG data from BOSS MASTER structure to EEG_CPT_Prepro file here first.*
 
 `CPT_SUBJECTS.m` List of valid CPT subjects for each measure, with notes
 
@@ -27,8 +27,6 @@ Move Prepro EEG data from BOSS MASTER structure to EEG_CPT_Prepro file here.
 
 
 ## EEG Analyses
-
-ERSP (newtimef), BAND (bandpass) or FFT (simple spectral)
 
 `Time_Freq_Analysis_ERSP.m`[+ job + compile + plot + topoPlot] Run newtimef on preprocessed EEG data, compile, plot
 
@@ -54,7 +52,7 @@ ERSP (newtimef), BAND (bandpass) or FFT (simple spectral)
 
 ## EYE Analysis
 
-**First move compiled EYE_CPT_Master.mat file from BOSS>ICB cluster**
+*First move compiled EYE_CPT_Master.mat file from BOSS>ICB cluster*
 
 `EYE_Plot_Pupil_Group.m` Group pupil diameter plots
 
