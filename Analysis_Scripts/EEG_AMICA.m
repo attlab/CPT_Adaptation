@@ -8,11 +8,16 @@ Date: 01.09.20
 %% add dirs, paths etc.
 Parent_dir = '/home/bullock/BOSS/CPT_Adaptation/';
 scriptsDir = [Parent_dir 'Analysis_Scripts'];
-eeglabDir = '/home/bullock/matlab_2016b/TOOLBOXES/eeglab14_1_1b';
+%eeglabDir = '/home/bullock/matlab_2016b/TOOLBOXES/eeglab14_1_1b';
+eeglabDir = '/home/bullock/Toolboxes/eeglab2019_1'; 
+
 addpath(genpath(scriptsDir))
 
 cleanDataDir = [Parent_dir 'EEG_Processed_Cleaned_For_ICA/'];
-EEG_ica_dir = [Parent_dir 'EEG_ICA_Notch/'];
+%EEG_ica_dir = [Parent_dir 'EEG_ICA_Notch/'];
+EEG_ica_dir = [Parent_dir 'EEG_ICA_50Hz_LP/'];
+
+
 
 cd(eeglabDir)
 eeglab
@@ -69,6 +74,9 @@ try
     %     % Search for and estimate symmetrically constrained bilateral dipoles
     %     EEG = fitTwoDipoles(EEG, 'LRR', 35);
     
+    
+    % apply IC Label
+    EEG = iclabel(EEG);
     
     
     save([EEG_ica_dir sprintf('sj%02d_se%02d_EEG_clean_ica.mat',subNum,session+1)], 'EEG','-v7.3');

@@ -1,5 +1,4 @@
-%function EEG_Clean_For_ICA(subject,session,jobRAM,processInParallel)
-function EEG_Clean_For_ICA(subject,session,processInParallel,analysisType)
+function EEG_Clean_For_ICA(subject,session,analysisType)
 
 %{
 ========================================================================
@@ -24,7 +23,10 @@ Notes: currently just running on local machine
 %% set dirs
 Parent_dir = '/home/bullock/BOSS/CPT_Adaptation/';
 scriptsDir = [Parent_dir 'Analysis_Scripts'];
-eeglabDir = '/home/bullock/matlab_2016b/TOOLBOXES/eeglab14_1_1b';
+
+%eeglabDir = '/home/bullock/matlab_2016b/TOOLBOXES/eeglab14_1_1b';
+eeglabDir = '/home/bullock/Toolboxes/eeglab2019_1' 
+
 EEGraw_dir = [Parent_dir 'EEG_CPT_Prepro/'];
 if analysisType==1
     EEG_clean = [Parent_dir 'EEG_Processed_Cleaned_For_ICA'];
@@ -55,9 +57,9 @@ end
 EEG=EEGO;
 clear EEGO
 
-%% high-pass filter + downsample (for main analysis only)
+%% high-pass filter + downsample (for main analysis only because don't want to downsample if trying to display 1-500 Hz)
 if analysisType==1
-    EEG = my_fxtrap(EEG,1,0,.1,0,0,250); %hp,lp,transition,rectif,smooth, resamp
+    EEG = my_fxtrap(EEG,1,50,.1,0,0,250); %hp,lp,transition,rectif,smooth, resamp 50 HZ LP!!! 
 else
     EEG = my_fxtrap(EEG,1,0,.1,0,0,0); %hp,lp,transition,rectif,smooth, resamp
 end
@@ -70,18 +72,33 @@ EEG=pop_chanedit(EEG, 'lookup','/home/bullock/matlab_2016b/TOOLBOXES/eeglab14_1_
 %% remove EKG channel
 EEG = pop_select(EEG,'nochannel',{'ECG'});
 
-%remove line noise using CleanLine function (slow)
-%EEG = pop_cleanline(EEG,'SignalType','Channels','ChanCompIndices',[1:EEG.nbchan]);
-EEG = my_fxcomb(EEG,[60],1,.3,0,0,0,0); % notch filter alternative
-
-% Apply clean_rawdata() to reject bad channels (turn off highpass, ASR, bad "window" rejection)
-originalEEG = EEG;
-if processInParallel 
-    %EEG = clean_rawdata(EEG,5,-1,.80,4,-1,-1,'WindowCriterionTolerances','off','availableRAM_GB',jobRAM);
-    EEG = clean_rawdata(EEG,5,-1,.80,4,-1,-1,'WindowCriterionTolerances','off');
-else
-    EEG = clean_rawdata(EEG,5,-1,.80,4,-1,-1,'WindowCriterionTolerances','off'); % note corr was orig set to .80
+%% remove line noise using notch filter
+if analysisType==1
+    EEG = my_fxcomb(EEG,[60],1,.3,0,0,0,0); % notch filter alternative
 end
+
+originalEEG = EEG;
+
+
+% % Apply clean_rawdata() to reject bad channels (turn off highpass, ASR, bad "window" rejection)
+% if processInParallel 
+%     %EEG = clean_rawdata(EEG,5,-1,.80,4,-1,-1,'WindowCriterionTolerances','off','availableRAM_GB',jobRAM);
+%     EEG = clean_rawdata(EEG,5,-1,.80,4,-1,-1,'WindowCriterionTolerances','off');
+% else
+%     EEG = clean_rawdata(EEG,5,-1,.80,4,-1,-1,'WindowCriterionTolerances','off'); % note corr was orig set to .80
+% end
+
+EEG = clean_artifacts(EEG,...
+    'channelCriterion',.85,...
+    'LineNoiseCriterion',4,...
+    'BurstCriterion','off',...
+    'FlatLineCriterion',5,...
+    'WindowCriterion','off',...
+    'WindowCriterionTolerances','off');
+
+
+
+
 
 % % visualize original vs. cleaned data (reality check)
 % vis_artifacts(EEG,originalEEG)

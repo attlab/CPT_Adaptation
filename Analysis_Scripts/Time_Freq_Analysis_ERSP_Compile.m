@@ -13,25 +13,21 @@ clear erspAll chanlocs times freqs
 
 if analysisType==0
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-500Hz';
-    destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 elseif analysisType==1
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-100Hz';
-    destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 elseif analysisType==2
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-30Hz_ICA_Occ_Rej';
-    destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 elseif analysisType==3
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-30Hz_ICA_Brain_80';
-    destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 elseif analysisType==4
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-30Hz_ICA_Brain_60';
-    destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 elseif analysisType==5
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-30Hz_ICA_Brain_Other_Top';
-    destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
+elseif analysisType==6
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit';
 end
 
-
+destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 
 
 %% select subjects
@@ -66,6 +62,8 @@ elseif analysisType==4
     save([destDir '/' 'GRAND_ERSP_1-30Hz_ICA_Brain_60.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')
 elseif analysisType==5
     save([destDir '/' 'GRAND_ERSP_1-30Hz_ICA_Brain_Other_Top.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')
+elseif analysisType==6
+    save([destDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')
 end
 
 % if analysisType==1

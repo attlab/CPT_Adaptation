@@ -5,7 +5,7 @@ Date: 09.15.18
 %}
 
 clear
-%close all
+close all
 
 %% set dirs
 %sourceDir = '/data/DATA_ANALYSIS/BOSS_PREPROCESSING/EEG/CPT/Data_Compiled';
@@ -13,7 +13,7 @@ clear
 sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 
 %% select analysis type and load data (0=1-500 Hz, 1=1-100 Hz, 2...)
-analysisType=1; 
+analysisType=6; 
 
 if analysisType==0
     load([sourceDir '/' 'GRAND_ERSP_1-500Hz.mat'])
@@ -28,8 +28,9 @@ elseif analysisType==4
     load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_Brain_60.mat'])
 elseif analysisType==5
     load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_Brain_Other_Top.mat'])
-% elseif analysisType==1
-%     load([sourceDir '/' 'GRAND_ERSP_1-30Hz.mat'])
+elseif analysisType==6
+    load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'])
+    load([sourceDir '/' 'STATS_EEG_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'])
 end
 
 %% baseline correct?
@@ -85,9 +86,14 @@ for iElects=5;%1:5
         for iSession=1:2
             
             plotCnt=plotCnt+1;
-            plotIdx=[1,2,4,5,7,8,10,11,13,14];
             
-            subplot(5,3,plotIdx(plotCnt))
+            % if plotting with p-value plots also
+            %plotIdx=[1,2,4,5,7,8,10,11,13,14];
+            %subplot(5,3,plotIdx(plotCnt))
+            
+            % just data plots
+            plotIdx = 1:10;
+            subplot(5,2,plotIdx(plotCnt))
             
             % plot titles
             if iSession==1; thisTitle = ['Ice Water' '-' thisChanTitle]; thisTime = ['T' num2str(iOrder)];
@@ -98,7 +104,7 @@ for iElects=5;%1:5
             if analysisType==0 || analysisType==1           
                 thisCbar=[-2,8];
             elseif analysisType>1
-                thisCbar=[-2,5];
+                thisCbar=[-4,4];
             end
 
 %             if analysisType==1
@@ -184,7 +190,7 @@ for iElects=5;%1:5
 %             end
 %             ylabel('Freq (Hz)')
             
-            pbaspect([3,1,1])
+            pbaspect([5,1,1])
             
             % plot colorbar
             %cbar
@@ -193,123 +199,128 @@ for iElects=5;%1:5
     end
     
     
-    %% plot session1 (ICE) - session2 (WARM) difference ERSP
-    plotCnt=0;
-    for iOrder=[1:5]
-        
-        plotCnt=plotCnt+1;
-        plotIdx=3:3:15;       
-        subplot(5,3,plotIdx(plotCnt))
-        
-        % plot title
-        thisTitle = 'Ice vs. Warm (pairwise)'; thisTime = ['T' num2str(iOrder)];
-        
-        % do t-tests between conditions
-        erspAllChans = squeeze(mean(ersp(:,:,:,theseElects,:,:),4)); % isolate this T and avg over channels
-        
-        
-        % plot regular (0) or resampled t-tests (1)
-        plotTestType=1;
-        
-        if plotTestType==0
-            
-            tMat = [];
-            for f=1:size(erspAllChans,4)
-                for t=1:size(erspAllChans,5)
-                    
-                    tResult = [];
-                    tResult = ttest(erspAllChans(:,1,iOrder,f,t), erspAllChans(:,2,iOrder,f,t));
-                    tMat(f,t) = tResult;
-                    
-                end
-            end
-            
-        elseif plotTestType==1 && analysisType==1
-         
-            tMat = squeeze(sigVec(iOrder,:,:));
-            disp('RESAMPLED T-TESTS!')
-        end
-        
-        
-        
-        
-        
-        % generate t-plot
-        imagesc(tMat)
-          
-        thisXtick = [1,40,65,95,125,155,194];
-        if analysisType==0
-            thisYtick = linspace(1,50,6);
-            thisYtickLabel = [1,100,200,300,400,500];
-        elseif analysisType==1
-            thisYtick = linspace(1,50,6);
-            thisYtickLabel = [1,20,40,60,80,100];
-        elseif analysisType>1
-                %thisYtick = linspace(1,30,5);
-                thisYtick = [0,4,8,14,22,30];%  linspace(1,30,5);           
-
-                thisYtickLabel = [0,4,8,14,22,30];
-                thisXtick = [1,39,64,94,124,154,191];
-        end
-        
-%         if analysisType==2
+%     %% plot session1 (ICE) - session2 (WARM) difference ERSP
+%     plotCnt=0;
+%     for iOrder=[1:5]
+%         
+%         plotCnt=plotCnt+1;
+%         plotIdx=3:3:15;       
+%         subplot(5,3,plotIdx(plotCnt))
+%         
+%         % plot title
+%         thisTitle = 'Ice vs. Warm (pairwise)'; thisTime = ['T' num2str(iOrder)];
+%         
+%         % do t-tests between conditions
+%         erspAllChans = squeeze(mean(ersp(:,:,:,theseElects,:,:),4)); % isolate this T and avg over channels
+%         
+%         
+%         % plot regular (0) or resampled t-tests (1)
+%         plotTestType=1;
+%         
+%         if plotTestType==0
+%             
+%             tMat = [];
+%             for f=1:size(erspAllChans,4)
+%                 for t=1:size(erspAllChans,5)
+%                     
+%                     tResult = [];
+%                     tResult = ttest(erspAllChans(:,1,iOrder,f,t), erspAllChans(:,2,iOrder,f,t));
+%                     tMat(f,t) = tResult;
+%                     
+%                 end
+%             end
+%             
+%         elseif plotTestType==1 && analysisType==1
+%          
+%             tMat = squeeze(sigVec(iOrder,:,:));
+%             disp('RESAMPLED T-TESTS!')
+%             
+%         elseif plotTestType==1 && analysisType==6 % Current ICA analysis
+%             
+%             tMat = squeeze(sigVec(iOrder,:,:));
+%             disp('RESAMPLED T-TESTS!')
+%         end
+%         
+%         
+%         
+%         
+%         
+%         % generate t-plot
+%         imagesc(tMat)
+%           
+%         thisXtick = [1,40,65,95,125,155,194];
+%         if analysisType==0
+%             thisYtick = linspace(1,50,6);
+%             thisYtickLabel = [1,100,200,300,400,500];
+%         elseif analysisType==1
 %             thisYtick = linspace(1,50,6);
 %             thisYtickLabel = [1,20,40,60,80,100];
-%         else
-%             thisYtick = [1,4,8,12,20,30];
-%             thisYtickLabel = thisYtick;
+%         elseif analysisType>1
+%                 %thisYtick = linspace(1,30,5);
+%                 thisYtick = [0,4,8,14,22,30];%  linspace(1,30,5);           
+% 
+%                 thisYtickLabel = [0,4,8,14,22,30];
+%                 thisXtick = [1,39,64,94,124,154,191];
 %         end
-        
-        set(gca,'ydir','normal',...
-            'fontsize',18,...
-            'xtick',thisXtick,...
-            'XTickLabel',[0,40,65,95,125,155,195],...
-            'YTick',thisYtick,...
-            'YTickLabel',thisYtickLabel,...
-            'LineWidth',1.5)
-        
-        
-        
-        
-        % add lines
-        t1=1; % start pre baseline ( 40 s)
-        t2=40; % immersion period (position feet for immersion -25 s)
-        t3=65; % start CPT (immerse feet - 90 s)
-        t4=155; % recovery (feet out, start recovery baseline - 40 s)
-        
-        for iLine=2:4
-            if iLine==1; tx=t1;thisText = 'Baseline';
-            elseif iLine==2; tx=t2; thisText = 'Prep';
-            elseif iLine==3; tx=t3; thisText = 'CPT';
-            elseif iLine==4; tx=t4; thisText = 'Recovery';
-            end
-            line([tx,tx],[1,size(erspAll,5)],'color','w','linewidth',4,'linestyle',':');
-            %text(tx,35,thisText,'fontsize',18)
-        end
-        
-        % add title at top
-%         if iOrder==1
-%             th = title(thisTitle,'fontsize',24);
-%             titlePos = get(th,'position');
-%             set(th,'position',titlePos+1.5)
+%         
+% %         if analysisType==2
+% %             thisYtick = linspace(1,50,6);
+% %             thisYtickLabel = [1,20,40,60,80,100];
+% %         else
+% %             thisYtick = [1,4,8,12,20,30];
+% %             thisYtickLabel = thisYtick;
+% %         end
+%         
+%         set(gca,'ydir','normal',...
+%             'fontsize',18,...
+%             'xtick',thisXtick,...
+%             'XTickLabel',[0,40,65,95,125,155,195],...
+%             'YTick',thisYtick,...
+%             'YTickLabel',thisYtickLabel,...
+%             'LineWidth',1.5)
+%         
+%         
+%         
+%         
+%         % add lines
+%         t1=1; % start pre baseline ( 40 s)
+%         t2=40; % immersion period (position feet for immersion -25 s)
+%         t3=65; % start CPT (immerse feet - 90 s)
+%         t4=155; % recovery (feet out, start recovery baseline - 40 s)
+%         
+%         for iLine=2:4
+%             if iLine==1; tx=t1;thisText = 'Baseline';
+%             elseif iLine==2; tx=t2; thisText = 'Prep';
+%             elseif iLine==3; tx=t3; thisText = 'CPT';
+%             elseif iLine==4; tx=t4; thisText = 'Recovery';
+%             end
+%             line([tx,tx],[1,size(erspAll,5)],'color','w','linewidth',4,'linestyle',':');
+%             %text(tx,35,thisText,'fontsize',18)
 %         end
-        
-%         % add T1, T2 etc labels on left
-%         if iSession==1
-%             text(0,0, thisTime,'fontsize',36)
-%         end
-%   
-%         if iOrder==5
-%             xlabel('Time (s)','fontsize',18)
-%         end
-%         ylabel('Freq (Hz)')
-        
-        pbaspect([3,1,1])
-        
-        % plot colorbar
-        colormap('jet')
-        
-    end
+%         
+%         % add title at top
+% %         if iOrder==1
+% %             th = title(thisTitle,'fontsize',24);
+% %             titlePos = get(th,'position');
+% %             set(th,'position',titlePos+1.5)
+% %         end
+%         
+% %         % add T1, T2 etc labels on left
+% %         if iSession==1
+% %             text(0,0, thisTime,'fontsize',36)
+% %         end
+% %   
+% %         if iOrder==5
+% %             xlabel('Time (s)','fontsize',18)
+% %         end
+% %         ylabel('Freq (Hz)')
+%         
+%         pbaspect([3,1,1])
+%         
+%         % plot colorbar
+%         colormap('jet')
+%         
+%     end
     
     
     

@@ -24,16 +24,20 @@ function Time_Freq_Analysis_ERSP(sjNum,analysisType)
 %addpath(genpath('/Users/tombullock/Documents/Psychology/BOSS/CPT/Analysis_Scripts_Local')) % local
 addpath(genpath('/home/bullock/BOSS/CPT_Adaptation/Analysis_Scripts'))
 
+eeglabDir = '/home/bullock/Toolboxes/eeglab2019_1';
+
+
 % load eeglab into path (unless already present)
 %if ~exist('eeglab.m')
     %cd('/Users/tombullock/Documents/MATLAB/eeglab14_1_2b') % local
     %cd('/data/DATA_ANALYSIS/All_Dependencies/eeglab14_1_1b') % BOSS
-    cd('/home/bullock/matlab_2016b/TOOLBOXES/eeglab14_1_1b')
+    %cd('/home/bullock/matlab_2016b/TOOLBOXES/eeglab14_1_1b')
+    cd(eeglabDir);
     eeglab
     close all
     cd ..
 %else
-    close all
+    %close all
 %end
 
 % define analysis type
@@ -58,6 +62,9 @@ elseif analysisType==4
 elseif analysisType==5
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_IC_Label';
     destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-30Hz_ICA_Brain_Other_Top';
+elseif analysisType==6
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_50Hz_LP_DIPFIT';
+    destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-50Hz_ICLabel_Dipfit';
 end
     
     
@@ -145,6 +152,11 @@ for iSession=1:2
         EEG = my_fxtrap(EEG,0,30,.1,0,0,0); %hp,lp,transition,rectif,smooth, resamp
         disp('Low Pass Filtering')
     end
+    
+    
+    
+    
+    
     
     % save the channel locations
     chanlocs=EEG.chanlocs;

@@ -13,7 +13,7 @@ sourceDir = [parentDir '/' 'Data_Compiled'];
 destDir = [parentDir '/' 'Plots'];
 
 % load compiled ERSP dataset & chanlocs
-analysisType=3;
+analysisType=6;
 
 if analysisType==1
     load([sourceDir '/' 'GRAND_ERSP_1-100Hz.mat' ])  
@@ -27,6 +27,9 @@ elseif analysisType==4
     load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_Brain_60.mat' ])
 elseif analysisType==5
     load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_Brain_Other_Top.mat' ])
+elseif analysisType==6
+    load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'])
+    load([sourceDir '/' 'STATS_EEG_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'])
 end
 
 % analysis specific settings
@@ -74,7 +77,7 @@ for iFreq=freqIdx
             theseMapLimits = [-1,10];
             thisFreqName = '30-100Hz';
         end
-    elseif analysisType==3
+    elseif analysisType==3||analysisType==6
         if iFreq==1
             theseFreqs = 1:3;
             theseMapLimits = [-1,4];
@@ -187,13 +190,14 @@ for iFreq=freqIdx
             subplot(5,3,cntVec(cnt))
             
             
-%             %pause(1)
+% %             %pause(1)
 %             theseData1 = squeeze(mean(mean(ersp(:,1,iExposures,:,theseFreqs,theseTimes),5),6)); %se01
 %             theseData2 = squeeze(mean(mean(ersp(:,2,iExposures,:,theseFreqs,theseTimes),5),6)); %se02
 %             theseData = ttest(theseData1,theseData2);
+%             disp('non-resampled stats used')
 
             theseData = squeeze(sigVec(iExposures,iFreq,:));
-            
+            disp('resampled stats')
             
             
             topoplot(theseData,chanlocs,...---
@@ -209,6 +213,8 @@ for iFreq=freqIdx
         saveas(h,[destDir '/' 'EEG_ERSP_1-30_Brain80_Topos_' thisFreqName '.eps'],'epsc')
     elseif analysisType==1
         saveas(h,[destDir '/' 'EEG_ERSP_1-100Hz_No_ICA_Topos_' thisFreqName '.eps'],'epsc')
+    elseif analysisType==6
+        saveas(h,[destDir '/' 'EEG_ERSP_1-30Hz_Topos_Brain70_Dip15' thisFreqName '.eps'],'epsc')
     end
 
     

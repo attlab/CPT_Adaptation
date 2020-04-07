@@ -11,10 +11,16 @@ close all
 subjects = CPT_SUBJECTS;
 
 % run in serial (0) or parallel (1)
-runInParallel=0;
+runInParallel=1;
+
+% if runInParallel
+%     cluster=parcluster();
+%     job = createJob(cluster);
+% end
 
 if runInParallel
     cluster=parcluster();
+    cluster.ResourceTemplate = '--ntasks-per-node=6 --mem=65536'; % max set to 12! mem not working atm
     job = createJob(cluster);
 end
 

@@ -17,18 +17,10 @@ processInParallel=1;
 analysisType=1;
 
 % cluster settings
-if processInParallel
-    
-    % new cluster
+if runInParallel
     cluster=parcluster();
+    %cluster.ResourceTemplate = '--ntasks-per-node=6 --mem=65536'; % max set to 12! mem not working atm
     job = createJob(cluster);
-    
-    % old cluster
-%     s = parcluster;
-%     s.ResourceTemplate='-l nodes=^N^:ppn=4,mem=16GB';
-%     job=createJob(s,'Name','Tom_Job');
-%     job.AttachedFiles = {'EEG_Clean_For_ICA.m'};
-    
 end
 
 % create tasks
@@ -37,22 +29,17 @@ for iSub = 1:length(subjects)
     for session=1:2
         if processInParallel
             
-            % origninal cluster
-            %job.createTask(@EEG_Clean_For_ICA,0,{subject,session,processInParallel})
-            
             % new cluster
-            createTask(job,@EEG_Clean_For_ICA,0,{subject,session,processInParallel,analysisType})
+            createTask(job,@EEG_Clean_For_ICA,0,{subject,session,analysisType})
             
         else
-            EEG_Clean_For_ICA(subject,session,processInParallel,analysisType)
+            EEG_Clean_For_ICA(subject,session,analysisType)
         end
         
     end
 end
 
 if processInParallel
-    % old cluster
-    %job.submit
     
     % new cluster
     submit(job)

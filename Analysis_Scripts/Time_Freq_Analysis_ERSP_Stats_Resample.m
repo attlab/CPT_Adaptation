@@ -8,7 +8,7 @@ Date: 12.26.19
 clear
 close all
 
-analysisType=3; % 1=1-100Hz, 3=1-30Hz
+analysisType=6; % 1=1-100Hz, 3=1-30Hz
 
     
 
@@ -17,7 +17,11 @@ sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 
 
 % load data
-if analysisType==3
+if analysisType==6
+    load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'])
+    freqIdx=1:4; % loop through lower freq bands
+    criticalTimepoints=79:154;
+elseif analysisType==3
     load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_Brain_80.mat'])
     freqIdx=1:4; % loop through lower freq bands
     criticalTimepoints=79:154;
@@ -32,9 +36,9 @@ baselineCorrect=1;
 if baselineCorrect
     
     if analysisType>1
-        baselineCorrectTimepoints = 24:39;
+        baselineCorrectTimepoints = 25:39;
     else
-        baselineCorrectTimepoints = 25:40;
+        baselineCorrectTimepoints = 26:40;
     end
     
     erspBL = mean(erspAll(:,:,:,:,:,baselineCorrectTimepoints),6); % this is a little off, fix
@@ -155,7 +159,9 @@ for j=1:size(tStatIdx,1)
 end
 
 % save data
-if analysisType==3
+if analysisType==6
+    save([sourceDir '/' 'STATS_EEG_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'],'sigVec','tValsObs','tValsNull','chanlocs','freqs','times')
+elseif analysisType==3
     save([sourceDir '/' 'STATS_EEG_ERSP_1-30Hz_ICA_Brain_80.mat'],'sigVec','tValsObs','tValsNull','chanlocs','freqs','times')
 elseif analysisType==1
     save([sourceDir '/' 'STATS_EEG_ERSP_1-100Hz_TOPOS.mat'],'sigVec','tValsObs','tValsNull','chanlocs','freqs','times')
