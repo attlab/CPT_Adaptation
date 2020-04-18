@@ -14,10 +14,10 @@ subjects = CPT_SUBJECTS;
 processInParallel=1;
 
 % downsample (for main analyses = 1) or not (for muscle noise analysis = 0)
-analysisType=1;
+analysisType=0;
 
 % cluster settings
-if runInParallel
+if processInParallel
     cluster=parcluster();
     %cluster.ResourceTemplate = '--ntasks-per-node=6 --mem=65536'; % max set to 12! mem not working atm
     job = createJob(cluster);

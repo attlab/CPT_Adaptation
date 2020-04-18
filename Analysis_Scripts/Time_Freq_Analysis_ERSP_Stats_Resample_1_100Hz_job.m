@@ -16,6 +16,8 @@ processInParallel=1;
 % cluster settings
 if processInParallel
     cluster=parcluster();
+        cluster.ResourceTemplate = '--ntasks-per-node=6 --mem=65536'; % max set to 12! mem not working atm
+
     job = createJob(cluster);   
 end
 

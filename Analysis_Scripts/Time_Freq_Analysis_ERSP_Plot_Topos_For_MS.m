@@ -13,7 +13,7 @@ sourceDir = [parentDir '/' 'Data_Compiled'];
 destDir = [parentDir '/' 'Plots'];
 
 % load compiled ERSP dataset & chanlocs
-analysisType=6;
+analysisType=1;
 
 if analysisType==1
     load([sourceDir '/' 'GRAND_ERSP_1-100Hz.mat' ])  

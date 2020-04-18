@@ -13,7 +13,7 @@ close all
 sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 
 %% select analysis type and load data (0=1-500 Hz, 1=1-100 Hz, 2...)
-analysisType=6; 
+analysisType=1; 
 
 if analysisType==0
     load([sourceDir '/' 'GRAND_ERSP_1-500Hz.mat'])
@@ -104,7 +104,7 @@ for iElects=5;%1:5
             if analysisType==0 || analysisType==1           
                 thisCbar=[-2,8];
             elseif analysisType>1
-                thisCbar=[-4,4];
+                thisCbar=[-2,4];
             end
 
 %             if analysisType==1
@@ -122,12 +122,15 @@ for iElects=5;%1:5
             % find mean and plot data
             dataMean = squeeze(mean(mean(mean(ersp(:,iSession,iOrder,theseElects,:,:),1),3),4));
             imagesc(dataMean,thisCbar)
+            %imagesc(dataMean)
+
+            colormap('jet')
             thisXtick = [1,40,65,95,125,155,194];
             if analysisType==0
                 thisYtick = linspace(1,50,6);
                 thisYtickLabel = [1,100,200,300,400,500];
             elseif analysisType==1
-                thisYtick = linspace(1,50,6);
+                thisYtick = linspace(1,100,6);
                 thisYtickLabel = [1,20,40,60,80,100];
             elseif analysisType>1
                 thisYtick = [0,4,8,14,22,30];%  linspace(1,30,5);           
@@ -169,7 +172,7 @@ for iElects=5;%1:5
                 elseif iLine==3; tx=t3; thisText = 'CPT';
                 elseif iLine==4; tx=t4; thisText = 'Recovery';
                 end
-                line([tx,tx],[1,size(erspAll,5)],'color','k','linewidth',4,'linestyle',':');
+                line([tx,tx],[1,size(erspAll,5)],'color','w','linewidth',4,'linestyle',':');
                 %text(tx,35,thisText,'fontsize',18)
             end
             
