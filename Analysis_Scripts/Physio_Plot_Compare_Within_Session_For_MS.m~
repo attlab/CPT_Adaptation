@@ -231,7 +231,7 @@ for iMeasure=[1:8]
             
             % set plot title
             %thisTitle = [rawBlTitle  ' ' thisTitle1 ' ' thisSession ];
-            thisTitle = [thisTitle1 ' ' thisSession ' ' '(' rawBlTitle ')' ];
+            thisTitle = [thisTitle1 ' ' thisSession ' ' rawBlTitle  ];
             
             for iOrder=[5,4,3,2,1]
                 
