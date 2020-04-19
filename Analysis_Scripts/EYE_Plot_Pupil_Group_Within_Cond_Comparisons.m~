@@ -18,7 +18,7 @@ plotDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
 %% baseline correction [Note that Event times are 1,20000,32500,77500,97500]
-baselineCorrect=1;
+baselineCorrect=0;
 
 %% load resampled stats
 if baselineCorrect==0
@@ -51,7 +51,7 @@ end
 paMatAll = paMattAll_DS;
 
 %% plot settings
-theseYlims = [0,1];
+theseYlims = [-.2,1];
 
 %% normalize between -1 and 1
 maxPA = squeeze(max(max(max(max(nanmean(paMatAll,1))))));
@@ -60,26 +60,80 @@ paMatAll = (paMatAll-minPA)/(maxPA-minPA);
 
 %% plot T1-T5 on separate plots
 %plotCnt=0;
-
-h=figure('units','normalized','outerposition',[0 0 0.5 0.4]);
 for iCond=1:2
     
-    subplot(1,2,iCond)
-        
-    for iOrder=[5,4,3,2,1]
+    h=figure('units','normalized','outerposition',[0 0 1.5 1.5]);
+    
+    for iOrder=1:5
         
         thisEye=1:2; %1=left,2=right
         
-        if      iOrder==1; thisColor = [255,0,0]; %red
-        elseif  iOrder==2; thisColor = [255,140,0];% orange ;
-        elseif  iOrder==3; thisColor = [252,226,5]; % yellow[255,192,203];
-        elseif  iOrder==4; thisColor = [0,255,0]; % green
-        elseif  iOrder==5; thisColor = [0,0,255]; %blue
-        end
+        plot(1:195,squeeze(nanmean(nanmean(paMatAll(:,iCond,iOrder,thisEye,:)))),...
+            'color',[51,153,255]./255,...
+            'linewidth',2.5); hold on % plot indices (500 Hz,to divide by 2)
         
-        plot(1:195,smooth(squeeze(nanmean(nanmean(paMatAll(:,iCond,iOrder,thisEye,:),1),4)),5),...
-            'color',thisColor./255,...
-            'linewidth',4); hold on % plot indices (500 Hz,to divide by 2)
+        
+        
+        
+        
+        
+        
+        
+%         %plotCnt=plotCnt+1;
+%         %subplot(5,1,plotCnt)
+%         
+%         plotWithErrorBars=0;
+%         if plotWithErrorBars==0
+%             
+%             % plot ICE data
+%             plot(1:195,squeeze(nanmean(paMatAll(:,1,iOrder,2,:))),...
+%                 'color',[51,153,255]./255,...
+%                 'linewidth',2.5); hold on % plot indices (500 Hz,to divide by 2)
+%             
+%             % plot WARM data
+%             plot(1:195,squeeze(nanmean(paMatAll(:,2,iOrder,2,:))),...
+%                 'color',[255,51,51]./255,...
+%                 'linewidth',2.5); hold on % plot indices (500 Hz,to divide by 2)
+%         else
+%             
+%             xAxisLength=195;
+%             thisEye=1:2; %1=left,2=right
+%             
+%             if iPlot==1; thisColor=[51,153,255]./255;
+%             elseif iPlot==2; thisColor=[255,51,51]./255;
+%             end
+%             shadedErrorBar(1:195,squeeze(nanmean(nanmean(paMatAll(:,iPlot,iOrder,thisEye,:),4))),...
+%                 squeeze(nanstd(nanmean(paMatAll(:,iPlot,iOrder,thisEye,:),4)))./sqrt(size(paMatAll,1)),...
+%                 {'color',thisColor,...
+%                 'linewidth',2.5}); hold on % plot indices (500 Hz,to divide by 2
+%             
+%         end
+        
+        
+%         % use regular t-tests (0) or resampled t-tests (1) (imported)
+%         pairwiseCompType=0;
+%         if pairwiseCompType==0 % regular t-tests
+%             [hResults,pResults,~,theseStats] = ttest(nanmean(paMatAll(:,1,iOrder,thisEye,:),4),nanmean(paMatAll(:,2,iOrder,thisEye,:),4));
+%             hResults = squeeze(hResults);
+%         else % resampled t-tests (from another script)
+%             hResults = sigVec(:,iOrder);
+%             disp('USING RESAMPLED PAIRWISE COMPARISONS!!!!')
+%         end
+%         
+%         
+%         
+%         % add line for t-test results to base of plots
+%         for s = 1:length(hResults)
+%             if hResults(s)==1
+%                 if baselineCorrect
+%                     thisYpos=[-250,-250];
+%                 else
+%                     thisYpos=[250,250];
+%                 end
+%                 thisYpos = [-.1,-.1];
+%                 line([s,s+1],thisYpos,'linewidth',6,'color',[9,112,84]./255);
+%             end
+%         end
         
         % add lines
         t1=1; % start pre baseline ( 40 s)
@@ -114,14 +168,6 @@ for iCond=1:2
         %legend('ICE','WARM')
         
     end
-    
-    if baselineCorrect==0
-        saveas(h,[plotDir '/' 'EYE_Raw_Within_Condition.eps'],'epsc')
-    else
-        saveas(h,[plotDir '/' 'EYE_Bln_Within_Condition.eps'],'epsc')
-    end
-    
-    
 end
 
 % % save data
