@@ -59,8 +59,7 @@ minPA = squeeze(min(min(min(min(nanmean(paMatAll,1))))));
 paMatAll = (paMatAll-minPA)/(maxPA-minPA);
 
 %% plot T1-T5 on separate plots
-%h=figure('units','normalized','outerposition',[0 0 1.5 1.5]);
-h=figure('units','normalized','outerposition',[0 0 .3 2]);
+h=figure('units','normalized','outerposition',[0 0 1.5 1.5]);
 plotCnt=0;
 for iOrder=1:5
     
@@ -96,7 +95,7 @@ for iOrder=1:5
     
     
     % use regular t-tests (0) or resampled t-tests (1) (imported)
-    pairwiseCompType=1;
+    pairwiseCompType=0;
     if pairwiseCompType==0 % regular t-tests
         [hResults,pResults,~,theseStats] = ttest(nanmean(paMatAll(:,1,iOrder,thisEye,:),4),nanmean(paMatAll(:,2,iOrder,thisEye,:),4));
         hResults = squeeze(hResults);
@@ -154,11 +153,11 @@ for iOrder=1:5
     
 end
 
-% save data
-if baselineCorrect==1
-    save([sourceDir '/' 'EYE_FOR_PREDICTIVE_ANALYSIS.mat'],'subjects','badSubs','paMatAll')
-    saveas(h,[plotDir '/' 'Eye_Normalized_Resampled_Bln.eps'],'epsc')
-else
-    save([sourceDir '/' 'EYE_FOR_PREDICTIVE_ANALYSIS_RAW.mat'],'subjects','badSubs','paMatAll')
-    saveas(h,[plotDir '/' 'Eye_Normalized_Resampled_Raw.eps'],'epsc')
-end
+% % save data
+% if baselineCorrect==1
+%     save([sourceDir '/' 'EYE_FOR_PREDICTIVE_ANALYSIS.mat'],'subjects','badSubs','paMatAll')
+%     saveas(h,[plotDir '/' 'Eye_Normalized_Resampled_Bln.eps'],'epsc')
+% else
+%     save([sourceDir '/' 'EYE_FOR_PREDICTIVE_ANALYSIS_RAW.mat'],'subjects','badSubs','paMatAll')
+%     saveas(h,[plotDir '/' 'Eye_Normalized_Resampled_Raw.eps'],'epsc')
+% end

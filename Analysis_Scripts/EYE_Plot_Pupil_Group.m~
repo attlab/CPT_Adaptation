@@ -18,7 +18,7 @@ plotDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
 %% baseline correction [Note that Event times are 1,20000,32500,77500,97500]
-baselineCorrect=1;
+baselineCorrect=0;
 
 %% load resampled stats
 if baselineCorrect==0
@@ -54,9 +54,11 @@ paMatAll = paMattAll_DS;
 theseYlims = [-.2,1];
 
 %% normalize between -1 and 1
+if baselineCorrect==1
 maxPA = squeeze(max(max(max(max(nanmean(paMatAll,1))))));
 minPA = squeeze(min(min(min(min(nanmean(paMatAll,1))))));
 paMatAll = (paMatAll-minPA)/(maxPA-minPA);
+end
 
 %% plot T1-T5 on separate plots
 %h=figure('units','normalized','outerposition',[0 0 1.5 1.5]);
