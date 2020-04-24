@@ -12,7 +12,7 @@ clear
 close all
 
 % do baseline correction? (0=no, 1=yes)
-plotBlCorrectedPhysio = 1;
+plotBlCorrectedPhysio = 0;
 
 % set dirs
 sourceDir =  '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
@@ -190,7 +190,7 @@ for iMeasure=1:8
                 thisYtick = [0,.5,1];
             end
               
-            set(gca,'fontsize',18,'box','off','linewidth',1.5,'xlim',[1,194],'XTick',[0,40,65,155,194],'XTickLabel',[0,40,65,155,195],...
+            set(gca,'fontsize',28,'box','off','linewidth',1.5,'xlim',[1,194],'XTick',[0,40,65,155,194],'XTickLabel',[0,40,65,155,195],...
                 'YTick',thisYtick)
             
         end
@@ -246,8 +246,8 @@ for iMeasure=1:8
         
        
         % add title
-        title(thisTitle,'FontSize',28)
-        xlabel('Time (s)','fontsize',24)
+        %title(thisTitle,'FontSize',28)
+        %xlabel('Time (s)','fontsize',24)
         
         % change aspect ratio
         pbaspect([3,1,1])
