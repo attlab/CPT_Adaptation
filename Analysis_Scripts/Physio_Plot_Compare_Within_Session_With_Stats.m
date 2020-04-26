@@ -220,6 +220,7 @@ for iMeasure=1:8
         
         % do pairwise comparisons (T1 vs. T5, T1 vs. T3, T3 vs. T5) -
         % [eventually replace with resampled]
+        clear hResults_T1T5 hResults_T1T3 hResults_T3T5
         hResults_T1T5 = squeeze(ttest(allPhysio(:,1,iCond,:),allPhysio(:,5,iCond,:)));
         hResults_T1T3 = squeeze(ttest(allPhysio(:,1,iCond,:),allPhysio(:,3,iCond,:)));
         hResults_T3T5 = squeeze(ttest(allPhysio(:,3,iCond,:),allPhysio(:,5,iCond,:)));

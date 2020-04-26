@@ -18,7 +18,7 @@ plotDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
 %% baseline correction [Note that Event times are 1,20000,32500,77500,97500]
-baselineCorrect=1;
+baselineCorrect=0;
 
 %% load resampled stats
 if baselineCorrect==0
@@ -33,7 +33,9 @@ badSubs = [103,105,108,109,115,116,117,118,126,128,135,136,138,139,140,146,147,1
 paMatAll = paMatAll(b,:,:,:,:);
 
 
-      
+        
+
+
 theseXlims=[0,195];
 theseXticks=[0,40,65,155,195];
 
@@ -163,16 +165,17 @@ for iCond=1:2
     end
     
     
-    if      iCond==1; thisCondName = 'CPT';
-    elseif  iCond==2; thisCondName = 'WPT';
-    end
+    
+    
+    
     
     
     if baselineCorrect==0
-        saveas(h,[plotDir '/' 'EYE_wStats_Raw_Within_' thisCondName '.eps'],'epsc')
+        saveas(h,[plotDir '/' 'EYE_wStats_Raw_Within_C.eps'],'epsc')
     else
-        saveas(h,[plotDir '/' 'EYE_wStats_Bln_Within_' thisCondName '.eps'],'epsc')
+        saveas(h,[plotDir '/' 'EYE_wStats_Bln_Within_Condition.eps'],'epsc')
     end
+    
     
 end
 
