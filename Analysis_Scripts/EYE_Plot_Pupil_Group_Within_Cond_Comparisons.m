@@ -18,7 +18,7 @@ plotDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
 %% baseline correction [Note that Event times are 1,20000,32500,77500,97500]
-baselineCorrect=1;
+baselineCorrect=0;
 
 %% load resampled stats
 if baselineCorrect==0
@@ -120,7 +120,7 @@ for iCond=1:2
             'linewidth',1.5)
         
                        % change aspect ratio
-                pbaspect([2,1,1])
+                pbaspect([3,1,1])
         
         %legend('ICE','WARM')
         
