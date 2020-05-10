@@ -12,7 +12,7 @@ clear
 close all
 
 % do baseline correction? (0=no, 1=yes)
-plotBlCorrectedPhysio = 1;
+plotBlCorrectedPhysio = 0;
 
 % set dirs
 sourceDir =  '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
@@ -144,6 +144,39 @@ for iMeasure=1:8
         allPhysio = (allPhysio-minData)/(maxData-minData);
     end
     
+    
+    %%%%%%%%%%%%%%%%%
+    % run ANOVA across both conditions
+    %% quickly get ANOVA results
+    addpath(genpath('/home/bullock/BOSS/CPT_Adaptation/resampling'))
+    % name variables
+    var1_name = 'cond';
+    var1_levels = 2;
+    var2_name = 'trial';
+    var2_levels = 5;
+    
+    clear condVec trialVec intVec
+    
+    for t=1:size(allPhysio,4)
+        
+        % rearrange data for analysis
+        observedData = [squeeze(allPhysio(:,:,1,t)),squeeze(allPhysio(:,:,2,t))];
+        
+        % run ANOVA
+        statOutput = teg_repeated_measures_ANOVA(observedData,[var1_levels var2_levels],{var1_name, var2_name});
+        
+        % create vectors of main and int p-values (this will do)
+        condVec(t) = statOutput(1,4);
+        trialVec(t) = statOutput(2,4);
+        intVec(t) = statOutput(3,4);
+        
+    end
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+    
+    
+    
+    
+    
 
     % loop through CPT and WPT conditions and plot separately
     %plotCnt=0;
@@ -216,6 +249,17 @@ for iMeasure=1:8
                 %text(tx,thisYlim(2)+.5,thisText,'fontsize',18)
             end
         end
+        
+        
+       
+        
+        
+        
+        
+        
+        
+        
+        
             
         
         % do pairwise comparisons (T1 vs. T5, T1 vs. T3, T3 vs. T5) -
@@ -240,12 +284,28 @@ for iMeasure=1:8
             end
             
             for s = 1:length(hResults)
-                if hResults(s)==1
+                if hResults(s)==1 && intVec(s)<.05 % if t-test is sig and ANOVA interaction is sig, then plot line
                     line([s,s+1],[YlinePos,YlinePos],'linewidth',thisLineWidth,'color',thisColor1./255);
                     line([s,s+1],[YlinePos-thisLineGap,YlinePos-thisLineGap],'linewidth',thisLineWidth,'color',thisColor2./255);
                 end
             end
         end
+        
+        
+
+        
+        
+        
+        
+        
+        
+       % observedData = [squeeze(allPain(:,1,:)),squeeze(allPain(:,2,:))];
+        
+        
+        
+        
+        
+        %%%%%%%%%%%%%%%%%%
         
        
         % add title
@@ -259,9 +319,9 @@ for iMeasure=1:8
         % save image
         if plotType==1
             if plotBlCorrectedPhysio
-                saveas(h,[destDir '/' 'Physio_wStats_Bln_Within_' thisTitle1 '_' thisSession '.eps'],'epsc')
+                saveas(h,[destDir '/' 'Physio_anv_wStats_Bln_Within_' thisTitle1 '_' thisSession '.eps'],'epsc')
             else
-                saveas(h,[destDir '/' 'Physio_wStats_Raw_Within_' thisTitle1 '_' thisSession '.eps'],'epsc')
+                saveas(h,[destDir '/' 'Physio_anv_wStats_Raw_Within_' thisTitle1 '_' thisSession '.eps'],'epsc')
             end
         end
          
