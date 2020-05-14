@@ -66,12 +66,97 @@ thisLineGap = .025;
 thisLineWidth = 7;
 
 
-%h=figure('units','normalized','outerposition',[0 0 0.5 0.4]);
+%%%%%%%%%%%%%%%%%
+% run ANOVA across both conditions
+%% quickly get ANOVA results
+addpath(genpath('/home/bullock/BOSS/CPT_Adaptation/resampling'))
+% name variables
+var1_name = 'cond';
+var1_levels = 2;
+var2_name = 'trial';
+var2_levels = 5;
+
+clear condVec trialVec intVec
+
+for t=1:size(paMatAll,5)
+    
+    % rearrange data for analysis
+    observedData = [squeeze(mean(paMatAll(:,1,:,:,t),4)),squeeze(mean(paMatAll(:,2,:,:,t),4))];
+    
+    %observedData = [squeeze(allPhysio(:,:,1,t)),squeeze(allPhysio(:,:,2,t))];
+    
+    % run ANOVA
+    statOutput = teg_repeated_measures_ANOVA(observedData,[var1_levels var2_levels],{var1_name, var2_name});
+    
+    % create vectors of main and int p-values (this will do)
+    condVec(t) = statOutput(1,4);
+    trialVec(t) = statOutput(2,4);
+    intVec(t) = statOutput(3,4);
+    
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% figure
+h=figure('units','normalized','outerposition',[0 0 0.5 1]); % 1 was .4
+
+
+subplot(7,1,4)
+
+for theseLines=1:3
+    
+    clear hResults
+    
+    if theseLines==1
+        hResults=condVec; YlinePos=3; thisColor1 = [153,50,204]; thisColor2 = [0,0,255];
+    elseif theseLines==2
+        hResults = trialVec; YlinePos=2; thisColor1 = [238,130,238]; thisColor2 = [252,226,5];
+    elseif  theseLines==3
+        hResults = intVec; YlinePos=1; thisColor1 = [64,64,64]; thisColor2 = [0,0,255];
+    end
+    
+    for s = 1:length(hResults)
+        if hResults(s)<.05
+            line([s,s+1],[YlinePos,YlinePos],'linewidth',30,'color',thisColor1./255);
+        end
+    end
+    
+end
+
+set(gca,'Visible','off','XLim',theseXlims)
+
+
+
+
+
+
+
+
+
 for iCond=1:2
     
-    %subplot(1,2,iCond)
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    if iCond==1
+        subplotIdx=1:3;
+    else
+        subplotIdx=5:7;
+    end
+    
+    subplot(7,1,subplotIdx)
+    
     % new figure
-    h=figure('units','normalized','OuterPosition',[0,0,.75,.60]);
+    %h=figure('units','normalized','OuterPosition',[0,0,.75,.60]);
     for iOrder=[5,4,3,2,1]
         
  
@@ -155,7 +240,7 @@ for iCond=1:2
         end
         
         for s = 1:length(hResults)
-            if hResults(s)==1
+            if hResults(s)==1 && intVec(s)<.05
                 line([s,s+1],[YlinePos,YlinePos],'linewidth',thisLineWidth,'color',thisColor1./255);
                 line([s,s+1],[YlinePos-thisLineGap,YlinePos-thisLineGap],'linewidth',thisLineWidth,'color',thisColor2./255);
             end
@@ -168,13 +253,23 @@ for iCond=1:2
     end
     
     
-    if baselineCorrect==0
-        saveas(h,[plotDir '/' 'EYE_wStats_Raw_Within_' thisCondName '.eps'],'epsc')
-    else
-        saveas(h,[plotDir '/' 'EYE_wStats_Bln_Within_' thisCondName '.eps'],'epsc')
-    end
+%     if baselineCorrect==0
+%         saveas(h,[plotDir '/' 'EYE_wStats_Raw_Within_' thisCondName '.eps'],'epsc')
+%     else
+%         saveas(h,[plotDir '/' 'EYE_wStats_Bln_Within_' thisCondName '.eps'],'epsc')
+%     end
     
 end
+
+if baselineCorrect==0
+    saveas(h,[plotDir '/' 'EYE_ANOVA_CPTvWPT_Raw_Within.eps'],'epsc')
+else
+    saveas(h,[plotDir '/' 'EYE_ANOVA_CPTvWPT_Bln_Within.eps'],'epsc')
+end
+
+
+
+
 
 % % save data
 % if baselineCorrect==1

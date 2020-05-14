@@ -12,7 +12,7 @@ clear
 close all
 
 % do baseline correction? (0=no, 1=yes)
-plotBlCorrectedPhysio = 0;
+plotBlCorrectedPhysio = 1;
 
 % set dirs
 sourceDir =  '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
@@ -173,8 +173,37 @@ for iMeasure=1:8
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
+    % figure
+    h=figure('units','normalized','outerposition',[0 0 0.5 1]); % 1 was .4
     
     
+    
+    
+    subplot(7,1,4)
+    
+    for theseLines=1:3
+        
+        clear hResults
+        
+        if theseLines==1
+            hResults=condVec; YlinePos=3; thisColor1 = [153,50,204]; thisColor2 = [0,0,255];
+        elseif theseLines==2
+            hResults = trialVec; YlinePos=2; thisColor1 = [238,130,238]; thisColor2 = [252,226,5];
+        elseif  theseLines==3
+            hResults = intVec; YlinePos=1; thisColor1 = [64,64,64]; thisColor2 = [0,0,255];
+        end
+        
+        for s = 1:length(hResults)
+            if hResults(s)<.05
+                line([s,s+1],[YlinePos,YlinePos],'linewidth',30,'color',thisColor1./255);
+            end
+        end
+        
+    end
+    theseXlims=[0,195];
+
+    set(gca,'Visible','off','XLim',theseXlims)
+
     
     
 
@@ -182,10 +211,15 @@ for iMeasure=1:8
     %plotCnt=0;
     for iCond=1:2
         
+        if iCond==1
+            subplotIdx=1:3;
+        else
+            subplotIdx=5:7;
+        end
         
-    
-        % new figure
-        h=figure('units','normalized','OuterPosition',[0,0,.75,.60]);
+        subplot(7,1,subplotIdx)
+        
+        
         
         %plotCnt=plotCnt+1;
         %subplot(2,1,plotCnt);
@@ -208,7 +242,7 @@ for iMeasure=1:8
             
             % select line colors
             if      iOrder==1; thisColor = [255,0,0]; %red
-            elseif  iOrder==2; thisColor = [255,140,0];% orange 
+            elseif  iOrder==2; thisColor = [255,140,0];% orange
             elseif  iOrder==3; thisColor = [252,226,5]; % yellow
             elseif  iOrder==4; thisColor = [0,255,0]; % green
             elseif  iOrder==5; thisColor = [0,0,255]; %blue
@@ -216,7 +250,7 @@ for iMeasure=1:8
             
             % plot line for trial
             plot(linspace(1,xAxisLength,size(allPhysio,4)),squeeze(nanmean(allPhysio(:,iOrder,iCond,:),1)),'color',thisColor./255,'linewidth',4);hold on
-
+            
             % set y-axis limits etc.
             if plotBlCorrectedPhysio==0
                 set(gca,'ylim',thisYlim)
@@ -224,7 +258,7 @@ for iMeasure=1:8
                 set(gca,'ylim',thisYlim)
                 thisYtick = [0,.5,1];
             end
-              
+            
             set(gca,'fontsize',28,'box','off','linewidth',1.5,'xlim',[1,194],'XTick',[0,40,65,155,194],'XTickLabel',[0,40,65,155,195],...
                 'YTick',thisYtick)
             
@@ -251,7 +285,6 @@ for iMeasure=1:8
         end
         
         
-       
         
         
         
@@ -260,7 +293,8 @@ for iMeasure=1:8
         
         
         
-            
+        
+        
         
         % do pairwise comparisons (T1 vs. T5, T1 vs. T3, T3 vs. T5) -
         % [eventually replace with resampled]
@@ -292,14 +326,14 @@ for iMeasure=1:8
         end
         
         
-
         
         
         
         
         
         
-       % observedData = [squeeze(allPain(:,1,:)),squeeze(allPain(:,2,:))];
+        
+        % observedData = [squeeze(allPain(:,1,:)),squeeze(allPain(:,2,:))];
         
         
         
@@ -307,7 +341,7 @@ for iMeasure=1:8
         
         %%%%%%%%%%%%%%%%%%
         
-       
+        
         % add title
         %title(thisTitle,'FontSize',28)
         %xlabel('Time (s)','fontsize',24)
@@ -316,17 +350,19 @@ for iMeasure=1:8
         pbaspect([3,1,1])
         
         
-        % save image
-        if plotType==1
-            if plotBlCorrectedPhysio
-                saveas(h,[destDir '/' 'Physio_wStats_Bln_Within_' thisTitle1 '_' thisSession '.eps'],'epsc')
-            else
-                saveas(h,[destDir '/' 'Physio_wStats_Raw_Within_' thisTitle1 '_' thisSession '.eps'],'epsc')
-            end
-        end
-         
+
     end
         
+    
+    % save image
+    if plotType==1
+        if plotBlCorrectedPhysio
+            saveas(h,[destDir '/' 'Physio_wStats_Bln_Within_' thisTitle1 '_anv' '.eps'],'epsc')
+        else
+            saveas(h,[destDir '/' 'Physio_wStats_Raw_Within_' thisTitle1 '_anv' '.eps'],'epsc')
+        end
+    end
+    
 
         
 end
