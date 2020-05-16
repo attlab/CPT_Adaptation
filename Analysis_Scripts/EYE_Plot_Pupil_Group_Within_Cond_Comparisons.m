@@ -18,7 +18,10 @@ plotDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
 %% baseline correction [Note that Event times are 1,20000,32500,77500,97500]
-baselineCorrect=0;
+baselineCorrect=1;
+
+% use resampled stats (0=no, 1=yes)
+useResampledStats = 1;
 
 %% load resampled stats
 if baselineCorrect==0
@@ -26,7 +29,7 @@ if baselineCorrect==0
 else
     load([sourceDir '/' 'STATS_Resampled_EYE_n21_bln.mat'],'sigVec')
 end
-
+f
 % remove bad subjects
 badSubs = [103,105,108,109,115,116,117,118,126,128,135,136,138,139,140,146,147,148,154,157,158,159];
 [a,b] = setdiff(subjects,badSubs);
@@ -66,35 +69,56 @@ thisLineGap = .025;
 thisLineWidth = 7;
 
 
-%%%%%%%%%%%%%%%%%
-% run ANOVA across both conditions
-%% quickly get ANOVA results
-addpath(genpath('/home/bullock/BOSS/CPT_Adaptation/resampling'))
-% name variables
-var1_name = 'cond';
-var1_levels = 2;
-var2_name = 'trial';
-var2_levels = 5;
+if baselineCorrect==1
+    thisLabel='bln';
+else
+    thisLabel='raw';
+end
 
+load([sourceDir '/' 'STATS_WITHIN_Resampled_EYE_n21_' thisLabel '.mat'])
+
+
+
+
+% get ANOVA results
 clear condVec trialVec intVec
-
-for t=1:size(paMatAll,5)
+if useResampledStats==1 % get ANOVA results from resampled data mats
     
-    % rearrange data for analysis
-    observedData = [squeeze(mean(paMatAll(:,1,:,:,t),4)),squeeze(mean(paMatAll(:,2,:,:,t),4))];
+    for t=1:length(allPupilStats.ANOVA)
+        condVec(t) = allPupilStats.ANOVA(t).var1.pValueANOVA;
+        trialVec(t) = allPupilStats.ANOVA(t).var2.pValueANOVA;
+        intVec(t) = allPupilStats.ANOVA(t).varInt.pValueANOVA;
+    end
     
-    %observedData = [squeeze(allPhysio(:,:,1,t)),squeeze(allPhysio(:,:,2,t))];
+else
     
-    % run ANOVA
-    statOutput = teg_repeated_measures_ANOVA(observedData,[var1_levels var2_levels],{var1_name, var2_name});
+    addpath(genpath('/home/bullock/BOSS/CPT_Adaptation/resampling'))
+    % name variables
+    var1_name = 'cond';
+    var1_levels = 2;
+    var2_name = 'trial';
+    var2_levels = 5;
     
-    % create vectors of main and int p-values (this will do)
-    condVec(t) = statOutput(1,4);
-    trialVec(t) = statOutput(2,4);
-    intVec(t) = statOutput(3,4);
+    clear condVec trialVec intVec
+    
+    for t=1:size(paMatAll,5)
+        
+        % rearrange data for analysis
+        observedData = [squeeze(mean(paMatAll(:,1,:,:,t),4)),squeeze(mean(paMatAll(:,2,:,:,t),4))];
+        
+        %observedData = [squeeze(allPhysio(:,:,1,t)),squeeze(allPhysio(:,:,2,t))];
+        
+        % run ANOVA
+        statOutput = teg_repeated_measures_ANOVA(observedData,[var1_levels var2_levels],{var1_name, var2_name});
+        
+        % create vectors of main and int p-values (this will do)
+        condVec(t) = statOutput(1,4);
+        trialVec(t) = statOutput(2,4);
+        intVec(t) = statOutput(3,4);
+        
+    end
     
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 % figure
@@ -139,7 +163,7 @@ for iCond=1:2
     
     
     
-  
+    
     
     
     
@@ -159,7 +183,7 @@ for iCond=1:2
     %h=figure('units','normalized','OuterPosition',[0,0,.75,.60]);
     for iOrder=[5,4,3,2,1]
         
- 
+        
         
         thisEye=1:2; %1=left,2=right
         
@@ -204,8 +228,8 @@ for iCond=1:2
             'fontsize',26,...
             'linewidth',1.5)
         
-                       % change aspect ratio
-                pbaspect([3,1,1])
+        % change aspect ratio
+        pbaspect([3,1,1])
         
         %legend('ICE','WARM')
         
@@ -214,19 +238,30 @@ for iCond=1:2
     
     % do pairwise comparisons (T1 vs. T5, T1 vs. T3, T3 vs. T5) -
     % [eventually replace with resampled]
-%     hResults_T1T5 = squeeze(ttest(allPhysio(:,1,iCond,:),allPhysio(:,5,iCond,:)));
-%     hResults_T1T3 = squeeze(ttest(allPhysio(:,1,iCond,:),allPhysio(:,3,iCond,:)));
-%     hResults_T3T5 = squeeze(ttest(allPhysio(:,3,iCond,:),allPhysio(:,5,iCond,:)));
+    %     hResults_T1T5 = squeeze(ttest(allPhysio(:,1,iCond,:),allPhysio(:,5,iCond,:)));
+    %     hResults_T1T3 = squeeze(ttest(allPhysio(:,1,iCond,:),allPhysio(:,3,iCond,:)));
+    %     hResults_T3T5 = squeeze(ttest(allPhysio(:,3,iCond,:),allPhysio(:,5,iCond,:)));
     
+    
+    %% get the pairwise comparison results
     clear hResults_T1T5 hResults_T1T3 hResults_T3T5
+    if useResampledStats==1
+        
+        hResults_T1T5 = squeeze(allPupilStats.sigVec(iCond,1,:));
+        hResults_T1T3 = squeeze(allPupilStats.sigVec(iCond,2,:));
+        hResults_T3T5 = squeeze(allPupilStats.sigVec(iCond,3,:));
+        
+    else
+             
+        hResults_T1T5 = squeeze(ttest(mean(paMatAll(:,iCond,1,:,:),4),mean(paMatAll(:,iCond,5,:,:),4)));
+        hResults_T1T3 = squeeze(ttest(mean(paMatAll(:,iCond,1,:,:),4),mean(paMatAll(:,iCond,3,:,:),4)));
+        hResults_T3T5 = squeeze(ttest(mean(paMatAll(:,iCond,3,:,:),4),mean(paMatAll(:,iCond,5,:,:),4)));
+        
+    end
     
-    hResults_T1T5 = squeeze(ttest(mean(paMatAll(:,iCond,1,:,:),4),mean(paMatAll(:,iCond,5,:,:),4)));
-    hResults_T1T3 = squeeze(ttest(mean(paMatAll(:,iCond,1,:,:),4),mean(paMatAll(:,iCond,3,:,:),4)));
-    hResults_T3T5 = squeeze(ttest(mean(paMatAll(:,iCond,3,:,:),4),mean(paMatAll(:,iCond,5,:,:),4)));
-
     
     
-
+    
     for theseLines=1:3
         
         clear hResults
@@ -253,11 +288,11 @@ for iCond=1:2
     end
     
     
-%     if baselineCorrect==0
-%         saveas(h,[plotDir '/' 'EYE_wStats_Raw_Within_' thisCondName '.eps'],'epsc')
-%     else
-%         saveas(h,[plotDir '/' 'EYE_wStats_Bln_Within_' thisCondName '.eps'],'epsc')
-%     end
+    %     if baselineCorrect==0
+    %         saveas(h,[plotDir '/' 'EYE_wStats_Raw_Within_' thisCondName '.eps'],'epsc')
+    %     else
+    %         saveas(h,[plotDir '/' 'EYE_wStats_Bln_Within_' thisCondName '.eps'],'epsc')
+    %     end
     
 end
 

@@ -14,12 +14,18 @@ close all
 % do baseline correction? (0=no, 1=yes)
 plotBlCorrectedPhysio = 1;
 
+% use resampled stats (0=no, 1=yes)
+useResampledStats = 1;
+
 % set dirs
 sourceDir =  '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 destDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
+resampledStatsDir = [sourceDir '/' 'Resampled_Stats'];
+
 
 % load compiled data
 load([sourceDir '/' 'PHYSIO_MASTER_RESP_CORR.mat' ])
+
 
 % % load resampled stats
 % if plotBlCorrectedPhysio==1
@@ -80,13 +86,13 @@ badSubjects_HF = [120,123,133,157];
 % do baseline correction on all measures (correcting to mean 20-40 secs
 % period in baseline)
 if plotBlCorrectedPhysio
-    all_BP = all_BP-mean(all_BP(:,:,:,25:40),4);
-    all_CO = all_CO-mean(all_CO(:,:,:,2500:4000),4);
-    all_HR = all_HR-mean(all_HR(:,:,:,2500:4000),4);
-    all_LVET = all_LVET-mean(all_LVET(:,:,:,2500:4000),4);
-    all_PEP = all_PEP-mean(all_PEP(:,:,:,2500:4000),4);
-    all_SV = all_SV-mean(all_SV(:,:,:,2500:4000),4);
-    all_TPR = all_TPR-mean(all_TPR(:,:,:,2500:4000),4);
+    all_BP = all_BP-mean(all_BP(:,:,:,26:40),4);
+    all_CO = all_CO-mean(all_CO(:,:,:,2600:4000),4);
+    all_HR = all_HR-mean(all_HR(:,:,:,2600:4000),4);
+    all_LVET = all_LVET-mean(all_LVET(:,:,:,2600:4000),4);
+    all_PEP = all_PEP-mean(all_PEP(:,:,:,2600:4000),4);
+    all_SV = all_SV-mean(all_SV(:,:,:,2600:4000),4);
+    all_TPR = all_TPR-mean(all_TPR(:,:,:,2600:4000),4);
     all_HF = all_HF-nanmean(all_HF(:,:,:,3200:4000),4);% [nan for first 30 secs coz classifier training...address this?] 
 end
 
@@ -145,39 +151,57 @@ for iMeasure=1:8
     end
     
     
-    %%%%%%%%%%%%%%%%%
-    % run ANOVA across both conditions
-    %% quickly get ANOVA results
-    addpath(genpath('/home/bullock/BOSS/CPT_Adaptation/resampling'))
-    % name variables
-    var1_name = 'cond';
-    var1_levels = 2;
-    var2_name = 'trial';
-    var2_levels = 5;
     
-    clear condVec trialVec intVec
-    
-    for t=1:size(allPhysio,4)
-        
-        % rearrange data for analysis
-        observedData = [squeeze(allPhysio(:,:,1,t)),squeeze(allPhysio(:,:,2,t))];
-        
-        % run ANOVA
-        statOutput = teg_repeated_measures_ANOVA(observedData,[var1_levels var2_levels],{var1_name, var2_name});
-        
-        % create vectors of main and int p-values (this will do)
-        condVec(t) = statOutput(1,4);
-        trialVec(t) = statOutput(2,4);
-        intVec(t) = statOutput(3,4);
-        
+    %% LOAD RESAMPLED STATS DATA
+    if plotBlCorrectedPhysio==0
+        thisLabel = 'Uncorrected';
+    else
+        thisLabel = 'Bl_Corrected';
     end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    % figure
+    load([resampledStatsDir '/' 'STATS_Physio_Resampled_' thisLabel '_' thisTitle1 '.mat'])
+    
+    % get ANOVA results
+    clear condVec trialVec intVec
+    if useResampledStats==1 % get ANOVA results from resampled data mats
+        
+        for t=1:length(allCardioStats.ANOVA)
+            condVec(t) = allCardioStats.ANOVA(t).var1.pValueANOVA;
+            trialVec(t) = allCardioStats.ANOVA(t).var2.pValueANOVA;
+            intVec(t) = allCardioStats.ANOVA(t).varInt.pValueANOVA;
+        end
+        
+    else % compute ANOVA results here and now
+        
+        addpath(genpath('/home/bullock/BOSS/CPT_Adaptation/resampling'))
+        % name variables
+        var1_name = 'cond';
+        var1_levels = 2;
+        var2_name = 'trial';
+        var2_levels = 5;
+        
+        clear condVec trialVec intVec
+        
+        for t=1:size(allPhysio,4)
+            
+            % rearrange data for analysis
+            observedData = [squeeze(allPhysio(:,:,1,t)),squeeze(allPhysio(:,:,2,t))];
+            
+            % run ANOVA
+            statOutput = teg_repeated_measures_ANOVA(observedData,[var1_levels var2_levels],{var1_name, var2_name});
+            
+            % create vectors of main and int p-values (this will do)
+            condVec(t) = statOutput(1,4);
+            trialVec(t) = statOutput(2,4);
+            intVec(t) = statOutput(3,4);
+            
+        end
+       
+    end
+    
+    
+    %% create figure
     h=figure('units','normalized','outerposition',[0 0 0.5 1]); % 1 was .4
-    
-    
-    
     
     subplot(7,1,4)
     
@@ -193,6 +217,12 @@ for iMeasure=1:8
             hResults = intVec; YlinePos=1; thisColor1 = [64,64,64]; thisColor2 = [0,0,255];
         end
         
+        if iMeasure==8
+            hResults(1:32)=1;
+        else
+            hResults(1:2) = 1;
+        end
+        
         for s = 1:length(hResults)
             if hResults(s)<.05
                 line([s,s+1],[YlinePos,YlinePos],'linewidth',30,'color',thisColor1./255);
@@ -202,7 +232,7 @@ for iMeasure=1:8
     end
     theseXlims=[0,195];
 
-    set(gca,'Visible','off','XLim',theseXlims)
+    set(gca,'Visible','off','XLim',theseXlims,'yLim',[1,3])
 
     
     
@@ -287,21 +317,21 @@ for iMeasure=1:8
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        % do pairwise comparisons (T1 vs. T5, T1 vs. T3, T3 vs. T5) -
-        % [eventually replace with resampled]
+        %% get the pairwise comparison results
         clear hResults_T1T5 hResults_T1T3 hResults_T3T5
-        hResults_T1T5 = squeeze(ttest(allPhysio(:,1,iCond,:),allPhysio(:,5,iCond,:)));
-        hResults_T1T3 = squeeze(ttest(allPhysio(:,1,iCond,:),allPhysio(:,3,iCond,:)));
-        hResults_T3T5 = squeeze(ttest(allPhysio(:,3,iCond,:),allPhysio(:,5,iCond,:)));
+        if useResampledStats==1
+            
+            hResults_T1T5 = squeeze(allCardioStats.sigVec(iCond,1,:));
+            hResults_T1T3 = squeeze(allCardioStats.sigVec(iCond,2,:));
+            hResults_T3T5 = squeeze(allCardioStats.sigVec(iCond,3,:));
+            
+        else
+            
+            hResults_T1T5 = squeeze(ttest(allPhysio(:,1,iCond,:),allPhysio(:,5,iCond,:)));
+            hResults_T1T3 = squeeze(ttest(allPhysio(:,1,iCond,:),allPhysio(:,3,iCond,:)));
+            hResults_T3T5 = squeeze(ttest(allPhysio(:,3,iCond,:),allPhysio(:,5,iCond,:)));
+            
+        end
         
         
         % add line for t-test results to base of plots
@@ -315,6 +345,12 @@ for iMeasure=1:8
                 hResults = hResults_T1T3; YlinePos=thisYlinePos(2); thisColor1 = [255,0,0]; thisColor2 = [252,226,5];
             elseif  theseLines==3
                 hResults = hResults_T3T5; YlinePos=thisYlinePos(3); thisColor1 = [252,226,5]; thisColor2 = [0,0,255];
+            end
+            
+            if iMeasure==8
+                hResults(1:32) = 0;
+            else
+                hResults(1:2) = 0;
             end
             
             for s = 1:length(hResults)
