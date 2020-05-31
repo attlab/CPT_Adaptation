@@ -14,7 +14,8 @@ clear erspAll chanlocs times freqs
 if analysisType==0
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-500Hz';
 elseif analysisType==1
-    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-100Hz';
+    %sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-100Hz';
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-100Hz_NewBL';
 elseif analysisType==2
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-30Hz_ICA_Occ_Rej';
 elseif analysisType==3
@@ -24,7 +25,8 @@ elseif analysisType==4
 elseif analysisType==5
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-30Hz_ICA_Brain_Other_Top';
 elseif analysisType==6
-    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit';
+    %sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit';
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_NewBL';
 end
 
 destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
@@ -53,7 +55,8 @@ end
 if analysisType==0
     save([destDir '/' 'GRAND_ERSP_1-500Hz.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')
 elseif analysisType==1
-    save([destDir '/' 'GRAND_ERSP_1-100Hz.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs','-v7.3')
+    %save([destDir '/' 'GRAND_ERSP_1-100Hz.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs','-v7.3')
+    save([destDir '/' 'GRAND_ERSP_1-100Hz_NewBL.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs','-v7.3')
 elseif analysisType==2
     save([destDir '/' 'GRAND_ERSP_1-30Hz_ICA_Occ_Rej.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')
 elseif analysisType==3
@@ -63,7 +66,10 @@ elseif analysisType==4
 elseif analysisType==5
     save([destDir '/' 'GRAND_ERSP_1-30Hz_ICA_Brain_Other_Top.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')
 elseif analysisType==6
-    save([destDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')
+    %save([destDir '/'
+    %'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')%original
+    save([destDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP_NewBL.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs') %new bl
+
 end
 
 % if analysisType==1

@@ -49,7 +49,7 @@ if analysisType==0 % generate 1-500 Hz ERSPs
     destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-500Hz';
 elseif analysisType==1 % generate 1-100 Hz ERSPs
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_Processed_Cleaned_No_Downsample';
-    destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-100Hz';
+    destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-100Hz_NewBL';
 elseif analysisType==2 % generate 1-30 Hz ICA Occular artifacts rejected only
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_Notch_IC_Label'; % use notch data
     destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_Results_1-30Hz_ICA_Occ_Rej';
@@ -199,6 +199,7 @@ for iSession=1:2
                 'timesout',erspSettings.timesout,... % impacted by winsize (this needs to be worked out - ideally do 1-195)
                 'plotersp','off',...
                 'plotitc','off',...
+                'baseline',[26000,40000],... % TOM APPLY BASELINE CORRECTION HERE INSTEAD OF LATER!
                 'plottype','image');
             
             ersp(iSession,iEpoch,iChan,:,:) = erspTmp;

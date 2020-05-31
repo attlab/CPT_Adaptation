@@ -11,7 +11,7 @@ close all
 runInParallel = 1;
 
 %% select analysis type (0=1-500 Hz no ICA, 1=1-100 Hz no ICA, 2=1-30Hz ICA Reject Occular Arts only, 6=1-50Hz IClabel_DipFit)
-analysisType=1; % EITHER 1 (no ica) or 6 (ICA)
+analysisType=1; % EITHER 1 (no ica) or 6 (ICA)-seeother scirpt!
 
 %% set up cluster
 if runInParallel  

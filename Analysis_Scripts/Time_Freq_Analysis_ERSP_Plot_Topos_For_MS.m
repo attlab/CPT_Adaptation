@@ -4,15 +4,24 @@ Author: Tom Bullock
 Date: 09.18.18
 %}
 
+
+eeglabDir = '/home/bullock/Toolboxes/eeglab2019_1'; 
+cd(eeglabDir)
+eeglab
+
 clear
 close all
+
 
 % set dirs
 parentDir = '/home/bullock/BOSS/CPT_Adaptation';
 sourceDir = [parentDir '/' 'Data_Compiled'];
 destDir = [parentDir '/' 'Plots'];
 
-% load compiled ERSP dataset & chanlocs
+
+
+
+% load compiled ERSP dataset & chanlocs (only 1 and 6 for now)
 analysisType=1;
 
 if analysisType==1
@@ -41,9 +50,9 @@ end
 
 % baseline correct
 if analysisType>1
-    erspBL = mean(erspAll(:,:,:,:,:,24:39),6);
+    erspBL = mean(erspAll(:,:,:,:,:,25:39),6);
 else
-    erspBL = mean(erspAll(:,:,:,:,:,25:40),6);
+    erspBL = mean(erspAll(:,:,:,:,:,26:40),6);
 end
 ersp = erspAll-erspBL;
 
@@ -52,7 +61,7 @@ ersp = erspAll-erspBL;
 
 
 % plot freqs
-for iFreq=freqIdx
+for iFreq=1;%freqIdx
     
     % stuff
     if analysisType==1

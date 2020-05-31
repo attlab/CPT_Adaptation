@@ -36,7 +36,9 @@ cd ..
 
 
 sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_50Hz_LP_DIPFIT';
-destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit';
+%destDir =
+%'/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit';%original
+destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_NewBL';%TOM TRY USING BASELINE IN NEWTIMEF
 
 
 
@@ -115,7 +117,8 @@ for iSession=1:2
                 'timesout',erspSettings.timesout,... % impacted by winsize (this needs to be worked out - ideally do 1-195)
                 'plotersp','off',...
                 'plotitc','off',...
-                'plottype','image');
+                'plottype','image',...
+                'baseline',[26000,40000]); % TOM APPLY BASELINE CORRECTION HERE INSTEAD OF LATER!
             
             ersp(iSession,iEpoch,iChan,:,:) = erspTmp;
         end

@@ -13,13 +13,13 @@ close all
 sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 
 %% select analysis type and load data (0=1-500 Hz, 1=1-100 Hz, 2...)
-analysisType=1; 
+analysisType=1; % [EITHER 1 or 6 for Manuscript] 
 
 if analysisType==0
     load([sourceDir '/' 'GRAND_ERSP_1-500Hz.mat'])
 elseif analysisType==1
-    load([sourceDir '/' 'GRAND_ERSP_1-100Hz.mat'])
-    load([sourceDir '/' 'STATS_EEG_ERSP_1-100Hz.mat'])
+    load([sourceDir '/' 'GRAND_ERSP_1-100Hz_NewBL.mat'])
+    %load([sourceDir '/' 'STATS_EEG_ERSP_1-100Hz.mat'])
 elseif analysisType==2
     load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_Occ_Rej.mat'])
 elseif analysisType==3
@@ -29,12 +29,14 @@ elseif analysisType==4
 elseif analysisType==5
     load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_Brain_Other_Top.mat'])
 elseif analysisType==6
-    load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'])
-    load([sourceDir '/' 'STATS_EEG_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'])
+    %load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'])
+    load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP_NewBL.mat'])
+
+    %load([sourceDir '/' 'STATS_EEG_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'])
 end
 
 %% baseline correct?
-baselineCorrect=1;
+baselineCorrect=0;
 if baselineCorrect
     
     if analysisType>1
@@ -47,6 +49,8 @@ if baselineCorrect
     ersp = erspAll - erspBL;
 else
     ersp = erspAll;
+    disp('NO BASELINE CORRECTION IN PLOTTING SCRIPT!!!')
+    pause(1)
 end
 
 
@@ -102,9 +106,11 @@ for iElects=5;%1:5
             
             % set colorbar maxmin
             if analysisType==0 || analysisType==1           
-                thisCbar=[-2,8];
+                %thisCbar=[-2,8]; original
+                thisCbar = [-6,6];
             elseif analysisType>1
-                thisCbar=[-2,4];
+                %thisCbar=[-2,4];
+                thisCbar = [-4,2];
             end
 
 %             if analysisType==1
@@ -121,6 +127,7 @@ for iElects=5;%1:5
             
             % find mean and plot data
             dataMean = squeeze(mean(mean(mean(ersp(:,iSession,iOrder,theseElects,:,:),1),3),4));
+            
             imagesc(dataMean,thisCbar)
             %imagesc(dataMean)
 

@@ -18,7 +18,7 @@ plotDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
 %% baseline correction [Note that Event times are 1,20000,32500,77500,97500]
-baselineCorrect=1;
+baselineCorrect=0;
 
 % use resampled stats (0=no, 1=yes)
 useResampledStats = 1;
@@ -29,7 +29,7 @@ if baselineCorrect==0
 else
     load([sourceDir '/' 'STATS_Resampled_EYE_n21_bln.mat'],'sigVec')
 end
-f
+
 % remove bad subjects
 badSubs = [103,105,108,109,115,116,117,118,126,128,135,136,138,139,140,146,147,148,154,157,158,159];
 [a,b] = setdiff(subjects,badSubs);
