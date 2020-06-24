@@ -8,7 +8,7 @@ addpath(genpath(scriptsDir))
 cd(scriptsDir)
 
 % if run on local machine(0), else if run on cluster(1)
-processInParallel=1;
+processInParallel=0;
 
 % cluster settings
 if processInParallel
@@ -18,7 +18,7 @@ if processInParallel
 end
 
 % send to cluster (only a single job)
-for analysisType=1:2
+for analysisType=2;%1:2
     if processInParallel
         createTask(job,@EEG_Stats_Resample_Within_ANOVA,0,{analysisType})
     else

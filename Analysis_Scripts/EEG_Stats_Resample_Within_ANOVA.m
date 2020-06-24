@@ -132,6 +132,9 @@ for iFreq=freqIdx
         % isolate data
         observedData = [squeeze(mean(mean(ersp(:,1,:,iChan,theseFreqs,theseTimes),5),6)),squeeze(mean(mean(ersp(:,2,:,iChan,theseFreqs,theseTimes),5),6))];
         
+        % do posthocs
+        
+        
          % run ANOVA
         statOutput = teg_repeated_measures_ANOVA(observedData,[var1_levels var2_levels],{var1_name, var2_name});
         
@@ -192,6 +195,11 @@ for iFreq=freqIdx
         
         clear nullData
         
+        
+        
+        
+        
+        
     end
 
     
@@ -206,7 +214,7 @@ allEEG_Stats.ANOVA = allANOVA;
 if analysisType==1
     save([sourceDir '/' 'STATS_WITHIN_Resampled_ERSP_ANOVA_100Hz_NewBL.mat'],'allANOVA')
 else
-    save([sourceDir '/' 'STATS_WITHIN_Resampled_ERSP_ANOVA_30Hz_NewBL.mat'],'allANOVA')
+    save([sourceDir '/' 'STATS_WITHIN_Resampled_ERSP_ANOVA_30Hz_NewBL_Added_Alpha_PH.mat'],'allANOVA')
 end
 
 

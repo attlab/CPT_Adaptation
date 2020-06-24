@@ -177,7 +177,7 @@ for iFreq=freqIdx
                 
                 topoplot(theseData,chanlocs,...
                     'maplimits',theseMapLimits)
-                cbar
+                %cbar
                 
 %                   h=figure;
 %                   topoplot(theseData,chanlocs);

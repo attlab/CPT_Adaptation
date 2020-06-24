@@ -154,11 +154,11 @@ for iOrder=1:5
     
 end
 
-% save data
-if baselineCorrect==1
-    save([sourceDir '/' 'EYE_FOR_PREDICTIVE_ANALYSIS.mat'],'subjects','badSubs','paMatAll')
-    saveas(h,[plotDir '/' 'Eye_Normalized_Resampled_Bln.eps'],'epsc')
-else
-    save([sourceDir '/' 'EYE_FOR_PREDICTIVE_ANALYSIS_RAW.mat'],'subjects','badSubs','paMatAll')
-    saveas(h,[plotDir '/' 'Eye_Normalized_Resampled_Raw.eps'],'epsc')
-end
+% % save data
+% if baselineCorrect==1
+%     save([sourceDir '/' 'EYE_FOR_PREDICTIVE_ANALYSIS.mat'],'subjects','badSubs','paMatAll')
+%     saveas(h,[plotDir '/' 'Eye_Normalized_Resampled_Bln.eps'],'epsc')
+% else
+%     save([sourceDir '/' 'EYE_FOR_PREDICTIVE_ANALYSIS_RAW.mat'],'subjects','badSubs','paMatAll')
+%     saveas(h,[plotDir '/' 'Eye_Normalized_Resampled_Raw.eps'],'epsc')
+% end

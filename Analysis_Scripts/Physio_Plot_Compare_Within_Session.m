@@ -393,16 +393,16 @@ for iMeasure=[1:8]
         
     end
     
-    % save image
-    if plotType==1
-        if plotBlCorrectedPhysio
-            saveas(h,[destDir '/' 'Physio_Within_Session' thisTitle1 '.eps'],'epsc')
-            %saveas(h,[destDir '/' 'Physio_Within_Session' thisTitle1 '.jpeg'],'jpeg')
-        else
-            saveas(h,[destDir '/' 'Physio_Raw_Within_Session' thisTitle1 '.eps'],'epsc')
-            %saveas(h,[destDir '/' 'Physio_Raw_Within_Session' thisTitle1 '.jpeg'],'jpeg')
-        end
-    end
+%     % save image
+%     if plotType==1
+%         if plotBlCorrectedPhysio
+%             saveas(h,[destDir '/' 'Physio_Within_Session' thisTitle1 '.eps'],'epsc')
+%             %saveas(h,[destDir '/' 'Physio_Within_Session' thisTitle1 '.jpeg'],'jpeg')
+%         else
+%             saveas(h,[destDir '/' 'Physio_Raw_Within_Session' thisTitle1 '.eps'],'epsc')
+%             %saveas(h,[destDir '/' 'Physio_Raw_Within_Session' thisTitle1 '.jpeg'],'jpeg')
+%         end
+%     end
 
     
 end
