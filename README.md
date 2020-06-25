@@ -125,7 +125,7 @@ Last updated: 06.25.20
 
 ## Most Relevant Scripts for Michael
 
-`Time_Freq_Analysis_ERSP_ICA.m`
+`Time_Freq_Analysis_ERSP_ICA.m` Loads data that has already been run through ICA, applies component rejection criteria, does time/freq analysis
 
 `Time_Freq_Analysis_ERPS_Compile.m` Compiles the ERSPs from individual subjects (analysis type 1 = no ICA, analysis type 6 = ICA)
 
