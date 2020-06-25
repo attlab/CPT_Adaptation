@@ -276,6 +276,8 @@ for iMeasure=1:8
             hResults (1:32) = NaN;         
         end
         
+        
+        
         % add line for t-test results to base of plots
         for s = 1:length(hResults)
             if hResults(s)==1
@@ -285,6 +287,10 @@ for iMeasure=1:8
                     else
                         line([s,s+1],[thisYlim(1)+.2,thisYlim(1)+.2],'linewidth',6,'color',[9,112,84]./255);
                     end
+                    
+                    
+                    
+                    
                 else
                     %line([s,s+1],[62,62],'linewidth',2);
                 end
@@ -311,9 +317,30 @@ for iMeasure=1:8
             end
 
         end
+        
+        
+%         if iOrder==5
+%             xlabel('Time (s)','fontsize',24)
+%         end
+%         ylabel(thisTitle1,'fontsize',24)
+        
+%         % add title at top
+%         if iOrder==1
+%             th = title(thisTitle,'fontsize',24);
+%             %th = title('test');
+%             titlePos = get(th,'position');
+%             if iMeasure~=1
+%                 set(th,'position',titlePos+2)
+%             else
+%                 set(th,'position',titlePos)
+%             end
+%         end
+        
 
-        % change plot aspect ratio
+        
+        % change aspect ratio
         pbaspect([4,1,1])
+        
         
     end
     
@@ -326,6 +353,8 @@ for iMeasure=1:8
         end
     end
     
+
+    
 end
 
 
@@ -335,3 +364,7 @@ if plotBlCorrectedPhysio
 else
     save([sourceDir '/' 'PHYSIO_Clean_Uncorr.mat'],'all_BP','all_HR','all_LVET','all_PEP','all_HF','all_SV','all_CO','all_TPR','subjects','badSubjects_BP_TPR','badSubjects_CO_HR_LVET_PEP_SV','badSubjects_HF')
 end
+
+
+
+%    disp(['Displaying SjNum ' num2str(subjects(sjIdx))])

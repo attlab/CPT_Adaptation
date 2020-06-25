@@ -121,3 +121,15 @@ Last updated: 06.23.20
 `my_fixtrap.m` Neil's trapizoidal filter
 
 `shadedErrorBar.m` Creates exactly that
+
+
+## Most Relevant Scripts for Michael
+
+`Time_Freq_Analysis_ERSP_ICA.m`
+
+`Time_Freq_Analysis_ERPS_Compile.m` Compiles the ERSPs from individual subjects (analysis type 1 = no ICA, analysis type 6 = ICA)
+
+`EYE_Plot_Pupil_Within_Cond_Comparisons.m` Loads pupil data, rejects bad subjects, normalizes and baseline corrects (optional)
+
+`Physio_Plot.m` Loads master physio data file, removes bad subjects on a per measure basis, plots data
+

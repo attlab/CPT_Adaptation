@@ -3,27 +3,29 @@ EYE_Plot_Pupil_Area
 Author: Tom Bullock, UCSB Attention Lab
 Date: 09.17.18, updated 05.25.19
 
-Notes: normalize data
+Notes: 
+
+Remove bad subjects, normalize and plot pupil data
 
 %}
 
 clear
 close all
 
-%% set dirs
+% set dirs
 sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 plotDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
 
-%% load compiled EYE Data (paMatAll = sub,session,task,eye,timepoint)
+% load compiled EYE Data (paMatAll = sub,session,task,eye,timepoint)
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
-%% baseline correction [Note that Event times are 1,20000,32500,77500,97500]
+% baseline correction [Note that Event times are 1,20000,32500,77500,97500]
 baselineCorrect=0;
 
-% use resampled stats (0=no, 1=yes)
+% use resampled stats (requires separate script to be run) (0=no, 1=yes)
 useResampledStats = 1;
 
-%% load resampled stats
+% load resampled stats
 if baselineCorrect==0
     load([sourceDir '/' 'STATS_Resampled_EYE_n21_raw.mat'],'sigVec')
 else
@@ -35,55 +37,47 @@ badSubs = [103,105,108,109,115,116,117,118,126,128,135,136,138,139,140,146,147,1
 [a,b] = setdiff(subjects,badSubs);
 paMatAll = paMatAll(b,:,:,:,:);
 
-
-      
-theseXlims=[0,195];
-theseXticks=[0,40,65,155,195];
-
+% do baseline correction
 if baselineCorrect==1
     paMatBL= nanmean(paMatAll(:,:,:,:,round(26000/2):round(40000/2)),5);
     paMatAll = paMatAll - paMatBL;
 end
 
-%% downsample to 1Hz [average across each second (500Hz original SR)]
+% downsample to 1Hz [average across each second (500Hz original SR)]
 for i=1:195
     paMattAll_DS(:,:,:,:,i) = nanmean(paMatAll(:,:,:,:,((i*500)+1:(i+1)*500)-500),5);
 end
 paMatAll = paMattAll_DS;
 
-%% plot settings
+% plot settings
+theseXlims=[0,195];
+theseXticks=[0,40,65,155,195];
 theseYlims = [-.3,1];
 
-%% normalize between -1 and 1
+% normalize between -1 and 1
 maxPA = squeeze(max(max(max(max(nanmean(paMatAll,1))))));
 minPA = squeeze(min(min(min(min(nanmean(paMatAll,1))))));
 paMatAll = (paMatAll-minPA)/(maxPA-minPA);
 
-%% plot T1-T5 on separate plots
-%plotCnt=0;
-
-% add line for t-test results to base of plots
-%thisYlim = [-.3,1];
+% some plot settings
 thisYlinePos = [-.05, -.15, -.25];
 thisLineGap = .025;
 thisLineWidth = 7;
 
-
+% apply baseline correction to these plots?
 if baselineCorrect==1
     thisLabel='bln';
 else
     thisLabel='raw';
 end
 
-load([sourceDir '/' 'STATS_WITHIN_Resampled_EYE_n21_' thisLabel '.mat'])
-
-
-
-
 % get ANOVA results
 clear condVec trialVec intVec
+
 if useResampledStats==1 % get ANOVA results from resampled data mats
     
+    % load permuted stats
+    load([sourceDir '/' 'STATS_WITHIN_Resampled_EYE_n21_' thisLabel '.mat'])
     for t=1:length(allPupilStats.ANOVA)
         condVec(t) = allPupilStats.ANOVA(t).var1.pValueANOVA;
         trialVec(t) = allPupilStats.ANOVA(t).var2.pValueANOVA;
@@ -121,10 +115,10 @@ else
 end
 
 
-% figure
+% open figure
 h=figure('units','normalized','outerposition',[0 0 0.5 1]); % 1 was .4
 
-
+% position for ANOVA results (horizontal bar)
 subplot(7,1,4)
 
 for theseLines=1:3
@@ -151,25 +145,8 @@ set(gca,'Visible','off','XLim',theseXlims)
 
 
 
-
-
-
-
-
-
+% generate pupil data plots
 for iCond=1:2
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     if iCond==1
         subplotIdx=1:3;
@@ -182,8 +159,6 @@ for iCond=1:2
     % new figure
     %h=figure('units','normalized','OuterPosition',[0,0,.75,.60]);
     for iOrder=[5,4,3,2,1]
-        
-        
         
         thisEye=1:2; %1=left,2=right
         
@@ -235,15 +210,7 @@ for iCond=1:2
         
     end
     
-    
-    % do pairwise comparisons (T1 vs. T5, T1 vs. T3, T3 vs. T5) -
-    % [eventually replace with resampled]
-    %     hResults_T1T5 = squeeze(ttest(allPhysio(:,1,iCond,:),allPhysio(:,5,iCond,:)));
-    %     hResults_T1T3 = squeeze(ttest(allPhysio(:,1,iCond,:),allPhysio(:,3,iCond,:)));
-    %     hResults_T3T5 = squeeze(ttest(allPhysio(:,3,iCond,:),allPhysio(:,5,iCond,:)));
-    
-    
-    %% get the pairwise comparison results
+    % get the pairwise comparison results
     clear hResults_T1T5 hResults_T1T3 hResults_T3T5
     if useResampledStats==1
         
@@ -259,9 +226,7 @@ for iCond=1:2
         
     end
     
-    
-    
-    
+    % plot pairwise comparision results
     for theseLines=1:3
         
         clear hResults
@@ -287,13 +252,6 @@ for iCond=1:2
     elseif  iCond==2; thisCondName = 'WPT';
     end
     
-    
-    %     if baselineCorrect==0
-    %         saveas(h,[plotDir '/' 'EYE_wStats_Raw_Within_' thisCondName '.eps'],'epsc')
-    %     else
-    %         saveas(h,[plotDir '/' 'EYE_wStats_Bln_Within_' thisCondName '.eps'],'epsc')
-    %     end
-    
 end
 
 if baselineCorrect==0
@@ -301,16 +259,3 @@ if baselineCorrect==0
 else
     saveas(h,[plotDir '/' 'EYE_ANOVA_CPTvWPT_Bln_Within.eps'],'epsc')
 end
-
-
-
-
-
-% % save data
-% if baselineCorrect==1
-%     save([sourceDir '/' 'EYE_FOR_PREDICTIVE_ANALYSIS.mat'],'subjects','badSubs','paMatAll')
-%     saveas(h,[plotDir '/' 'Eye_Normalized_Resampled_Bln.eps'],'epsc')
-% else
-%     save([sourceDir '/' 'EYE_FOR_PREDICTIVE_ANALYSIS_RAW.mat'],'subjects','badSubs','paMatAll')
-%     saveas(h,[plotDir '/' 'Eye_Normalized_Resampled_Raw.eps'],'epsc')
-% end

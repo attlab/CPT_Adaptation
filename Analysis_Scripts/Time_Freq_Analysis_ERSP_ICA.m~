@@ -16,6 +16,7 @@ determine the temporal order that the CPT sessions were completed in.
 %}
 
 
+
 % add scripts dir to path
 %addpath(genpath('/data/DATA_ANALYSIS/CPT/Analysis_Scripts')) % BOSS cluster
 %addpath(genpath('/Users/tombullock/Documents/Psychology/BOSS/CPT/Analysis_Scripts_Local')) % local
@@ -108,7 +109,7 @@ for iSession=1:2
                 'plotersp','off',...
                 'plotitc','off',...
                 'plottype','image',...
-                'baseline',[26000,40000]); % apply baseline correction
+                'baseline',[26000,40000]); % TOM APPLY BASELINE CORRECTION HERE INSTEAD OF LATER!
             
             ersp(iSession,iEpoch,iChan,:,:) = erspTmp;
         end
@@ -132,18 +133,9 @@ return
     
     
     
-
-
-
-
-
-
-
     
     
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5   
- 
- % pertains to old analyses
     
 %     if analysisType==2 % remove occular artifacts identifier by IC Label 
 %         badCompsICLabel=[];
