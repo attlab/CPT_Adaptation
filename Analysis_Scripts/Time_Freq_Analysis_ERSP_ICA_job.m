@@ -8,7 +8,7 @@ clear
 close all
 
 %% run in serial (0) or parallel (1)
-runInParallel = 1;
+runInParallel = 0;
 
 %% set up cluster
 if runInParallel  
@@ -20,14 +20,18 @@ end
 subjects = CPT_SUBJECTS;
 disp(['Processing n=' num2str(length(subjects)) ' subjects'])
 
+%% set analysis type (11 = regular baselineline sub, 12 = no baseline sub)
+analysisType=11;
+
+
 %% create jobs for subjects
 for iSub =1:length(subjects)
     sjNum = subjects(iSub);
     disp(['Processing Subject ' num2str(sjNum)])
     if runInParallel       
-        createTask(job,@Time_Freq_Analysis_ERSP_ICA,0,{sjNum})      
+        createTask(job,@Time_Freq_Analysis_ERSP_ICA,0,{sjNum,analysisType})      
     else
-        Time_Freq_Analysis_ERSP_ICA(sjNum)
+        Time_Freq_Analysis_ERSP_ICA(sjNum,analysisType)
     end
 end
     

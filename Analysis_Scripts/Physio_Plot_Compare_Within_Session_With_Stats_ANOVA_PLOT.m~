@@ -106,7 +106,7 @@ all_CO = all_CO(:,:,:,1:100:19500);
 all_HF = all_HF(:,:,:,1:100:19000);
 
 % loop through measures and plot
-for iMeasure=1:8
+for iMeasure=6;%1:8
 
     % select data
     allPhysio=[];
@@ -130,7 +130,7 @@ for iMeasure=1:8
         elseif  iMeasure==3; allPhysio = all_LVET; thisTitle1  = 'LVET'; thisYlim=[260,300]; thisYtick = [260:10:300]; thisYlinePos = [270,267,264];thisLineWidth=7;thisLineGap = 1;
         elseif  iMeasure==4; allPhysio = all_PEP; thisTitle1= 'PEP'; thisYlim = [62,90]; thisYtick = [70:5:90];thisYlinePos = [68,66,64];thisLineWidth=7;thisLineGap = .5;
         elseif  iMeasure==5; allPhysio = all_SV; thisTitle1 = 'SV'; thisYlim = [25,45]; thisYtick = [25:5:45];thisYlinePos = [30,28,26];thisLineWidth=7;thisLineGap = .5;
-        elseif  iMeasure==6; allPhysio = all_TPR; thisTitle1 = 'TPR'; thisYlim = [2000,4000];thisYtick = [2500:500:4000];thisYlinePos = [2400,2300,2200];thisLineWidth=5;thisLineGap = 40;
+        elseif  iMeasure==6; allPhysio = all_TPR; thisTitle1 = 'TPR'; thisYlim = [2000,4000];thisYtick = [2500:500:4000];thisYlinePos = [2400,2300,2200];thisLineWidth=7;thisLineGap = 25;
         elseif  iMeasure==7; allPhysio = all_BP; thisTitle1 = 'BP';thisYlim = [58,110]; thisYtick = [70:10:110];thisYlinePos = [68,64,60];thisLineWidth=7;thisLineGap = 1;
         elseif  iMeasure==8; allPhysio = all_HF; thisTitle1 = 'HF'; thisYlim = [4,8]; thisYtick = [5:1:8];thisYlinePos = [5,4.7,4.4];thisLineWidth=7;thisLineGap = .1;
         end

@@ -1,14 +1,18 @@
 %{
-Time_Freq_Analysis_ERSP_Plot_Topos_WITHIN_ANOVA
+Time_Freq_Analysis_ERSP_Post_Hocs
 Author: Tom Bullock
-Date: 05.17.20
+Date: 06.07.20
+
+This just loads in the data for the significant alpha interaction and then
+averages over channels and does post-hoc t-tests T1vT5, T1vT3, T3vT5 for
+both Tx and Ct.  Messy, but it works for just this purpose (alpha)
 
 %}
 
-%load eeglab
-eeglabDir = '/home/bullock/Toolboxes/eeglab2019_1'; 
-cd(eeglabDir)
-eeglab
+% load eeglab
+% eeglabDir = '/home/bullock/Toolboxes/eeglab2019_1'; 
+% cd(eeglabDir)
+% eeglab
 
 clear
 close all
@@ -16,7 +20,8 @@ close all
 % set dirs
 parentDir = '/home/bullock/BOSS/CPT_Adaptation';
 sourceDir = [parentDir '/' 'Data_Compiled'];
-destDir = [parentDir '/' 'Plots'];
+%destDir = [parentDir '/' 'Plots'];
+destDir = [parentDir '/' 'Data_Compiled'];
 
 % baseline correction in plotting script?
 blCorrectInPlotScript=0;
@@ -70,7 +75,7 @@ end
 
 
 % loop through freqs
-for iFreq=freqIdx
+for iFreq=3 %freqIdx
     
     h=figure;
     set(gcf, 'Units', 'Normalized', 'OuterPosition', [0, 0.06, .18, .8]); % replace 1 with .8 to get back to normal
@@ -233,44 +238,206 @@ for iFreq=freqIdx
         
     end
     
+    % do follow up tests for significant interaction
     
-    
-    % plot ANOVA results onto topos
-    for iPlot=1:3
+    % convert p-vals into a vector of 0's (ns) and 1's (sig)
+    theseData = intVec;
+    for t=1:length(theseData)
         
-        if      iPlot==1; theseData = condVec; plotPos = 31:32;
-        elseif  iPlot==2; theseData = trialVec; plotPos = 33:34;
-        elseif  iPlot==3; theseData = intVec; plotPos = 35:36;
+        if theseData(t)<.05
+            statVec(t)=1;
+        else
+            statVec(t)=0;
         end
         
-        % convert p-vals into a vector of 0's (ns) and 1's (sig)
-        for t=1:length(theseData)
+    end
+    
+  
+    cnt=0;
+    for iChan=1:63
+        if statVec(iChan)==1
+            cnt=cnt+1;
+            statVecIdx(cnt) = iChan;
+        end
+    end
+    
+    
+    observedData = [squeeze(mean(mean(mean(ersp(:,1,:,statVecIdx,theseFreqs,theseTimes),5),6),4)),squeeze(mean(mean(mean(ersp(:,2,:,statVecIdx,theseFreqs,theseTimes),5),6),4))];
+    
+    
+    
+    
+    % do real pairwise tests for each session separately
+    [~,pVal,~,STATS] = ttest(observedData(:,1),observedData(:,5)); % tx T1vsT5
+    tValsObs(1,1) = STATS.tstat;
+    pValsObsParametric(1,1) = pVal;
+    
+    [~,pVal,~,STATS] = ttest(observedData(:,1),observedData(:,3)); % tx T1vsT3
+    tValsObs(1,2) = STATS.tstat;
+    pValsObsParametric(1,2) = pVal;
+    
+    [~,pVal,~,STATS] = ttest(observedData(:,3),observedData(:,5)); % tx T3vsT5
+    tValsObs(1,3) = STATS.tstat;
+    pValsObsParametric(1,3) = pVal;
+    
+    [~,pVal,~,STATS] = ttest(observedData(:,6),observedData(:,10)); % tx T1vsT5
+    tValsObs(2,1) = STATS.tstat;
+    pValsObsParametric(2,1) = pVal;
+    
+    [~,pVal,~,STATS] = ttest(observedData(:,6),observedData(:,8)); % tx T1vsT3
+    tValsObs(2,2) = STATS.tstat;
+    pValsObsParametric(2,2) = pVal;
+    
+    [~,pVal,~,STATS] = ttest(observedData(:,8),observedData(:,10)); % tx T3vsT5
+    tValsObs(2,3) = STATS.tstat;
+    pValsObsParametric(2,3) = pVal;
+    
+    
+    % create null data matrices
+    for i=1:1000
+        
+        for m=1:length(observedData)
+            thisPerm = randperm(size(observedData,2));
+            nullDataMat(m,:) = observedData(m,thisPerm);
+        end
+        
+        % do real pairwise tests for each session separately
+        [~,~,~,STATS] = ttest(nullDataMat(:,1),nullDataMat(:,5)); % tx T1vsT5
+        tValsNull(1,1,i) = STATS.tstat;
+        
+        [~,~,~,STATS] = ttest(nullDataMat(:,1),nullDataMat(:,3)); % tx T1vsT3
+        tValsNull(1,2,i) = STATS.tstat;
+        
+        [~,~,~,STATS] = ttest(nullDataMat(:,3),nullDataMat(:,5)); % tx T3vsT5
+        tValsNull(1,3,i) = STATS.tstat;
+        
+        [~,~,~,STATS] = ttest(nullDataMat(:,6),nullDataMat(:,10)); % tx T1vsT5
+        tValsNull(2,1,i) = STATS.tstat;
+        
+        [~,~,~,STATS] = ttest(nullDataMat(:,6),nullDataMat(:,8)); % tx T1vsT3
+        tValsNull(2,2,i) = STATS.tstat;
+        
+        [~,~,~,STATS] = ttest(nullDataMat(:,8),nullDataMat(:,10)); % tx T3vsT5
+        tValsNull(2,3,i) = STATS.tstat;
+        
+    end
+    
+    clear nullDataMat
+    
+    % get t-value indices for permuted stats
+    for iCond=1:2
+        for iTest=1:3
             
-            if theseData(t)<.05
-                statVec(t)=1;
+            % get observed and null t-values
+            theseNullValues  = sort(squeeze(tValsNull(iCond,iTest,:)),1,'descend');
+            thisObsValue = tValsObs(iCond,iTest);
+            
+            % compare obs to null dist
+            [~,tStatIdx] = min(abs(theseNullValues - thisObsValue));
+            
+            %%all_tStats(iCond,iTest) = tStatIdx;
+            
+            % sig or not?
+            if tStatIdx<25 || tStatIdx>975
+                sigMat(iCond,iTest) = 1;
+                tStatIdx_all(iCond,iTest) = tStatIdx;
             else
-                statVec(t)=0;
+                sigMat(iCond,iTest) = 0;
+                tStatIdx_all(iCond,iTest) = tStatIdx;
             end
-               
+            
         end
-        
-        t=subplot(6,6,plotPos);
-        
-        topoplot(statVec,chanlocs,...---
-            'maplimits',[0,1])
-        
-        % moves ANOVA plots down slightly
-        t.Position(2) = .05;
-        
-        clear statVec theseData
-        
     end
     
-    if analysisType==1
-        saveas(h,[destDir '/' 'EEG_ERSP_1-100Hz_No_ICA_Topos_' thisFreqName '.eps'],'epsc')
-    else
-        saveas(h,[destDir '/' 'EEG_ERSP_1-30Hz_Topos_Brain70_Dip15' thisFreqName '.eps'],'epsc')
-    end
+    
+    %% save results in struct
+    allAlphaIntStats.tStatIdx = tStatIdx_all;
+    allAlphaIntStats.tValsSigMat = sigMat;
+    allAlphaIntStats.tValsObs = tValsObs;
+    %allPupilStats.ANOVA = allANOVA;
+    allAlphaIntStats.pValsObsParametric = pValsObsParametric;
+    
+    
+    % save data 
+    save([destDir '/' 'ERSP_Alpha_Posthocs.mat'],'allAlphaIntStats')
+    
+    
+%     
+%     [h,p,~,STATS] = ttest(observedData(:,1),observedData(:,5));
+%     all_tStats(1,1) = STATS.tstat; 
+%     
+%     [h,p,~,STATS] = ttest(observedData(:,1),observedData(:,3));
+%     all_tStats(1,2) = STATS.tstat;
+% 
+%     [h,p,~,STATS] = ttest(observedData(:,3),observedData(:,5));
+%     all_tStats(1,3) = STATS.tstat;
+%     
+%     [h,p,~,STATS] = ttest(observedData(:,6),observedData(:,10));
+%     all_tStats(2,1) = STATS.tstat;
+%     
+%     [h,p,~,STATS] = ttest(observedData(:,6),observedData(:,8));
+%     all_tStats(2,2) = STATS.tstat;
+% 
+%     [h,p,~,STATS] = ttest(observedData(:,8),observedData(:,10));
+%     all_tStats(2,3) = STATS.tstat;
+    
+    
+    
+    
+    
+    
+%     % run ANOVA
+%     statOutput = teg_repeated_measures_ANOVA(observedData,[var1_levels var2_levels],{var1_name, var2_name});
+%     
+%     % create vectors of main and int p-values (this will do)
+%     condVec(iChan) = statOutput(1,4);
+%     trialVec(iChan) = statOutput(2,4);
+%     intVec(iChan) = statOutput(3,4);
+    
+    
+    
+    
+    
+    
+    
+    
+    
+%     % plot ANOVA results onto topos
+%     for iPlot=1:3
+%         
+%         if      iPlot==1; theseData = condVec; plotPos = 31:32;
+%         elseif  iPlot==2; theseData = trialVec; plotPos = 33:34;
+%         elseif  iPlot==3; theseData = intVec; plotPos = 35:36;
+%         end
+%         
+%         % convert p-vals into a vector of 0's (ns) and 1's (sig)
+%         for t=1:length(theseData)
+%             
+%             if theseData(t)<.05
+%                 statVec(t)=1;
+%             else
+%                 statVec(t)=0;
+%             end
+%                
+%         end
+%         
+%         t=subplot(6,6,plotPos);
+%         
+%         topoplot(statVec,chanlocs,...---
+%             'maplimits',[0,1])
+%         
+%         % moves ANOVA plots down slightly
+%         t.Position(2) = .05;
+%         
+%         clear statVec theseData
+%         
+%     end
+%     
+%     if analysisType==1
+%         saveas(h,[destDir '/' 'EEG_ERSP_1-100Hz_No_ICA_Topos_' thisFreqName '.eps'],'epsc')
+%     else
+%         saveas(h,[destDir '/' 'EEG_ERSP_1-30Hz_Topos_Brain70_Dip15' thisFreqName '.eps'],'epsc')
+%     end
     
     
     
@@ -278,187 +445,3 @@ for iFreq=freqIdx
     
 end
 
-
-
-
-
-
-
-
-
-
-
-
-% 
-% 
-% 
-% % plot freqs
-% for iFreq=1 %freqIdx
-%     
-%     % stuff
-%     if analysisType==1
-%         if iFreq==1
-%             theseFreqs = 1:3;
-%             theseMapLimits = [-4,4];
-%             thisFreqName = 'Delta';
-%         elseif iFreq==2
-%             theseFreqs = 4:7;
-%             theseMapLimits = [-2,4];
-%             thisFreqName = 'Theta';
-%         elseif iFreq==3
-%             theseFreqs = 8:14;
-%             theseMapLimits = [-1,3];
-%             thisFreqName = 'Alpha';
-%         elseif iFreq==4
-%             theseFreqs = 15:30;
-%             theseMapLimits = [-1,5];
-%             thisFreqName = 'Beta';
-%         elseif iFreq==5
-%             theseFreqs=31:100;
-%             theseMapLimits = [-1,10];
-%             thisFreqName = '30-100Hz';
-%         end
-%     elseif analysisType==3||analysisType==6
-%         if iFreq==1
-%             theseFreqs = 1:3;
-%             theseMapLimits = [-1,4];
-%             thisFreqName = 'Delta';
-%         elseif iFreq==2
-%             theseFreqs = 4:7;
-%             theseMapLimits = [-1,2];
-%             thisFreqName = 'Theta';
-%         elseif iFreq==3
-%             theseFreqs = 8:14;
-%             theseMapLimits = [-1,3];
-%             thisFreqName = 'Alpha';
-%         elseif iFreq==4
-%             theseFreqs = 15:30;
-%             theseMapLimits = [-1,5];
-%             thisFreqName = 'Beta';
-%         end
-%         
-%         
-%     end
-%     
-% %     if analysisType==1
-% %         theseFreqs = 1:50;
-% %         theseMapLimits = [-2,8];
-% %         iFreq=5;
-% %         thisFreqName='1-100Hz';
-% %     end
-%     
-%     % plot topo
-%     h=figure;
-%     set(gcf, 'Units', 'Normalized', 'OuterPosition', [0, 0.04, .2, 0.70]);
-%     
-%     
-%     cnt=0;
-%     for iExposures=1:5
-%         for iCond=1:2
-%             for iTimes=2;%1:3
-%                 %for iExposures=1:5
-%                 if      iTimes==1; theseTimes = 10:24; %   10:24;%25:40;
-%                 elseif  iTimes==2; theseTimes = 80:155; %   78:160;
-%                 elseif  iTimes==3; theseTimes = 180:194; %    182:197;
-%                 end
-%                 
-%                 % if doing 1-30 Hz analysis, shift times to compensate for
-%                 % cut off at start of ERSP
-%                 if analysisType>1
-%                     theseTimes=theseTimes-1;
-%                 end
-%                 
-%                 if      iCond==1 && iTimes==1; thisTitle='ICE Baseline';
-%                 elseif  iCond==1 && iTimes==2; thisTitle='ICE CPT';
-%                 elseif  iCond==1 && iTimes==3; thisTitle='ICE Recovery';
-%                 elseif  iCond==2 && iTimes==1; thisTitle='WARM Baseline';
-%                 elseif  iCond==2 && iTimes==2; thisTitle='WARM CPT';
-%                 elseif  iCond==3 && iTimes==3; thisTitle='WARM Recovery';
-%                 end
-%                 
-%                 cnt=cnt+1;
-%                 cntVec = [1,2,4,5,7,8,10,11,13,14];
-%                 subplot(5,3,cntVec(cnt))
-%                 %pause(1)
-%                 theseData = squeeze(mean(mean(mean(ersp(:,iCond,iExposures,:,theseFreqs,theseTimes),1),5),6));
-%                 
-%                 %theseMapLimits = 'maxmin';
-%                 
-%                 topoplot(theseData,chanlocs,...
-%                     'maplimits',theseMapLimits)
-%                 %title(thisTitle)
-%                 %cbar
-%                 
-%                 %end
-%             end
-%         end
-%     end
-%     
-% 
-% 
-% 
-%     
-%     theseMapLimits = [0,1];
-%     
-% %     if analysisType==1
-% %         theseFreqs = 1:50;
-% %     end
-%     
-%     % plot topo
-%     %figure;
-%     cnt=0;
-%     for iExposures=1:5
-%         for iTimes=2;%1:3
-%             %for iExposures=1:5
-% %             if      iTimes==1; theseTimes = 1:24;thisTitle = 'Baseline - Pairwise';
-% %             elseif  iTimes==2; theseTimes = 78:160; thisTitle = 'Immersion - Pairwise';
-% %             elseif  iTimes==3; theseTimes = 182:197; thisTitle = 'Recovery - Pairwise';
-% %             end
-%             
-%             if      iTimes==1; theseTimes = 10:24; thisTitle = 'Baseline - Pairwise';
-%             elseif  iTimes==2; theseTimes = 80:155; thisTitle = 'Immersion - Pairwise';
-%             elseif  iTimes==3; theseTimes = 180:194; thisTitle = 'Recovery - Pairwise';
-%             end
-%             
-%             % if doing 1-30 Hz analysis, shift times to compensate for
-%             % cut off at start of ERSP
-%             if analysisType>1
-%                 theseTimes=theseTimes-1;
-%             end
-%             
-%             cnt=cnt+1;
-%             cntVec = [3,6,9,12,15];
-%             subplot(5,3,cntVec(cnt))
-%             
-%             
-% % %             %pause(1)
-% %             theseData1 = squeeze(mean(mean(ersp(:,1,iExposures,:,theseFreqs,theseTimes),5),6)); %se01
-% %             theseData2 = squeeze(mean(mean(ersp(:,2,iExposures,:,theseFreqs,theseTimes),5),6)); %se02
-% %             theseData = ttest(theseData1,theseData2);
-% %             disp('non-resampled stats used')
-% 
-%             theseData = squeeze(sigVec(iExposures,iFreq,:));
-%             disp('resampled stats')
-%             
-%             
-%             topoplot(theseData,chanlocs,...---
-%                 'maplimits',theseMapLimits)
-%             %title(thisTitle)
-%             %cbar
-%             
-%             
-%         end
-%     end
-%     
-%     if analysisType==3
-%         saveas(h,[destDir '/' 'EEG_ERSP_1-30_Brain80_Topos_' thisFreqName '.eps'],'epsc')
-%     elseif analysisType==1
-%         saveas(h,[destDir '/' 'EEG_ERSP_1-100Hz_No_ICA_Topos_' thisFreqName '.eps'],'epsc')
-%     elseif analysisType==6
-%         saveas(h,[destDir '/' 'EEG_ERSP_1-30Hz_Topos_Brain70_Dip15' thisFreqName '.eps'],'epsc')
-%     end
-% 
-%     
-%     %close all
-%     
-% end

@@ -27,6 +27,8 @@ elseif analysisType==5
 elseif analysisType==6
     %sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit';
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_NewBL';
+elseif analysisType==12 % no baseline corect,anticipatory analysis for MS
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_No_BL_Corr';
 end
 
 destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
@@ -70,6 +72,8 @@ elseif analysisType==6
     %save([destDir '/'
     %'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs')%original
     save([destDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP_NewBL.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs') %new bl
+elseif analysisType==12
+    save([destDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP_NoBlCorr.mat'],'erspAll','taskOrderStruct','chanlocs','times','freqs') %new bl
 end
 
 return

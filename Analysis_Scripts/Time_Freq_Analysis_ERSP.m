@@ -65,6 +65,9 @@ elseif analysisType==5
 elseif analysisType==6
     sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_50Hz_LP_DIPFIT';
     destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-50Hz_ICLabel_Dipfit';
+elseif analysisType==7
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_50Hz_LP_DIPFIT';
+    destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-50Hz_ICLabel_Dipfit_No_BL_Corr';
 end
     
     
@@ -213,8 +216,10 @@ if analysisType==0
     save([destDir '/' sprintf('sj%d_ersp_1-500Hz.mat',sjNum)],'ersp','times','freqs','chanlocs')
 elseif analysisType==1
     save([destDir '/' sprintf('sj%d_ersp_1-100Hz.mat',sjNum)],'ersp','times','freqs','chanlocs')
-elseif analysisType>1
+elseif analysisType==6
     save([destDir '/' sprintf('sj%d_ersp_1-30Hz.mat',sjNum)],'ersp','times','freqs','chanlocs')
+elseif analysisType==7
+    save([destDir '/' sprintf('sj%d_ersp_1-30Hz_No_Bl_Corr.mat',sjNum)],'ersp','times','freqs','chanlocs')
 end
 
 return

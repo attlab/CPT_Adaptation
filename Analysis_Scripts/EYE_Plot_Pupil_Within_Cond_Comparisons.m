@@ -20,7 +20,7 @@ plotDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
 % baseline correction [Note that Event times are 1,20000,32500,77500,97500]
-baselineCorrect=0;
+baselineCorrect=1;
 
 % use resampled stats (requires separate script to be run) (0=no, 1=yes)
 useResampledStats = 1;
@@ -51,7 +51,7 @@ paMatAll = paMattAll_DS;
 
 % plot settings
 theseXlims=[0,195];
-theseXticks=[0,40,65,155,195];
+theseXticks=[0,40,65,95,125,155,195];
 theseYlims = [-.3,1];
 
 % normalize between -1 and 1

@@ -1,4 +1,4 @@
-function Time_Freq_Analysis_ERSP_ICA(sjNum)
+function Time_Freq_Analysis_ERSP_ICA(sjNum,analysisType)
 
 %{
 ERSP_Time_Freq_Analysis
@@ -31,8 +31,11 @@ cd ..
 % set dirs
 sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_50Hz_LP_DIPFIT';
 %destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit';% original
-destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_NewBL';% correct baseline in newtimef function
-
+if analysisType==11
+    destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_NewBL';% correct baseline in newtimef function
+elseif analysisType==12
+    destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_No_BL_Corr'; % no baseline correction at all for anticipaotry stuff
+end
   
 % loop through sessions (1=treatment, 2=control) and CPT exposures (tasks)
 ersp=[];
@@ -92,7 +95,11 @@ for iSession=1:2
     %erspSettings.timesout=200;
     erspSettings.timesout= find(EEG.times==4):1000:EEG.times(end); % actually 2002 to 192002
     
-    
+    if analysisType==11
+        thisBaseline = [26000,40000];
+    elseif analysisType==12
+         thisBaseline = NaN;
+    end
     
     % generate an ERSP for each epoch [figure out how to plot specific
     % times using timesout]
@@ -108,7 +115,7 @@ for iSession=1:2
                 'plotersp','off',...
                 'plotitc','off',...
                 'plottype','image',...
-                'baseline',[26000,40000]); % apply baseline correction
+                'baseline',thisBaseline); % apply baseline correction
             
             ersp(iSession,iEpoch,iChan,:,:) = erspTmp;
         end
@@ -117,7 +124,11 @@ for iSession=1:2
     comps.goodIC(iSession) = {goodIcIdx};
     comps.goodRV(iSession) = {goodRvIdx};
     
-    save([destDir '/' sprintf('sj%d_ersp_1-30Hz.mat',sjNum)],'ersp','times','freqs','chanlocs','comps')
+    if analysisType==11
+        save([destDir '/' sprintf('sj%d_ersp_1-30Hz.mat',sjNum)],'ersp','times','freqs','chanlocs','comps')
+    elseif analysisType==12
+        save([destDir '/' sprintf('sj%d_ersp_1-30Hz.mat',sjNum)],'ersp','times','freqs','chanlocs','comps')
+    end
     
 end
 
