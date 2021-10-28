@@ -1,12 +1,15 @@
-# CPT_Adaptation
+# Habituation of the Stress Multiplex to Repeated Cold Pressor Exposure
 
-Scripts for analyzing the preprocessed CPT_Adapatation EEG data (preprocessed on BOSS cluster and located in MASTER structure)
+<Insert paper details and abstract here when accepted>
+
+This repository contains scripts for analyzing the preprocessed CPT_Adapatation EEG data.  The data are available upon request.
 
 Script Authors: 
 
-Tom Bullock, Neil Dundon
+Tom Bullock, Attention Lab, UCSB 
+Neil Dundon, Action Lab, UCSB
 
-Last updated: 06.25.20
+Repository last updated: 10.27.21
 
 
 
@@ -36,9 +39,26 @@ Last updated: 06.25.20
 
 ## EEG Analyses
 
-`Time_Freq_Analysis_ERSP.m`[+ job + compile + plot + topoPlot] Run newtimef on preprocessed EEG data, compile, plot
-
 `EEG_Stats_Resample_Within_ANOVA.m` + job Computes permuted stats
+
+`EEG_Stats_Resample_Within_ANOVA_TimeGrad.m` + job Computes permuted stats averaged over time bins [no baseline correction
+
+`EEG_Stats_Resample_Within_ANOVA_TimeGrad_Base.m + job Computes permuted stats averaged over time bins [baseline correction
+
+`Time_Freq_Analysis_ERSP_ICA.m` + job Generate ERSPS (run newtimef on data)
+
+`Time_Freq_Analysis_ERSP_Compile.m` Compile ERSP data from individual subjects
+
+`Time_Freq_Analysis_ERSP_Plot.m` Plot ERSPs 
+
+`Time_Freq_Analysis_ERSP_Plot_Topos*.m` Generate topo plots for manuscript for ANT (anticipatory) and REC (during CPT and recovery)
+
+`Time_Freq_Analysis_Post_Hocs*.m` Post hoc stats for specific bands
+
+`Time_Freq_Analysis_ERSP_Stats_Resample.m` Run resampled stats on data for main analysis
+
+`Time_Freq_Analysis_ERSP_Stats_Resample_1_100Hz.m`+job Broadband analysis (for supplemental info)
+
 
 
 
@@ -60,15 +80,7 @@ Last updated: 06.25.20
 
 `Physio_Interactions.m` Run quick stats to test for interactions between induced stress and evoked stress across different cardiac measures
 
-`Physio_Plot.m` Plot pairwise comparisions for each cardiac measure (not in manuscript)
-
-`Physio_plot_Compare_Within_Session.m` Create one plot for each condition with multiple lines (no stats, not in manuscript)
-
-`Physio_Plot_Compare_Within_Session_For_MS.m` Create plots for manuscript (ANOVA + pairwise tests)
-
-`Physio_Plot_Compare_Within_Session_With_Stats.m` old ???
-
-`Physio_Plot_Compare_Within_Session_With_Stats_ANOVA.m` old ???
+`Physio_Plot_Compare_Within_Session_With_Stats_ANOVA.m` Create physio plots for manuscript
 
 
 
@@ -106,9 +118,13 @@ Last updated: 06.25.20
 
 ## Cortisol 
 
-`Cortisol_Plot.m` Plot cortisol results (currently all subjects)
+`Cortisol_Plot.m` Plot cortisol results averaged across time of day (TOD)
 
 `Cortisol_Stats_Resample.m` Generate resampled stats
+
+`Cortisol_Plot_Split_TOD.m` Plot cortisol results split by AM/PM session
+
+`Cortisol_Stats_Resample_TOD.m` Generate resampled stats plit by AM/PM session
 
 
 
@@ -120,10 +136,13 @@ Last updated: 06.25.20
 
 `my_fixtrap.m` Neil's trapizoidal filter
 
-`shadedErrorBar.m` Creates exactly that
+`shadedErrorBar.m` Creates exactly that (borrowed)
+
+`simple_mixed_anova.m` Does that (borrowed)
 
 
-## Most Relevant Scripts for Michael
+
+## Most Relevant Scripts for Michael [REMOVE THIS FOR FINAL VERSION OF REPO!]
 
 `Time_Freq_Analysis_ERSP_ICA.m` Loads data that has already been run through ICA, applies component rejection criteria, does time/freq analysis
 
@@ -131,5 +150,5 @@ Last updated: 06.25.20
 
 `EYE_Plot_Pupil_Within_Cond_Comparisons.m` Loads pupil data, rejects bad subjects, normalizes and baseline corrects (optional)
 
-`Physio_Plot.m` Loads master physio data file, removes bad subjects on a per measure basis, plots data
+`Physio_Plot_For_Manuscript.m` Loads master physio data file, removes bad subjects on a per measure basis, plots data
 
