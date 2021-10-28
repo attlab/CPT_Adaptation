@@ -7,9 +7,10 @@ This repository contains scripts for analyzing the preprocessed CPT_Adapatation 
 Script Authors: 
 
 Tom Bullock, Attention Lab, UCSB 
+
 Neil Dundon, Action Lab, UCSB
 
-Repository last updated: 10.27.21
+Repository last updated: 10.27.21 (Tom)
 
 
 
