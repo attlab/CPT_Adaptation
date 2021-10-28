@@ -1,6 +1,6 @@
 # Habituation of the Stress Multiplex to Repeated Cold Pressor Exposure
 
-<Insert paper details and abstract here when accepted>
+Insert paper details and abstract here when accepted!
 
 This repository contains scripts for analyzing the preprocessed CPT_Adapatation EEG data.  The data are available upon request.
 
