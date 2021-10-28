@@ -20,7 +20,7 @@ plotDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
 % baseline correction [Note that Event times are 1,20000,32500,77500,97500]
-baselineCorrect=1;
+baselineCorrect=0;
 
 % use resampled stats (requires separate script to be run) (0=no, 1=yes)
 useResampledStats = 1;
@@ -41,6 +41,13 @@ paMatAll = paMatAll(b,:,:,:,:);
 if baselineCorrect==1
     paMatBL= nanmean(paMatAll(:,:,:,:,round(26000/2):round(40000/2)),5);
     paMatAll = paMatAll - paMatBL;
+end
+
+%% select time period for plotting ANOVA and t-test results only
+if baselineCorrect==0
+    timesForPlotting = 1:64;
+else
+    timesForPlotting = 65:195;
 end
 
 % downsample to 1Hz [average across each second (500Hz original SR)]
@@ -134,7 +141,7 @@ for theseLines=1:3
     end
     
     for s = 1:length(hResults)
-        if hResults(s)<.05
+        if hResults(s)<.05 && ismember(s,timesForPlotting)
             line([s,s+1],[YlinePos,YlinePos],'linewidth',30,'color',thisColor1./255);
         end
     end
@@ -240,7 +247,7 @@ for iCond=1:2
         end
         
         for s = 1:length(hResults)
-            if hResults(s)==1 && intVec(s)<.05
+            if hResults(s)==1 && intVec(s)<.05 && ismember(s,timesForPlotting)
                 line([s,s+1],[YlinePos,YlinePos],'linewidth',thisLineWidth,'color',thisColor1./255);
                 line([s,s+1],[YlinePos-thisLineGap,YlinePos-thisLineGap],'linewidth',thisLineWidth,'color',thisColor2./255);
             end

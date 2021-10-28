@@ -12,7 +12,7 @@ clear
 close all
 
 % do baseline correction? (0=no, 1=yes)
-plotBlCorrectedPhysio = 0;
+plotBlCorrectedPhysio = 1;
 
 % use resampled stats (0=no, 1=yes)
 useResampledStats = 1;
@@ -104,6 +104,14 @@ all_SV = all_SV(:,:,:,1:100:19500);
 all_TPR = all_TPR(:,:,:,1:100:19500);
 all_CO = all_CO(:,:,:,1:100:19500);
 all_HF = all_HF(:,:,:,1:100:19000);
+
+%% select time period for plotting ANOVA and t-test results only
+if plotBlCorrectedPhysio==0
+    timesForPlotting = 1:64;
+else
+    timesForPlotting = 65:195;
+end
+   
 
 % loop through measures and plot
 for iMeasure=1:8
@@ -224,7 +232,7 @@ for iMeasure=1:8
         end
         
         for s = 1:length(hResults)
-            if hResults(s)<.05
+            if hResults(s)<.05 && ismember(s,timesForPlotting)
                 line([s,s+1],[YlinePos,YlinePos],'linewidth',30,'color',thisColor1./255);
             end
         end
@@ -361,7 +369,7 @@ for iMeasure=1:8
             end
             
             for s = 1:length(hResults)
-                if hResults(s)==1 && intVec(s)<.05 % if t-test is sig and ANOVA interaction is sig, then plot line
+                if hResults(s)==1 && intVec(s)<.05 && ismember(s,timesForPlotting)% if t-test is sig and ANOVA interaction is sig && is in the time period for plotting, then plot line
                     line([s,s+1],[YlinePos,YlinePos],'linewidth',thisLineWidth,'color',thisColor1./255);
                     line([s,s+1],[YlinePos-thisLineGap,YlinePos-thisLineGap],'linewidth',thisLineWidth,'color',thisColor2./255);
                 end
