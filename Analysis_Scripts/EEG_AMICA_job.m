@@ -2,6 +2,7 @@
 EEG_AMICA_job
 Author(s): Neil (modified by Tom)
 Date: 01.09.20
+
 %}
 
 clear
@@ -36,9 +37,7 @@ try
     
     if runInParallel
         
-        %job.submit
         submit(job)
-
         wait(job,'finished')
         results = getAllOutputArguments(job)
         

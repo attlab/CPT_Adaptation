@@ -1,30 +1,25 @@
 %{
-Time_Freq_Analysis_ERSP_Plot_Topos_WITHIN_ANOVA_Time_Graded ANTICIPATORY!
+EEG_TFA_Plot_Topos_ERSPS_Anticipatory
 Author: Tom Bullock, UCSB Attention Lab
-Date: 10.12.20
+Date: 10.12.20 (updated 12.02.22)
 
-Create a grip of plots that divides CPT immersion period into
-early/middle/late (also possibly bl and rec)
+Plot baseline activity across the freq bands
 
-THIS IS JUST BASELINE!!!
 
 %}
 
-% %load eeglab
+clear
+close all
+
+% %load eeglab 
 % eeglabDir = '/home/bullock/Toolboxes/eeglab2019_1'; 
 % cd(eeglabDir)
 % eeglab
-
-clear
-close all
 
 % set dirs
 parentDir = '/home/bullock/BOSS/CPT_Adaptation';
 sourceDir = [parentDir '/' 'Data_Compiled'];
 destDir = [parentDir '/' 'Plots'];
-
-% baseline correction in plotting script?
-blCorrectInPlotScript=0;
 
 % import permuted stats?
 usePermStats=1;
@@ -32,218 +27,90 @@ if usePermStats==0
     disp('NOT USING PERM STATS!!! CAUTION!')
 end
 
-% load compiled ERSP dataset and perm stats
-analysisType=2; % 1 = 1-100 Hz, 2 = 1-30 Hz
+% load compiled ERSP dataset
+load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP_NoBlCorr.mat'])
 
-if analysisType==1
-    load([sourceDir '/' 'GRAND_ERSP_1-100Hz_NewBL.mat' ])
-    %load([sourceDir '/' 'STATS_EEG_ERSP_1-100Hz_TOPOS.mat'])
-    %load([sourceDir '/' 'STATS_WITHIN_Resampled_ERSP_ANOVA_100Hz.mat'])%Bl
-    %calculated in plotting script)
-    load([sourceDir '/' 'STATS_WITHIN_Resampled_ERSP_ANOVA_100Hz_NewBL.mat']) % new (bl calculated in ERSP compute script)
-else
-    load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP_NoBlCorr.mat']) %original
-    %load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP_NewBL.mat'])
-
-    %load([sourceDir '/' 'STATS_EEG_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'])
-    %load([sourceDir '/' 'STATS_WITHIN_Resampled_ERSP_ANOVA_30Hz.mat']) % original (BL calculated in plotting script)
-    %load([sourceDir '/' 'STATS_WITHIN_Resampled_ERSP_ANOVA_30Hz_NewBL.mat']) % new (bl calculatd in ERSP compute script)
-    
-end
-
-
-
-
-% analysis specific settings
-if analysisType==1
-    freqIdx=1:5;
-else
-    freqIdx=1:4;
-end
-% 
-% % baseline correct
-% if blCorrectInPlotScript==1
-%     if analysisType>1
-%         erspBL = mean(erspAll(:,:,:,:,:,25:39),6);
-%     else
-%         erspBL = mean(erspAll(:,:,:,:,:,26:40),6);
-%     end
-%     ersp = erspAll-erspBL;
-% else
-%     ersp = erspAll;
-%     disp('BL CORRECTION IN PLOTTING SCRIPT DISABLED!!!!')
-%     pause(1)
-% end
-
-
+% rename var
 ersp = erspAll;
 
 % loop through freqs
-for iFreq=4;%freqIdx
+for iFreq=1:4 %was 4
     
+    % create figure
     h=figure;
-    set(gcf, 'Units', 'Normalized', 'OuterPosition',[0 0.0282 0.2288 0.9446]); % replace 1 with .8 to get back to normal
+    set(gcf, 'Units', 'Normalized', 'OuterPosition',[0 0.0282 0.2288 0.9446]); 
     
-    
-    if analysisType==1
-        
-        if iFreq==1
-            theseFreqs = 1:3;
-            %theseMapLimits = [-4,4];
-            theseMapLimits = [-6,0];
-            thisFreqName = 'Delta';
-        elseif iFreq==2
-            theseFreqs = 4:7;
-            %theseMapLimits = [-2,4];
-            theseMapLimits = [-6,0];
-            thisFreqName = 'Theta';
-        elseif iFreq==3
-            theseFreqs = 8:14;
-            %theseMapLimits = [-1,3];
-            theseMapLimits = [-6,0];
-            thisFreqName = 'Alpha';
-        elseif iFreq==4
-            theseFreqs = 15:30;
-            %theseMapLimits = [-1,5];
-            theseMapLimits = [-6,2];
-            thisFreqName = 'Beta';
-        elseif iFreq==5
-            theseFreqs=31:100;
-            %theseMapLimits = [-1,10];
-            theseMapLimits = [-6,2];
-            thisFreqName = '30-100Hz';
-        end
-        
-    else
-        
-        if iFreq==1
-            theseFreqs = 1:3;
-            theseMapLimits = [-6,8];
-            %theseMapLimits = [-4,0];
-            thisFreqName = 'Delta';
-        elseif iFreq==2
-            theseFreqs = 4:7;
-            theseMapLimits = [-10,4];
-            %theseMapLimits = [-4,0];
-            thisFreqName = 'Theta';
-        elseif iFreq==3
-            theseFreqs = 8:14;
-            theseMapLimits = [-8,2];
-            %theseMapLimits = [-4,0];
-            thisFreqName = 'Alpha';
-        elseif iFreq==4
-            theseFreqs = 15:30;
-            theseMapLimits = [-16,-2];
-            %theseMapLimits = [-4,0];
-            thisFreqName = 'Beta';
-        end
-        
+    % freq band specific settings
+    if iFreq==1
+        theseFreqs = 1:3;
+        theseMapLimits = [-6,8];
+        thisFreqName = 'Delta';
+    elseif iFreq==2
+        theseFreqs = 4:7;
+        theseMapLimits = [-10,4];
+        thisFreqName = 'Theta';
+    elseif iFreq==3
+        theseFreqs = 8:14;
+        theseMapLimits = [-8,2];
+        thisFreqName = 'Alpha';
+    elseif iFreq==4
+        theseFreqs = 15:30;
+        theseMapLimits = [-16,-2];
+        thisFreqName = 'Beta';
     end
     
-    
-    
-    
+    % loop through trials (exposures) and conditions (CPT/WPT)
     cnt=0;
     for iExposures=1:5
-        for iTimes=1
+        for iTimes=1 % only plotting one time-frame, so this is redundant, but i left in anyway
             for iCond=1:2
                 
-                %for iExposures=1:5
-                if      iTimes==1; theseTimes = 2:40; % baseline   
-%                 elseif  iTimes==2; theseTimes = 65:94; % early immersion
-%                 elseif  iTimes==3; theseTimes = 95:124; % mid immersion
-%                 elseif  iTimes==4; theseTimes = 125:154; % late immersion
-%                 elseif  iTimes==5; theseTimes = 155:191; %    182:197;
-                end
+                % select times for averaging over
+                theseTimes = 1:39;
                 
-                % if doing 1-30 Hz analysis, shift times to compensate for
-                % cut off at start of ERSP
-                if analysisType>1
-                    theseTimes=theseTimes-1;
-                end
-                
+                % generate plot titles
                 if      iCond==1 && iTimes==1; thisTitle='CPT B';
-                elseif  iCond==1 && iTimes==2; thisTitle='CPT E';
-                elseif  iCond==1 && iTimes==3; thisTitle='CPT M';
-                elseif  iCond==1 && iTimes==4; thisTitle='CPT L';
-                elseif  iCond==1 && iTimes==5; thisTitle='CPT R';
                 elseif  iCond==2 && iTimes==1; thisTitle='WPT B';
-                elseif  iCond==2 && iTimes==2; thisTitle='WPT E';
-                elseif  iCond==2 && iTimes==3; thisTitle='WPT M';
-                elseif  iCond==2 && iTimes==4; thisTitle='WPT L';
-                elseif  iCond==2 && iTimes==5; thisTitle='WPT R';
                 end
                 
+                % add to counter
                 cnt=cnt+1;
-                %                 cntVec = [1,2,4,5,7,8,10,11,13,14];
-                %                 subplot(5,3,cntVec(cnt))
                 
-%                 cntVec = [
-%                     1,2,4,5,7,8,...
-%                     10,11,13,14,16,17,...
-%                     19,20,22,23,25,26,...
-%                     28,29,31,32,34,35,...
-%                     37,38,40,41,43,44,...
-%                     ]+.5;
-
+                % create vector 
                 cntVec = [1,2,4,5,7,8,10,11,13,14]+.5;
                 
-                %subplot(5,10,cntVec(cnt):cntVec(cnt)+2)
+                % create subplot
                 subplot(6,3,cntVec(cnt));
                 
-                
-                
-                %pause(1)
+                % specify data for plot
                 theseData = squeeze(mean(mean(mean(ersp(:,iCond,iExposures,:,theseFreqs,theseTimes),1),5),6));
                 
                 % creat a quick summary of activation for reality check
-                dataSummary(iExposures,iCond) = mean(theseData);
+                %dataSummary(iExposures,iCond) = mean(theseData);
                 
-                
-                
-                %theseMapLimits = 'maxmin';
-                
-                %h=figure;
-                
+                % generate plot
                 topoplot(theseData,chanlocs,...
                     'maplimits',theseMapLimits,...
                     'electrodes','on')
                 %cbar
                 
-%                   h=figure;
-%                   topoplot(theseData,chanlocs);
-%                   cbar
-                
-                %title(thisTitle)
-                %cbar
-                
-                %end
             end
         end
     end
     
     
-    %% add ANOVA statistical comparisions
+    % add ANOVA statistical comparisions
     clear condVec trialVec intVec
     
     for iTimes=1
         
-        %for iExposures=1:5
-        if      iTimes==1; theseTimes = 2:40; % baseline
-%         elseif  iTimes==2; theseTimes = 65:94; % early immersion
-%         elseif  iTimes==3; theseTimes = 95:124; % mid immersion
-%         elseif  iTimes==4; theseTimes = 125:154; % late immersion
-%         elseif  iTimes==5; theseTimes = 155:191; %    182:197;
-        end
+        % select times
+        theseTimes = 2:40; % baseline
         
+        % select stats to use (compute on the fly OR load resampled?)
         if usePermStats==1
             
-            
-            
             load([sourceDir '/' 'STATS_WITHIN_Resampled_ERSP_ANOVA_30Hz_NewBL_BASE_ONLY_' thisFreqName '.mat'])
-            
-           
-            
             for iChan=1:63
                 condVec(iChan,iTimes) =  allANOVA(iFreq,iChan).var1.pValueANOVA;
                 trialVec(iChan,iTimes) = allANOVA(iFreq,iChan).var2.pValueANOVA;
@@ -252,14 +119,14 @@ for iFreq=4;%freqIdx
             
         else
             
+            % add resample toolbox to path
             addpath(genpath('/home/bullock/BOSS/CPT_Adaptation/resampling'))
+            
             % name variables
             var1_name = 'cond';
             var1_levels = 2;
             var2_name = 'trial';
             var2_levels = 5;
-            
-            %clear condVec trialVec intVec
             
             % loop through all channels
             for iChan=1:63
@@ -282,12 +149,9 @@ for iFreq=4;%freqIdx
     
     clear cntVec
     
-    % plot ANOVA results onto topos
+    % plot ANOVA results onto topos (cond, trial, interaction)
     for iTimes=1
         for iPlot=1:3
-            
-            
-            
             
             if      iPlot==1; theseData = condVec(:,iTimes); plotPos = 16; thisTitle = 'Cond';
             elseif  iPlot==2; theseData = trialVec(:,iTimes); plotPos = 17; thisTitle = 'Trial';
@@ -295,20 +159,20 @@ for iFreq=4;%freqIdx
             end
             
             % convert p-vals into a vector of 0's (ns) and 1's (sig)
-            for t=1:length(theseData)
-                
+            for t=1:length(theseData) 
                 if theseData(t)<.05
                     statVec(t)=1;
                 else
                     statVec(t)=0;
                 end
-                
             end
             
+            % generate subplot
             t=subplot(6,3,plotPos);
             
             %title(thisTitle);
             
+            % plot data
             topoplot(statVec,chanlocs,...
                 'maplimits',[0,1],...
                 'electrodes','on')
@@ -321,199 +185,6 @@ for iFreq=4;%freqIdx
         end
     end
     
-    if analysisType==1
-        saveas(h,[destDir '/' 'EEG_ERSP_1-100Hz_No_ICA_Topos_TimeGraded' thisFreqName '.eps'],'epsc')
-    else
-        saveas(h,[destDir '/' 'EEG_ERSP_1-30Hz_Topos_Brain70_Dip15_TimeGraded_BASE_ONLY' thisFreqName '.eps'],'epsc')
-    end
-    
-    
-    
-    
-    
+    saveas(h,[destDir '/' 'EEG_ERSP_1-30Hz_Topos_Brain70_Dip15_TimeGraded_BASE_ONLY' thisFreqName '.eps'],'epsc')
+
 end
-
-
-
-
-
-
-
-
-
-
-
-
-% 
-% 
-% 
-% % plot freqs
-% for iFreq=1 %freqIdx
-%     
-%     % stuff
-%     if analysisType==1
-%         if iFreq==1
-%             theseFreqs = 1:3;
-%             theseMapLimits = [-4,4];
-%             thisFreqName = 'Delta';
-%         elseif iFreq==2
-%             theseFreqs = 4:7;
-%             theseMapLimits = [-2,4];
-%             thisFreqName = 'Theta';
-%         elseif iFreq==3
-%             theseFreqs = 8:14;
-%             theseMapLimits = [-1,3];
-%             thisFreqName = 'Alpha';
-%         elseif iFreq==4
-%             theseFreqs = 15:30;
-%             theseMapLimits = [-1,5];
-%             thisFreqName = 'Beta';
-%         elseif iFreq==5
-%             theseFreqs=31:100;
-%             theseMapLimits = [-1,10];
-%             thisFreqName = '30-100Hz';
-%         end
-%     elseif analysisType==3||analysisType==6
-%         if iFreq==1
-%             theseFreqs = 1:3;
-%             theseMapLimits = [-1,4];
-%             thisFreqName = 'Delta';
-%         elseif iFreq==2
-%             theseFreqs = 4:7;
-%             theseMapLimits = [-1,2];
-%             thisFreqName = 'Theta';
-%         elseif iFreq==3
-%             theseFreqs = 8:14;
-%             theseMapLimits = [-1,3];
-%             thisFreqName = 'Alpha';
-%         elseif iFreq==4
-%             theseFreqs = 15:30;
-%             theseMapLimits = [-1,5];
-%             thisFreqName = 'Beta';
-%         end
-%         
-%         
-%     end
-%     
-% %     if analysisType==1
-% %         theseFreqs = 1:50;
-% %         theseMapLimits = [-2,8];
-% %         iFreq=5;
-% %         thisFreqName='1-100Hz';
-% %     end
-%     
-%     % plot topo
-%     h=figure;
-%     set(gcf, 'Units', 'Normalized', 'OuterPosition', [0, 0.04, .2, 0.70]);
-%     
-%     
-%     cnt=0;
-%     for iExposures=1:5
-%         for iCond=1:2
-%             for iTimes=2;%1:3
-%                 %for iExposures=1:5
-%                 if      iTimes==1; theseTimes = 10:24; %   10:24;%25:40;
-%                 elseif  iTimes==2; theseTimes = 80:155; %   78:160;
-%                 elseif  iTimes==3; theseTimes = 180:194; %    182:197;
-%                 end
-%                 
-%                 % if doing 1-30 Hz analysis, shift times to compensate for
-%                 % cut off at start of ERSP
-%                 if analysisType>1
-%                     theseTimes=theseTimes-1;
-%                 end
-%                 
-%                 if      iCond==1 && iTimes==1; thisTitle='ICE Baseline';
-%                 elseif  iCond==1 && iTimes==2; thisTitle='ICE CPT';
-%                 elseif  iCond==1 && iTimes==3; thisTitle='ICE Recovery';
-%                 elseif  iCond==2 && iTimes==1; thisTitle='WARM Baseline';
-%                 elseif  iCond==2 && iTimes==2; thisTitle='WARM CPT';
-%                 elseif  iCond==3 && iTimes==3; thisTitle='WARM Recovery';
-%                 end
-%                 
-%                 cnt=cnt+1;
-%                 cntVec = [1,2,4,5,7,8,10,11,13,14];
-%                 subplot(5,3,cntVec(cnt))
-%                 %pause(1)
-%                 theseData = squeeze(mean(mean(mean(ersp(:,iCond,iExposures,:,theseFreqs,theseTimes),1),5),6));
-%                 
-%                 %theseMapLimits = 'maxmin';
-%                 
-%                 topoplot(theseData,chanlocs,...
-%                     'maplimits',theseMapLimits)
-%                 %title(thisTitle)
-%                 %cbar
-%                 
-%                 %end
-%             end
-%         end
-%     end
-%     
-% 
-% 
-% 
-%     
-%     theseMapLimits = [0,1];
-%     
-% %     if analysisType==1
-% %         theseFreqs = 1:50;
-% %     end
-%     
-%     % plot topo
-%     %figure;
-%     cnt=0;
-%     for iExposures=1:5
-%         for iTimes=2;%1:3
-%             %for iExposures=1:5
-% %             if      iTimes==1; theseTimes = 1:24;thisTitle = 'Baseline - Pairwise';
-% %             elseif  iTimes==2; theseTimes = 78:160; thisTitle = 'Immersion - Pairwise';
-% %             elseif  iTimes==3; theseTimes = 182:197; thisTitle = 'Recovery - Pairwise';
-% %             end
-%             
-%             if      iTimes==1; theseTimes = 10:24; thisTitle = 'Baseline - Pairwise';
-%             elseif  iTimes==2; theseTimes = 80:155; thisTitle = 'Immersion - Pairwise';
-%             elseif  iTimes==3; theseTimes = 180:194; thisTitle = 'Recovery - Pairwise';
-%             end
-%             
-%             % if doing 1-30 Hz analysis, shift times to compensate for
-%             % cut off at start of ERSP
-%             if analysisType>1
-%                 theseTimes=theseTimes-1;
-%             end
-%             
-%             cnt=cnt+1;
-%             cntVec = [3,6,9,12,15];
-%             subplot(5,3,cntVec(cnt))
-%             
-%             
-% % %             %pause(1)
-% %             theseData1 = squeeze(mean(mean(ersp(:,1,iExposures,:,theseFreqs,theseTimes),5),6)); %se01
-% %             theseData2 = squeeze(mean(mean(ersp(:,2,iExposures,:,theseFreqs,theseTimes),5),6)); %se02
-% %             theseData = ttest(theseData1,theseData2);
-% %             disp('non-resampled stats used')
-% 
-%             theseData = squeeze(sigVec(iExposures,iFreq,:));
-%             disp('resampled stats')
-%             
-%             
-%             topoplot(theseData,chanlocs,...---
-%                 'maplimits',theseMapLimits)
-%             %title(thisTitle)
-%             %cbar
-%             
-%             
-%         end
-%     end
-%     
-%     if analysisType==3
-%         saveas(h,[destDir '/' 'EEG_ERSP_1-30_Brain80_Topos_' thisFreqName '.eps'],'epsc')
-%     elseif analysisType==1
-%         saveas(h,[destDir '/' 'EEG_ERSP_1-100Hz_No_ICA_Topos_' thisFreqName '.eps'],'epsc')
-%     elseif analysisType==6
-%         saveas(h,[destDir '/' 'EEG_ERSP_1-30Hz_Topos_Brain70_Dip15' thisFreqName '.eps'],'epsc')
-%     end
-% 
-%     
-%     %close all
-%     
-% end

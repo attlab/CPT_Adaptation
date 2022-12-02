@@ -1,4 +1,9 @@
-%function EEG_Clean_For_ICA_job
+%{
+EEG_TFA_Stats_Resample_ERSP_Anticipatory_job
+Author:Tom Bullock
+Date:12.02.22
+
+%}
 
 clear 
 close all
@@ -17,35 +22,19 @@ if processInParallel
     job = createJob(cluster);
 end
 
-% send to cluster (only a single job)
-for analysisType=2 % leave 1 for now
-    
-    % analysis specific settings
-    if analysisType==1
-        freqIdx=1:5;
+% create tasks
+for iFreq = 1:4 % delta, theta, alpha, beta
+    if processInParallel
+        createTask(job,@EEG_TFA_Stats_Resample_ERSP_Anticipatory,0,{iFreq})
     else
-        freqIdx=1:4;
-    end
-
-    
-    for iFreq = freqIdx
-        
-        
-        if processInParallel
-            createTask(job,@EEG_TFA_Stats_Resample_ERSP_Anticipatory,0,{analysisType,iFreq})
-        else
-            EEG_TFA_Stats_Resample_ERSP_Anticipatory(analysisType,iFreq)
-        end
-        
+        EEG_TFA_Stats_Resample_ERSP_Anticipatory(iFreq)
     end
 end
 
 
-if processInParallel
-    
-    % new cluster
+% submit to cluster
+if processInParallel    
     submit(job)
-    
     % wait for job to finish?
     %wait(job,'finished');
     %results = getAllOutputArguments(job);

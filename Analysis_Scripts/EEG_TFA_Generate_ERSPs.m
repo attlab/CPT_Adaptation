@@ -3,7 +3,7 @@ function EEG_TFA_Generate_ERSPs(sjNum,analysisType)
 %{
 EEG_TFA_Generate_ERSPs
 Author: Tom Bullock, UCSB Attention Lab
-Date: 09.05.19 (last updated 06.24.20)
+Date: 09.05.19 (last updated 12.02.22)
 
 This script grabs pre-processed, clean CPT EEG files and uses newtimef to
 generate Event Related Spectral Perturbations (ERSPs) for each subject
@@ -27,9 +27,9 @@ cd ..
 
 % set dirs
 sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_50Hz_LP_DIPFIT';
-if analysisType==11 % final
+if analysisType==1 % final was 11
     destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_NewBL';% correct baseline in newtimef function
-elseif analysisType==12
+elseif analysisType==2 % was 12
     destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_No_BL_Corr'; % no baseline correction at all for anticipaotry stuff
 end
   
@@ -90,10 +90,10 @@ for iSession=1:2
     %erspSettings.timesout=200;
     erspSettings.timesout= find(EEG.times==4):1000:EEG.times(end); % actually 2002 to 192002
     
-    if analysisType==11
+    if analysisType==1 % sub baseline
         thisBaseline = [26000,40000];
-    elseif analysisType==12
-         thisBaseline = NaN;
+    elseif analysisType==2
+         thisBaseline = NaN; % do not sub baseline
     end
     
     % generate an ERSP for each epoch [figure out how to plot specific
@@ -119,9 +119,9 @@ for iSession=1:2
     comps.goodIC(iSession) = {goodIcIdx};
     comps.goodRV(iSession) = {goodRvIdx};
     
-    if analysisType==11
+    if analysisType==1
         save([destDir '/' sprintf('sj%d_ersp_1-30Hz.mat',sjNum)],'ersp','times','freqs','chanlocs','comps')
-    elseif analysisType==12
+    elseif analysisType==2
         save([destDir '/' sprintf('sj%d_ersp_1-30Hz.mat',sjNum)],'ersp','times','freqs','chanlocs','comps')
     end
     

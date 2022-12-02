@@ -7,7 +7,6 @@ Run a mixed ANOVA (with TOD as between subjects factor)
 
 %}
 
-
 clear
 close all
 
@@ -48,7 +47,3 @@ tbl = simple_mixed_anova(dataMat,between_factors,within_factor_names,between_fac
 
 % tbl = simple_mixed_anova(datamat, between_factors, {'Time', 'Exp_cond'},
 % {'Gender', 'Age_group'})
-
-
-
-

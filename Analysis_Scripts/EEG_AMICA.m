@@ -20,7 +20,6 @@ eeglab
 close all
 cd(scriptsDir)
 
-
 % load data
 load([cleanDataDir sprintf('sj%d_se%02d_clean.mat',subNum,session+1)]);
 EEG.data = double(EEG.data); % use double precision for ICA

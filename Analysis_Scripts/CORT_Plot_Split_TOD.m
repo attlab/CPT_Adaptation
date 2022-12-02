@@ -43,7 +43,6 @@ for iTOD = 1:2
     end
     
     
-    
     % plot data
     errorbar(mean(theseData(:,4:6),1),std(theseData(:,4:6),0,1)./sqrt(size(theseData,1)),...
         'LineWidth',2.5,...
@@ -65,8 +64,6 @@ for iTOD = 1:2
         'ylim',[2,14])
     
     title(thisTitle,'FontSize',30);
-    
-    
     
 end
 

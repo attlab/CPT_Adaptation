@@ -20,8 +20,8 @@ end
 subjects = CPT_SUBJECTS;
 disp(['Processing n=' num2str(length(subjects)) ' subjects'])
 
-% set analysis type (11 = regular baselineline sub, 12 = no baseline sub)
-analysisType=11;
+% set analysis type (1 = regular baselineline sub, 2 = no baseline sub)
+analysisType=1;
 
 % create jobs for subjects
 for iSub =1:length(subjects)
