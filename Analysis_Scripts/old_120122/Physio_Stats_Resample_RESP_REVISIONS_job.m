@@ -7,14 +7,8 @@ scriptsDir = '/home/bullock/BOSS/CPT_Adaptation/Analysis_Scripts';
 addpath(genpath(scriptsDir))
 cd(scriptsDir)
 
-% which subs?
-subjects = CPT_SUBJECTS;
-
 % if run on local machine(0), else if run on cluster(1)
 processInParallel=1;
-
-% downsample (for main analyses = 1) or not (for muscle noise analysis = 0)
-analysisType=0;
 
 % cluster settings
 if processInParallel
@@ -23,21 +17,23 @@ if processInParallel
     job = createJob(cluster);
 end
 
+
 % create tasks
-for iSub = 1:length(subjects)
-    subject = subjects(iSub); 
-    for session=1:2
+for plotBlCorrectedPhysio=0:1
+    for iMeasure=9:10;%1:8
         if processInParallel
-            createTask(job,@EEG_Clean_For_ICA,0,{subject,session,analysisType})         
+            createTask(job,@Physio_Stats_Resample_RESP_REVISIONS,0,{plotBlCorrectedPhysio,iMeasure})   
         else
-            EEG_Clean_For_ICA(subject,session,analysisType)
-        end       
+            Physio_Stats_Resample_RESP_REVISIONS(plotBlCorrectedPhysio,iMeasure)
+        end
     end
 end
 
-% submit job
 if processInParallel
+    
+    % new cluster
     submit(job)
+    
     % wait for job to finish?
     %wait(job,'finished');
     %results = getAllOutputArguments(job);

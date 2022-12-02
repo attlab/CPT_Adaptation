@@ -8,7 +8,7 @@ addpath(genpath(scriptsDir))
 cd(scriptsDir)
 
 % if run on local machine(0), else if run on cluster(1)
-processInParallel=1;
+processInParallel=0;
 
 % cluster settings
 if processInParallel
@@ -17,29 +17,17 @@ if processInParallel
     job = createJob(cluster);
 end
 
-% send to cluster (only a single job)
-for analysisType=2 % leave 1 for now
-    
-    % analysis specific settings
-    if analysisType==1
-        freqIdx=1:5;
-    else
-        freqIdx=1:4;
-    end
 
-    
-    for iFreq = freqIdx
-        
-        
+% create tasks
+for plotBlCorrectedPhysio=0
+    for iMeasure=1:8
         if processInParallel
-            createTask(job,@EEG_Stats_Resample_Within_ANOVA_TimeGrad_Base,0,{analysisType,iFreq})
+            createTask(job,@Physio_Stats_Resample_Within_Analysis,0,{plotBlCorrectedPhysio,iMeasure})   
         else
-            EEG_Stats_Resample_Within_ANOVA_TimeGrad_Base(analysisType,iFreq)
+            Physio_Stats_Resample_Within_Analysis(plotBlCorrectedPhysio,iMeasure)
         end
-        
     end
 end
-
 
 if processInParallel
     

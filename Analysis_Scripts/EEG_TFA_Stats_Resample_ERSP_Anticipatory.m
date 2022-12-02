@@ -1,9 +1,11 @@
-function EEG_Stats_Resample_Within_ANOVA_TimeGrad(analysisType,iFreq)
+function EEG_TFA_Stats_Resample_ERSP_Anticipatory(analysisType,iFreq)
 
 %{
 Time_Freq_Analysis_ERSP_Plot_Topos_WITHIN_ANOVA
 Author: Tom Bullock
 Date: 05.17.20
+
+JUST BASELINE (i.e. run stats on ancitipatory data only)
 
 %}
 
@@ -29,7 +31,7 @@ if analysisType==1
     %load([sourceDir '/' 'STATS_EEG_ERSP_1-100Hz_TOPOS.mat'])
 else
     %load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'])
-    load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP_NewBL.mat'])
+    load([sourceDir '/' 'GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP_NoBlCorr.mat'])
     %load([sourceDir '/' 'STATS_EEG_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP.mat'])
 end
 
@@ -116,25 +118,25 @@ clear condVec trialVec intVec
 
 % set timepoints to average over and include in analysis
 
-for iTimes=1:4
+for iTimes=1
     
     
     if analysisType==1 && iTimes==1
-        theseTimes=65:95;
-    elseif analysisType==1 && iTimes==2
-        theseTimes=96:125;
-    elseif analysisType==1 && iTimes==3
-        theseTimes=126:155;
-    elseif analysisType==1 && iTimes==4
-        theseTimes=156:191;
+         theseTimes=1:39;
+%     elseif analysisType==1 && iTimes==2
+%         theseTimes=96:125;
+%     elseif analysisType==1 && iTimes==3
+%         theseTimes=126:155;
+%     elseif analysisType==1 && iTimes==4
+%         theseTimes=156:191;
     elseif analysisType==2 && iTimes==1
-        theseTimes=64:94;
-    elseif analysisType==2 && iTimes==2
-        theseTimes=95:124;
-    elseif analysisType==2 && iTimes==3
-        theseTimes=125:154;
-    elseif analysisType==2 && iTimes==4
-        theseTimes=155:191;
+        theseTimes=1:39;
+%     elseif analysisType==2 && iTimes==2
+%         theseTimes=95:124;
+%     elseif analysisType==2 && iTimes==3
+%         theseTimes=125:154;
+%     elseif analysisType==2 && iTimes==4
+%         theseTimes=155:191;
     end
     
     
@@ -238,9 +240,9 @@ end
 
 % save data
 if analysisType==1
-    save([sourceDir '/' 'STATS_WITHIN_Resampled_ERSP_ANOVA_100Hz_NewBL_TimeGrad.mat'],'allANOVA')
+%     save([sourceDir '/' 'STATS_WITHIN_Resampled_ERSP_ANOVA_100Hz_NewBL_TimeGrad.mat'],'allANOVA')
 else
-    save([sourceDir '/' 'STATS_WITHIN_Resampled_ERSP_ANOVA_30Hz_NewBL_TimeGrad' thisFreqName '.mat'],'allANOVA')
+    save([sourceDir '/' 'STATS_WITHIN_Resampled_ERSP_ANOVA_30Hz_NewBL_BASE_ONLY_' thisFreqName '.mat'],'allANOVA')
 end
 
 

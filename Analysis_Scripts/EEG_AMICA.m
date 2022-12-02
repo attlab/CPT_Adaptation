@@ -3,49 +3,36 @@ function EEG_AMICA(subNum,session)
 EEG AMICA
 Author: Neil (adapted by Tom for CPT)
 Date: 01.09.20
+
 %}
 
-%% add dirs, paths etc.
+% add dirs, paths etc.
 Parent_dir = '/home/bullock/BOSS/CPT_Adaptation/';
 scriptsDir = [Parent_dir 'Analysis_Scripts'];
-%eeglabDir = '/home/bullock/matlab_2016b/TOOLBOXES/eeglab14_1_1b';
 eeglabDir = '/home/bullock/Toolboxes/eeglab2019_1'; 
-
+cleanDataDir = [Parent_dir 'EEG_Processed_Cleaned_For_ICA/'];
+EEG_ica_dir = [Parent_dir 'EEG_ICA_50Hz_LP/'];
 addpath(genpath(scriptsDir))
 
-cleanDataDir = [Parent_dir 'EEG_Processed_Cleaned_For_ICA/'];
-%EEG_ica_dir = [Parent_dir 'EEG_ICA_Notch/'];
-EEG_ica_dir = [Parent_dir 'EEG_ICA_50Hz_LP/'];
-
-
-
+% import EEGLAB functions
 cd(eeglabDir)
 eeglab
 close all
 cd(scriptsDir)
 
-%% dirs
-%eeglab_dipDir = '/Users/tombullock/Documents/MATLAB/eeglab14_1_2b/plugins/dipfit2.3/';
-%Parent_dir = '/Users/tombullock/Documents/Psychology/BOSS/CPT/';
-%Parent_dir = '/home/bullock/BOSS/CPT/';
-%cleanDataDir = [Parent_dir 'EEG_Processed_Cleaned_For_ICA/'];
-%cleanDataDir = [Parent_dir 'EEG_Processed_Cleaned_For_ICA_With_ASR/'];
-%EEG_ica_dir = [Parent_dir 'EEG_ICA/'];
-%addpath(genpath('/Users/tombullock/Documents/Psychology/BOSS/CPT/Analysis_Scripts_Local'))
-%addpath(genpath('/home/bullock/BOSS/CPT/Analysis_Scripts_Local'))
 
-
-%% load data
+% load data
 load([cleanDataDir sprintf('sj%d_se%02d_clean.mat',subNum,session+1)]);
 EEG.data = double(EEG.data); % use double precision for ICA
 
-
+% get data rank
 if isfield(EEG.etc, 'clean_channel_mask')
     dataRank = min([rank(double(EEG.data')) sum(EEG.etc.clean_channel_mask)]);
 else
     dataRank = rank(double(EEG.continousData'));
 end
 
+% run ICA
 try
     
     % AMICA takes forever on continous data, use send email function to notify when done
@@ -78,7 +65,7 @@ try
     % apply IC Label
     EEG = iclabel(EEG);
     
-    
+    % save data
     save([EEG_ica_dir sprintf('sj%02d_se%02d_EEG_clean_ica.mat',subNum,session+1)], 'EEG','-v7.3');
     
 catch e

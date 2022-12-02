@@ -4,7 +4,7 @@ Author: Tom Bullock, UCSB Attention Lab
 Date: 05.25.19
 %}
 
-function Time_Freq_Analysis_ERSP_Compile(analysisType)
+function EEG_TFA_Compile_ERSPs(analysisType)
 
 
 %analysisType=2;

@@ -1,5 +1,5 @@
 %{
-Self_Report_Compile_Ratings_CPT
+Self_Report_Plot
 Author: Tom Bullock, UCSB Attention Lab
 Date: 05.25.19
 
@@ -33,10 +33,6 @@ set(gca,'xlim',[0.5,5.5],'linewidth',1.5,'box','off','fontsize',20,'ylim',[0,100
 pbaspect([2,1,1])
 %legend('Cold','Warm','location','east','box','off')
 
-
-%plot(squeeze(nanmean(allPain(:,2,:))),'g');
-
-
 % test if Ice vs. Warm are different
 ttest(allPain(:,1,:),allPain(:,2,:))
 
@@ -50,4 +46,3 @@ end
 
 % save data
 save([sourceDir '/' 'SELF_REPORT_FOR_PREDICTIVE_ANALYSIS.mat'],'allPain','mySubjects')
-

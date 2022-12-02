@@ -13,18 +13,13 @@ subjects = CPT_SUBJECTS;
 % run in serial (0) or parallel (1)
 runInParallel=1;
 
-% if runInParallel
-%     cluster=parcluster();
-%     job = createJob(cluster);
-% end
-
 if runInParallel
     cluster=parcluster();
     cluster.ResourceTemplate = '--ntasks-per-node=6 --mem=65536'; % max set to 12! mem not working atm
     job = createJob(cluster);
 end
 
-%% Task 
+% run AMICA 
 tic
 try
     
@@ -32,7 +27,6 @@ try
         sjNum = subjects(iSub);
         for session=1:2
             if runInParallel
-                %job.createTask(@EEG_AMICA, 0, {sjNum,session})            
                 createTask(job,@EEG_AMICA,0,{sjNum,session});
             else
                 EEG_AMICA(sjNum,session)

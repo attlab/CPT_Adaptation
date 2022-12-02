@@ -29,10 +29,20 @@ maleCnt=0;
 for i=1:height(cpt_sjInfo)
    if strcmp(cpt_sjInfo.Sex{i},'M')
       maleCnt=maleCnt+1;  
+      sex_vector(i) = 1;
+   else
+       sex_vector(i) = 0;
    end
 end
 
 clear ans sjIdx sjTableIdx t
+
+subjects_all_42 = subjects;
+subjects_all_42(2,:) = sex_vector;
+
+
+
+save(['/home/bullock/BOSS/CPT_Adaptation/Data_Compiled' '/' 'Sex_Vector.mat'],'sex_vector','subjects_all_42')
 
 
 
@@ -114,6 +124,10 @@ males.sem.age = std(males.age_mat)/sqrt(length(males.age_mat));
 males.sem.bmi = std(males.bmi_mat)/sqrt(length(males.bmi_mat));
 males.sem.vo2max = std(males.vo2max_mat)/sqrt(length(males.vo2max_mat));
 
+males.std.age = std(males.age_mat);
+males.std.bmi = std(males.bmi_mat);
+males.std.vo2max = std(males.vo2max_mat);
+
 females.mean.age = mean(females.age_mat);
 females.mean.bmi = mean(females.bmi_mat);
 females.mean.vo2max = mean(females.vo2max_mat);
@@ -122,29 +136,30 @@ females.sem.age = std(females.age_mat)/sqrt(length(females.age_mat));
 females.sem.bmi = std(females.bmi_mat)/sqrt(length(females.bmi_mat));
 females.sem.vo2max = std(females.vo2max_mat)/sqrt(length(females.vo2max_mat));
 
+females.std.age = std(females.age_mat);
+females.std.bmi = std(females.bmi_mat);
+females.std.vo2max = std(females.vo2max_mat);
+
 both.sem.age = std([males.age_mat  females.age_mat])/sqrt(length([males.age_mat females.age_mat]));
 both.sem.bmi = std([males.bmi_mat  females.bmi_mat])/sqrt(length([males.bmi_mat females.bmi_mat]));
 both.sem.vo2 = std([males.vo2max_mat  females.vo2max_mat])/sqrt(length([males.vo2max_mat females.vo2max_mat]));
 
-
-   vo2max_mat(i) = cpet_sjInfo(i).vo2max_orig;  
-   bmi_mat(i) = cpet_sjInfo(i).sjInfo.thisBMI;
-
-   
-   meanVO2max = mean(vo2max_mat);
-    semVO2max = std(vo2max_mat,0,2) /sqrt(length(cpet_sjInfo));
+both.std.age = std([males.age_mat  females.age_mat]);
+both.std.bmi = std([males.bmi_mat  females.bmi_mat]);
+both.std.vo2 = std([males.vo2max_mat  females.vo2max_mat]);
 
 
+vo2max_mat(i) = cpet_sjInfo(i).vo2max_orig;
+bmi_mat(i) = cpet_sjInfo(i).sjInfo.thisBMI;
+
+
+meanVO2max = mean(vo2max_mat);
+semVO2max = std(vo2max_mat,0,2) /sqrt(length(cpet_sjInfo));
 
 
 
 
 clear allCPET cnt cpetSjIdx i vo2max_mat
-
-
-
-
-% get all subject info split by sex
 
 
 

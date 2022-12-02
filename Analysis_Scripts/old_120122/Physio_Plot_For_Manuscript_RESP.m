@@ -2,9 +2,12 @@
 Physio_Plot_Compare_Within_Session_With_Stats
 Author: Tom Bullock
 Date: 04.24.20
+Date updated: 01.10.22
 
 Do within-session comparison plots for CPT/WPT separately, then add stats
 lines to the base of the plots.
+
+JUST ADDING RESP PLOT HERE TO ADDRESS R3 COMMENTS
 
 %}
 
@@ -15,7 +18,7 @@ close all
 plotBlCorrectedPhysio = 1;
 
 % use resampled stats (0=no, 1=yes)
-useResampledStats = 1;
+useResampledStats = 0;
 
 % set dirs
 sourceDir =  '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
@@ -24,7 +27,9 @@ resampledStatsDir = [sourceDir '/' 'Resampled_Stats'];
 
 
 % load compiled data
-load([sourceDir '/' 'PHYSIO_MASTER_RESP_CORR.mat' ])
+%load([sourceDir '/' 'PHYSIO_MASTER_RESP_CORR.mat' ])
+load([sourceDir '/' 'PHYSIO_MASTER_RESP_CORR_PLUS_RESP_DATA_FOR_REVISION.mat' ])
+
 
 
 % % load resampled stats
@@ -94,6 +99,8 @@ if plotBlCorrectedPhysio
     all_SV = all_SV-mean(all_SV(:,:,:,2600:4000),4);
     all_TPR = all_TPR-mean(all_TPR(:,:,:,2600:4000),4);
     all_HF = all_HF-nanmean(all_HF(:,:,:,3200:4000),4);% [nan for first 30 secs coz classifier training...address this?] 
+    all_RESP_AMOUNT = all_RESP_AMOUNT-mean(all_RESP_AMOUNT(:,:,:,26:40),4);
+    all_RESP_PROCESSED = all_RESP_PROCESSED-mean(all_RESP_PROCESSED(:,:,:,26:40),4);
 end
 
 % downsample to reduce figure size (mbs)
@@ -104,6 +111,7 @@ all_SV = all_SV(:,:,:,1:100:19500);
 all_TPR = all_TPR(:,:,:,1:100:19500);
 all_CO = all_CO(:,:,:,1:100:19500);
 all_HF = all_HF(:,:,:,1:100:19000);
+% resp already ds to 1Hz
 
 %% select time period for plotting ANOVA and t-test results only
 if plotBlCorrectedPhysio==0
@@ -114,7 +122,7 @@ end
    
 
 % loop through measures and plot
-for iMeasure=1:8
+for iMeasure=9%:10
 
     % select data
     allPhysio=[];
@@ -127,6 +135,8 @@ for iMeasure=1:8
         elseif  iMeasure==6; allPhysio = all_TPR; thisTitle1 = 'TPR';
         elseif  iMeasure==7; allPhysio = all_BP; thisTitle1 = 'BP';
         elseif  iMeasure==8; allPhysio = all_HF; thisTitle1 = 'HF';
+        elseif  iMeasure==9; allPhysio = all_RESP_AMOUNT; thisTitle1 = 'RA'; %title wrong!!!! also below
+        elseif  iMeasure==10;allPhysio = all_RESP_PROCESSED; thisTitle1 = 'HF'; % title wrong!!! also below
         end
         thisYlim = [-.3,1];
         thisYlinePos = [-.05, -.15, -.25];
@@ -141,11 +151,10 @@ for iMeasure=1:8
         elseif  iMeasure==6; allPhysio = all_TPR; thisTitle1 = 'TPR'; thisYlim = [2000,4000];thisYtick = [2500:500:4000];thisYlinePos = [2400,2300,2200];thisLineWidth=5;thisLineGap = 40;
         elseif  iMeasure==7; allPhysio = all_BP; thisTitle1 = 'BP';thisYlim = [58,110]; thisYtick = [70:10:110];thisYlinePos = [68,64,60];thisLineWidth=7;thisLineGap = 1;
         elseif  iMeasure==8; allPhysio = all_HF; thisTitle1 = 'HF'; thisYlim = [4,8]; thisYtick = [5:1:8];thisYlinePos = [5,4.7,4.4];thisLineWidth=7;thisLineGap = .1;
+        elseif  iMeasure==9; allPhysio = all_RESP_AMOUNT; thisTitle1 = 'RA'; thisYlim = [0,.0005]; thisYtick = [0:0.0001:.0005];thisYlinePos = [5,4.7,4.4];thisLineWidth=7;thisLineGap = .1;
+        elseif  iMeasure==10; allPhysio = all_RESP_PROCESSED; thisTitle1 = 'HF'; thisYlim = [-2,1]; thisYtick = [-2:.5:1];thisYlinePos = [5,4.7,4.4];thisLineWidth=7;thisLineGap = .1;
         end
         
-        
-        
-
     end
     
     % null the first few seconds of baseline because crazy results
@@ -166,8 +175,10 @@ for iMeasure=1:8
     else
         thisLabel = 'Bl_Corrected';
     end
-    
-    load([resampledStatsDir '/' 'STATS_Physio_Resampled_' thisLabel '_' thisTitle1 '.mat'])
+
+    if useResampledStats
+        load([resampledStatsDir '/' 'STATS_Physio_Resampled_' thisLabel '_' thisTitle1 '.mat'])
+    end
     
     % get ANOVA results
     clear condVec trialVec intVec

@@ -20,7 +20,7 @@ plotDir = '/home/bullock/BOSS/CPT_Adaptation/Plots';
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
 % baseline correction [Note that Event times are 1,20000,32500,77500,97500]
-baselineCorrect=0;
+baselineCorrect=1;
 
 % use resampled stats (requires separate script to be run) (0=no, 1=yes)
 useResampledStats = 1;
@@ -169,16 +169,32 @@ for iCond=1:2
         
         thisEye=1:2; %1=left,2=right
         
-        if      iOrder==1; thisColor = [255,0,0]; %red
-        elseif  iOrder==2; thisColor = [255,140,0];% orange ;
-        elseif  iOrder==3; thisColor = [252,226,5]; % yellow[255,192,203];
-        elseif  iOrder==4; thisColor = [0,255,0]; % green
-        elseif  iOrder==5; thisColor = [0,0,255]; %blue
+        if      iOrder==1; thisColor = [255,0,0]; thisXPos=10;%red
+        elseif  iOrder==2; thisColor = [255,140,0];thisXPos=13;% orange ;
+        elseif  iOrder==3; thisColor = [252,226,5]; thisXPos=16;% yellow[255,192,203];
+        elseif  iOrder==4; thisColor = [0,255,0]; thisXPos=19;% green
+        elseif  iOrder==5; thisColor = [0,0,255]; thisXPos=22;%blue
         end
         
         plot(1:195,smooth(squeeze(nanmean(nanmean(paMatAll(:,iCond,iOrder,thisEye,:),1),4)),5),...
             'color',thisColor./255,...
             'linewidth',4); hold on % plot indices (500 Hz,to divide by 2)
+        
+        
+        semEB = nanstd(nanmean(nanmean(paMatAll(:,iCond,iOrder,thisEye,timesForPlotting),4),5),0,1)./sqrt(size(paMatAll,1)); % make this specific for RAW/NORM time durations
+        
+        if baselineCorrect==1
+            thisXPos = thisXPos -5; thisYPos = .88;
+        else
+            thisXPos = thisXPos -5 ; thisYPos = .88;
+        end
+           
+            
+        
+        line([thisXPos,thisXPos],[thisYPos-semEB,thisYPos+semEB],...
+            'linewidth',10,...
+            'color',thisColor./255); hold on;
+        
         
         % add lines
         t1=1; % start pre baseline ( 40 s)

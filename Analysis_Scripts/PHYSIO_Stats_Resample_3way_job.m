@@ -1,4 +1,11 @@
-%function EEG_Clean_For_ICA_job
+%{
+PHYSIO_Stats_Resample_3way_job
+Author: Tom Bullock
+Date: 12.01.22
+
+Run resample stats 3-way analysis job script
+
+%}
 
 clear 
 close all
@@ -7,14 +14,8 @@ scriptsDir = '/home/bullock/BOSS/CPT_Adaptation/Analysis_Scripts';
 addpath(genpath(scriptsDir))
 cd(scriptsDir)
 
-% which subs?
-subjects = CPT_SUBJECTS;
-
 % if run on local machine(0), else if run on cluster(1)
 processInParallel=1;
-
-% downsample (for main analyses = 1) or not (for muscle noise analysis = 0)
-analysisType=0;
 
 % cluster settings
 if processInParallel
@@ -24,20 +25,19 @@ if processInParallel
 end
 
 % create tasks
-for iSub = 1:length(subjects)
-    subject = subjects(iSub); 
-    for session=1:2
+for plotBlCorrectedPhysio=0 % only run the 3-way on uncorrected data
+    for iMeasure=1:8
         if processInParallel
-            createTask(job,@EEG_Clean_For_ICA,0,{subject,session,analysisType})         
+            createTask(job,@PHYSIO_Stats_Resample_3way,0,{plotBlCorrectedPhysio,iMeasure})   
         else
-            EEG_Clean_For_ICA(subject,session,analysisType)
-        end       
+            PHYSIO_Stats_Resample_3way(plotBlCorrectedPhysio,iMeasure)
+        end
     end
 end
 
 % submit job
 if processInParallel
-    submit(job)
+    submit(job)    
     % wait for job to finish?
     %wait(job,'finished');
     %results = getAllOutputArguments(job);

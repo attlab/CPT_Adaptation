@@ -1,4 +1,11 @@
-%function EEG_Clean_For_ICA_job
+%{
+PHYSIO_Stats_Resample_job
+Author: Tom Bullock
+Date:12.01.22
+
+Run resampled stats job for all eight physio data measures
+
+%}
 
 clear 
 close all
@@ -7,14 +14,8 @@ scriptsDir = '/home/bullock/BOSS/CPT_Adaptation/Analysis_Scripts';
 addpath(genpath(scriptsDir))
 cd(scriptsDir)
 
-% which subs?
-subjects = CPT_SUBJECTS;
-
 % if run on local machine(0), else if run on cluster(1)
 processInParallel=1;
-
-% downsample (for main analyses = 1) or not (for muscle noise analysis = 0)
-analysisType=0;
 
 % cluster settings
 if processInParallel
@@ -24,18 +25,17 @@ if processInParallel
 end
 
 % create tasks
-for iSub = 1:length(subjects)
-    subject = subjects(iSub); 
-    for session=1:2
+for plotBlCorrectedPhysio=0:1
+    for iMeasure=1:8
         if processInParallel
-            createTask(job,@EEG_Clean_For_ICA,0,{subject,session,analysisType})         
+            createTask(job,@PHYSIO_Stats_Resample,0,{plotBlCorrectedPhysio,iMeasure})   
         else
-            EEG_Clean_For_ICA(subject,session,analysisType)
-        end       
+            PHYSIO_Stats_Resample(plotBlCorrectedPhysio,iMeasure)
+        end
     end
 end
 
-% submit job
+% submit job to cluster
 if processInParallel
     submit(job)
     % wait for job to finish?

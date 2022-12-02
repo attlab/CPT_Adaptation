@@ -23,7 +23,6 @@ end
 
 for d=1:8
     
-    
     if d==1
         theseData = all_BP;
         dataID = 'BP';
@@ -87,9 +86,4 @@ for d=1:8
     
     clear theseDataLF theseData theseSubjects dataID thisSample dumTime dumTrial dumSession i j k m n
     
-    
 end
-
-
-
-
