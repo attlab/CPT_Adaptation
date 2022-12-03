@@ -23,7 +23,8 @@ end
 
 % set dirs 
 parentDir = '/home/bullock/BOSS/CPT_Adaptation';
-sourceDir = [parentDir '/' 'EEG_ICA_50Hz_LP'];
+%sourceDir = [parentDir '/' 'EEG_ICA_50Hz_LP'];
+sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN/EEG_ICA_50Hz_LP';
 scriptsDir = [parentDir '/' 'Analysis_Scripts'];
 
 % get files

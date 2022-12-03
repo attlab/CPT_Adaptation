@@ -11,7 +11,8 @@ analysis)
 %}
 
 % set dirs
-parentDir = '/home/bullock/BOSS/CPT_Adaptation';
+%parentDir = '/home/bullock/BOSS/CPT_Adaptation';
+parentDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN'; %Tom RERUN
 sourceDir = [parentDir '/' 'Data_Compiled'];
 
 % load data

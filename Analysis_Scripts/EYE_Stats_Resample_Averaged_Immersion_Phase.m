@@ -1,21 +1,22 @@
 %{
-EYE_Stats_Resample_Within_ANOVA_Avg
+EYE_Stats_Resample_Averaged_Immersion_Phase
 Author: Tom Bullock, UCSB Attention Lab
-Date: 06.06.20
+Date: 06.06.20 (updated 12.02.22)
 
-Run resampled ANOVA on average response period.
+Run resampled ANOVA on average response period for pupil data.
 
 %}
 
+clear
+close all
+
+% baseline correct (set to 1 for this analysis)
 baselineCorrect=1;
 
-%clear
-%close all
-
-%% set dirs
+% set dirs
 sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
 
-%% load compiled EYE Data (paMatAll = sub,session,task,eye,timepoint)
+% load compiled EYE Data (paMatAll = sub,session,task,eye,timepoint)
 load([sourceDir '/' '/CPT_EYE_Master.mat'])
 
 % remove bad subjects
@@ -25,8 +26,7 @@ badSubs = [103,105,108,109,115,116,117,118,126,128,135,136,138,139,140,146,147,1
 [a,b] = setdiff(subjects,badSubs);
 paMatAll = paMatAll(b,:,:,:,:);
  
-%% baseline correction [Note that Event times are 1,20000,32500,77500,97500]
-%baselineCorrect=1;
+% baseline correction [Note that Event times are 1,20000,32500,77500,97500]
 theseXlims=[0,195];
 theseXticks=[0,40,65,155,195];
 
@@ -35,19 +35,21 @@ if baselineCorrect==1
     paMatAll = paMatAll - paMatBL;
 end
 
-%% downsample to 1Hz [average across each second (500Hz original SR)]
+% downsample to 1Hz [average across each second (500Hz original SR)]
 for i=1:195
     paMattAll_DS(:,:,:,:,i) = nanmean(paMatAll(:,:,:,:,((i*500)+1:(i+1)*500)-500),5);
 end
 paMatAll = paMattAll_DS;
 
-%% normalize between -1 and 1
+% normalize between -1 and 1
 maxPA = squeeze(max(max(max(max(nanmean(paMatAll,1))))));
 minPA = squeeze(min(min(min(min(nanmean(paMatAll,1))))));
 paMatAll = (paMatAll-minPA)/(maxPA-minPA);
 
 
-%% DO REAL ANOVA
+% run stats 
+
+% ANOVA
 
 % add resample toolbox path
 addpath(genpath('/home/bullock/BOSS/CPT_Adaptation/resampling'))
@@ -128,11 +130,7 @@ allANOVA.varInt = varInt;
 clear nullData
 
 
-
-
-
-%% RUN PAIRWISE T-TESTS (T1vsT5, T1vsT3,T3vsT5)
-
+% RUN PAIRWISE T-TESTS (T1vsT5, T1vsT3,T3vsT5)
 
 
 % create observed data matrix
@@ -237,4 +235,3 @@ if baselineCorrect==0
 else
     save([sourceDir '/' 'STATS_WITHIN_Resampled_EYE_n21_bln_Avg_Immersion.mat'],'allPupilStats','subjects','badSubs')
 end
-

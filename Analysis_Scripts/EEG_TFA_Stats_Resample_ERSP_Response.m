@@ -13,7 +13,8 @@ Date: 05.17.20
 % eeglab
 
 % set dirs
-parentDir = '/home/bullock/BOSS/CPT_Adaptation';
+%parentDir = '/home/bullock/BOSS/CPT_Adaptation';
+parentDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN';
 sourceDir = [parentDir '/' 'Data_Compiled'];
 
 % load compiled ERSP dataset

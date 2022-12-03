@@ -11,11 +11,14 @@ clear erspAll chanlocs times freqs
 
 % set dirs for different analyses
 if analysisType==1
-    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_NewBL';
+    %sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_NewBL';
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN/Time_Freq_results_1-30Hz_ICLabel_Dipfit_NewBL';
 elseif analysisType==2
-    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_No_BL_Corr';
+    %sourceDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_No_BL_Corr';
+    sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN/Time_Freq_results_1-30Hz_ICLabel_Dipfit_No_BL_Corr';
 end
-destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
+%destDir = '/home/bullock/BOSS/CPT_Adaptation/Data_Compiled';
+destDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN/Data_Compiled';
 
 % select subjects
 subjects = CPT_SUBJECTS;

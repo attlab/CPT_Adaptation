@@ -14,8 +14,10 @@ function EEG_Dipfit(filename)
 
 % set dirs and load EEGLAB
 parentDir = '/home/bullock/BOSS/CPT_Adaptation';
-sourceDir = [parentDir '/' 'EEG_ICA_50Hz_LP'];
-destDir = [parentDir '/' 'EEG_ICA_50Hz_LP_DIPFIT'];
+%sourceDir = [parentDir '/' 'EEG_ICA_50Hz_LP'];
+sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN/EEG_ICA_50Hz_LP';
+%destDir = [parentDir '/' 'EEG_ICA_50Hz_LP_DIPFIT'];
+destDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN/EEG_ICA_50Hz_LP_DIPFIT';
 scriptsDir = [parentDir '/' 'Analysis_Scripts'];
 eeglabDir = '/home/bullock/Toolboxes/eeglab2019_1';
 
@@ -41,16 +43,19 @@ load([sourceDir '/' filename]);
 %     [eeglab_dipDir 'standard_BEM/elec/standard_1005.elc'],'coord_transform',...
 %     [0.83215 -15.6287 2.4114 0.081214 0.00093739 -1.5732 1.1742 1.0601 1.1485] ,'chansel',1:63);
 
+%% TOM EDIT 12.01.22  DIPFIT UPGRADED TO 3.4 [was 3.3 in original analysis]
+
+
 % tom dipfit
 EEG = pop_dipfit_settings( EEG, ...
-    'hdmfile','/home/bullock/Toolboxes/eeglab2019_1/plugins/dipfit3.3/standard_BEM/standard_vol.mat',...
-    'coordformat','MNI','mrifile','/home/bullock/Toolboxes/eeglab2019_1/plugins/dipfit3.3/standard_BEM/standard_mri.mat',...
-    'chanfile','/home/bullock/Toolboxes/eeglab2019_1/plugins/dipfit3.3/standard_BEM/elec/standard_1005.elc',...
+    'hdmfile','/home/bullock/Toolboxes/eeglab2019_1/plugins/dipfit3.4/standard_BEM/standard_vol.mat',...
+    'coordformat','MNI','mrifile','/home/bullock/Toolboxes/eeglab2019_1/plugins/dipfit3.4/standard_BEM/standard_mri.mat',...
+    'chanfile','/home/bullock/Toolboxes/eeglab2019_1/plugins/dipfit3.4/standard_BEM/elec/standard_1005.elc',...
     'chansel',[1:63] );
 
 % apparently this is necessary (chan locs were set to BESA up to this
 % point)
-EEG=pop_chanedit(EEG, 'lookup','/home/bullock/Toolboxes/eeglab2019_1/plugins/dipfit3.3/standard_BEM/elec/standard_1005.elc');
+EEG=pop_chanedit(EEG, 'lookup','/home/bullock/Toolboxes/eeglab2019_1/plugins/dipfit3.4/standard_BEM/elec/standard_1005.elc');
 
 % does the dipole fit
 EEG = pop_multifit(EEG, 1:EEG.nbchan,'threshold', 100, 'dipplot','off','plotopt',{'normlen' 'on'});

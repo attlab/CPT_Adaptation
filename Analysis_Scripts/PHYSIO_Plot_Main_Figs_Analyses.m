@@ -14,10 +14,10 @@ clear
 close all
 
 % do baseline correction? (0=no, 1=yes)
-plotBlCorrectedPhysio = 0;
+plotBlCorrectedPhysio = 1;
 
 % use resampled stats (0=no, 1=yes)
-useResampledStats = 0;
+useResampledStats = 1;
 
 
 % temp

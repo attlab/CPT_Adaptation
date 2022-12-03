@@ -26,11 +26,14 @@ close all
 cd ..
 
 % set dirs
-sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_50Hz_LP_DIPFIT';
+%sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_ICA_50Hz_LP_DIPFIT';
+sourceDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN/EEG_ICA_50Hz_LP_DIPFIT'; %TOM RERUN
 if analysisType==1 % final was 11
-    destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_NewBL';% correct baseline in newtimef function
+    %destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_NewBL';% correct baseline in newtimef function
+    destDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN/Time_Freq_results_1-30Hz_ICLabel_Dipfit_NewBL'; % TOM RERUN
 elseif analysisType==2 % was 12
-    destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_No_BL_Corr'; % no baseline correction at all for anticipaotry stuff
+    %destDir = '/home/bullock/BOSS/CPT_Adaptation/Time_Freq_results_1-30Hz_ICLabel_Dipfit_No_BL_Corr'; % no baseline correction at all for anticipaotry stuff
+    destDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN/Time_Freq_results_1-30Hz_ICLabel_Dipfit_No_BL_Corr'; % TOM RERUN
 end
   
 % loop through sessions (1=treatment, 2=control) and CPT exposures (tasks)

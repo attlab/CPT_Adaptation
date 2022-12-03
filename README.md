@@ -24,7 +24,6 @@ Repository last updated: XXXXXXXXXXX
 `CPT_SUBJECTS.m` List of valid CPT subjects for each measure, with notes
 
 
-
 ## CORTISOL
 
 `CORT_Plot.m` Plot cortisol results averaged across time of day (TOD)
@@ -36,16 +35,11 @@ Repository last updated: XXXXXXXXXXX
 `CORT_Stats_Resample_TOD.m` Generate resampled stats plit by AM/PM session
 
 
-
 ## DEMOGRAPHICS
 
 `DEMOGRAPHICS_Get_Info.m` Extract demographic info 
 
 `DEMOGRAPHICS_Get_Info_Additional.m` Extract additional demographic info (income etc.) to address a reviewer comment
-
-
-
-
 
 
 ## EEG
@@ -61,88 +55,33 @@ Repository last updated: XXXXXXXXXXX
 
 ### Move EEG data from BOSS MASTER structure to `EEG_CPT_Prepro` directory on BIC cluster.  Now preprocess and run ICA.
 
-dir: EEG_CPT_Prepro
-
 `EEG_Clean_For_ICA.m` +job Clean data in prep for ICA (for broadband muscle noise analysis set analysisType=0, for main ICA analyses set analysisType=1)
-
-dir: EEG_Processed_Cleaned_For_ICA
 
 `EEG_AMICA.m` +job Run ICA on data
 
-dir: EEG_ICA_50Hz_LP
-
 `EEG_Dipfit.m' +job Do dipole fitting in ICA data
-
-dir: EEG_ICA_50Hz_LP_DIPFIT
 
 
 ### Run Time Frequency Analyses [CLEAN UP AND RE-RUN THESE SCRIPTS]
 
 `EEG_TFA_Generate_ERSPs.m` +job generates ERSPS for anticipatory (no baseline corr) and stress response (baseline corr)
 
-dir: Time_Freq_results_1-30Hz_ICLabel_Dipfit_NewBL
-dir: Time_Freq_results_1-30Hz_ICLabel_Dipfit_No_BL_Corr
-
 `EEG_TFA_Compile_ERSPs.m` Compiles ERSPs into a single matrix [need to adjust all the analysis type stuff here - correct but inconsistent]
-
-dir: Data_Compiled/ GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP_NewBL.mat
-dir: Data_Compiled/ GRAND_ERSP_1-30Hz_ICA_ICLabel_Dipfit_50HzLP_NoBlCorr.mat
 
 `EEG_TFA_Stats_Resample_ERSP_Anticipatory.m` +job Run resampled ERSP data for anticipatory (baseline) period only
 
-dir: Data_Compiled/ 'STATS_WITHIN_Resampled_ERSP_ANOVA_30Hz_NewBL_BASE_ONLY_' thisFreqName '.mat'
-
 `EEG_TFA_Plot_Topos_ERSPS_Anticipatory.m` Plots topos for anticipatory activity (averages ERSPs over freq bands and baseline period)
-
-dir: Plots/ 'EEG_ERSP_1-30Hz_Topos_Brain70_Dip15_TimeGraded_BASE_ONLY' thisFreqName '.eps'
 
 `EEG_TFA_Stats_Resample_ERSP_Response.m` +job Run resampled ERSP data for response activity (averages ERSPs over freq bands and early/mid/late/rec phases)
 
-dir: Data_Compiled/ 'STATS_WITHIN_Resampled_ERSP_ANOVA_30Hz_NewBL_TimeGrad' thisFreqName '.mat'
-
 `EEG_TFA_Plot_Topos_ERSPS_Response.m` Plots topos for stress response activity (averages ERSPs over freq bands and early/mid/late/rec phases)
 
-dir: Plots/ 'EEG_ERSP_1-30Hz_Topos_Brain70_Dip15_TimeGradedRec' thisFreqName '.eps'
-
-**HERE**
-
-`EEG_TFA_Stats_ERSP_Post_Hocs.m` ??????
-
-`EEG_TFA_Stats_ERSP_Post_Hocs_Alpha.m` ???????
-
-`EEG_TFA_Stats_ERSP_Post_Hocs_Delta.m` ??????
+`EEG_TFA_Stats_Resample_ERSP_Post_Hocs_Alpha` Run Alpha post-hoc tests for manuscript
 
 
-
-## EEG Analyses
-
-`EEG_Stats_Resample_Within_ANOVA.m` + job Computes permuted stats
-
-`EEG_Stats_Resample_Within_ANOVA_TimeGrad.m` + job Computes permuted stats averaged over time bins [no baseline correction
-
-`EEG_Stats_Resample_Within_ANOVA_TimeGrad_Base.m + job Computes permuted stats averaged over time bins [baseline correction
-
-`Time_Freq_Analysis_ERSP_ICA.m` + job Generate ERSPS (run newtimef on data)
-
-`Time_Freq_Analysis_ERSP_Compile.m` Compile ERSP data from individual subjects
-
-`Time_Freq_Analysis_ERSP_Plot.m` Plot ERSPs 
-
-`Time_Freq_Analysis_ERSP_Plot_Topos*.m` Generate topo plots for manuscript for ANT (anticipatory) and REC (during CPT and recovery)
-
-`Time_Freq_Analysis_Post_Hocs*.m` Post hoc stats for specific bands
-
-`Time_Freq_Analysis_ERSP_Stats_Resample.m` Run resampled stats on data for main analysis
-
-`Time_Freq_Analysis_ERSP_Stats_Resample_1_100Hz.m`+job Broadband analysis (for supplemental info)
-
-
-
-
-Useful misc EEG scripts.
+### Useful misc EEG scripts.
 
 `EEG_ICLabel_Get_Classification_Stats.m` Get a summary of IC classification across all subjects and conditions.
-
 
 
 
@@ -174,13 +113,11 @@ Useful misc EEG scripts.
 
 
 
-
 ## SELF REPORT (PAIN)
 
 `SELF_REPORT_Stats_Resample.m` Runs stats on self-reported pain data [don't think we ended up using this coz ANOVA unnecessary given floor fx]
 
 `SELF_REPORT_Plot.m` Plot self-reported pain ratings 
-
 
 
 
@@ -195,6 +132,9 @@ Useful misc EEG scripts.
 `shadedErrorBar.m` Creates exactly that (borrowed)
 
 `simple_mixed_anova.m` Does that (borrowed)
+
+
+
 
 
 
@@ -257,3 +197,27 @@ Useful misc EEG scripts.
 `Self_Report_Stats_Resample.m` Compute resampled stats
 
 `Self_Report_Stats_Resample_Within_Cond.m` Compute resampled stats within condition (??)
+
+
+
+## EEG Analyses
+
+`EEG_Stats_Resample_Within_ANOVA.m` + job Computes permuted stats
+
+`EEG_Stats_Resample_Within_ANOVA_TimeGrad.m` + job Computes permuted stats averaged over time bins [no baseline correction
+
+`EEG_Stats_Resample_Within_ANOVA_TimeGrad_Base.m + job Computes permuted stats averaged over time bins [baseline correction
+
+`Time_Freq_Analysis_ERSP_ICA.m` + job Generate ERSPS (run newtimef on data)
+
+`Time_Freq_Analysis_ERSP_Compile.m` Compile ERSP data from individual subjects
+
+`Time_Freq_Analysis_ERSP_Plot.m` Plot ERSPs 
+
+`Time_Freq_Analysis_ERSP_Plot_Topos*.m` Generate topo plots for manuscript for ANT (anticipatory) and REC (during CPT and recovery)
+
+`Time_Freq_Analysis_Post_Hocs*.m` Post hoc stats for specific bands
+
+`Time_Freq_Analysis_ERSP_Stats_Resample.m` Run resampled stats on data for main analysis
+
+`Time_Freq_Analysis_ERSP_Stats_Resample_1_100Hz.m`+job Broadband analysis (for supplemental info)

@@ -1,4 +1,9 @@
-%function EEG_Clean_For_ICA_job
+%{
+EYE_Stats_Resample_job
+Author: Tom Bullock, UCSB Attention Lab
+Date: 12.21.19 (updated 12.02.22)
+
+%}
 
 clear 
 close all
@@ -20,18 +25,15 @@ end
 % send to cluster (only a single job)
 for baselineCorrect=0:1
     if processInParallel
-        createTask(job,@EYE_Stats_Resample_Within_ANOVA,0,{baselineCorrect})
+        createTask(job,@EYE_Stats_Resample,0,{baselineCorrect})
     else
-        EYE_Stats_Resample_Within_ANOVA(baselineCorrect)
+        EYE_Stats_Resample(baselineCorrect)
     end
 end
 
-
+% submit job to cluster
 if processInParallel
-    
-    % new cluster
-    submit(job)
-    
+    submit(job) 
     % wait for job to finish?
     %wait(job,'finished');
     %results = getAllOutputArguments(job);

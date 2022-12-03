@@ -44,6 +44,6 @@ end
 if processInParallel
     submit(job)
     % wait for job to finish?
-    %wait(job,'finished');
-    %results = getAllOutputArguments(job);
+    wait(job,'finished');
+    results = getAllOutputArguments(job);
 end

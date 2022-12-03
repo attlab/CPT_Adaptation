@@ -10,8 +10,10 @@ Date: 01.09.20
 Parent_dir = '/home/bullock/BOSS/CPT_Adaptation/';
 scriptsDir = [Parent_dir 'Analysis_Scripts'];
 eeglabDir = '/home/bullock/Toolboxes/eeglab2019_1'; 
-cleanDataDir = [Parent_dir 'EEG_Processed_Cleaned_For_ICA/'];
-EEG_ica_dir = [Parent_dir 'EEG_ICA_50Hz_LP/'];
+%cleanDataDir = [Parent_dir 'EEG_Processed_Cleaned_For_ICA/'];
+cleanDataDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN/EEG_Processed_Cleaned_For_ICA/';
+%EEG_ica_dir = [Parent_dir 'EEG_ICA_50Hz_LP/'];
+EEG_ica_dir = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN/EEG_ICA_50Hz_LP/';
 addpath(genpath(scriptsDir))
 
 % import EEGLAB functions

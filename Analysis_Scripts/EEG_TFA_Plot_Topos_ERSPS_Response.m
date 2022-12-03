@@ -17,7 +17,8 @@ clear
 close all
 
 % set dirs
-parentDir = '/home/bullock/BOSS/CPT_Adaptation';
+%parentDir = '/home/bullock/BOSS/CPT_Adaptation';
+parentDir = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN';
 sourceDir = [parentDir '/' 'Data_Compiled'];
 destDir = [parentDir '/' 'Plots'];
 
@@ -91,9 +92,9 @@ for iFreq=1:4
                 
                 % if doing 1-30 Hz analysis, shift times to compensate for
                 % cut off at start of ERSP
-                if analysisType>1
+                %if analysisType>1
                     theseTimes=theseTimes-1;
-                end
+                %end
                 
                 if      iCond==1 && iTimes==1; thisTitle='CPT B';
                 elseif  iCond==1 && iTimes==2; thisTitle='CPT E';

@@ -15,7 +15,8 @@ EEGraw_dir = [Parent_dir 'EEG_CPT_Prepro/'];
 
 % select analysis type
 if analysisType==1
-    EEG_clean = [Parent_dir 'EEG_Processed_Cleaned_For_ICA'];
+    %EEG_clean = [Parent_dir 'EEG_Processed_Cleaned_For_ICA'];
+    EEG_clean = '/home/bullock/BOSS/CPT_Adaptation/EEG_RERUN/EEG_Processed_Cleaned_For_ICA'; % TOM TEMP OVERRIDE CHECK EEG
 else
     EEG_clean = [Parent_dir 'EEG_Processed_Cleaned_No_Downsample'];
 end
