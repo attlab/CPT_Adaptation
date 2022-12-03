@@ -8,13 +8,17 @@ The data are available upon here:[INSERT BOX LINK - Upload RAW Physio Data]
 
 This project typically lives in: /home/bullock/BOSS/CPT_Adaptation [can transfer to /work when complete]
 
-### Script Authors: 
+## Script Authors: 
 
 Tom Bullock, Attention Lab, UCSB 
 
 Neil Dundon, Action Lab, UCSB
 
-Repository last updated: XXXXXXXXXXX
+Repository last updated: 12.03.22 (Tom Bullock)
+
+## Notes
+
+Tom reran EEG analyses in Dec 2022.  In folder on BIC cluster called EEG_RERUN + all dirs in EEG scripts point here not original folders.  
 
 
 
@@ -132,92 +136,3 @@ Repository last updated: XXXXXXXXXXX
 `shadedErrorBar.m` Creates exactly that (borrowed)
 
 `simple_mixed_anova.m` Does that (borrowed)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###################################################################
-
-## SCRIPTS NOT USED FOR ANALYSES/REPORTING IN MANUSCRIPT + OLD STUFF TO REMOVE!
-
-`Physio_Stats_Resample.m` + job  Compute resampled t-test stats for all physio measures (required for plots)
-
-`Physio_Plot.m` Generate plots for all physio measures (regular)
-
-`Physio_Plot_Compare_Within_Session.m` Generate within condition comparision plots (paired with GLMMs)
-
-`Physio_Convert_To_LF.m` Convert data to long format for GLMM analyses (not included in manuscript)
-
-`Classify_Stress_Rank_Order_Analysis.m` Perform rank order analyses on the physio data only
-
-`Classify_Stress_Rank_Order_Plot.m` Plot rank order analysis for each physio measure including all 10 trials
-
-`Classify_Stress_Rank_Order_Plot_Individual_Trials.m` Plot rank order analysis for each physio measure separate for each CPT/WPT trial pair.
-
-`Physio_Interactions.m` Run quick stats to test for interactions between induced stress and evoked stress across different cardiac measures
-
-`Physio_Plot_Compare_Within_Session_With_Stats_ANOVA.m` Create physio plots for manuscript
-
-
-`EYE_Plot_Pupil_Group.m` Compare pupil diameter grouped by condition (1 plot per trial, just pairwise comparisons)
-
-`EYE_Plot_Pupil_Within_Cond_Comparisons.m` Compare pupil diameter with ANOVA then pairwise comparisons (for manuscript)
-
-`EYE_Plot_Pupil_Individual.m` Individual pupil diameter plots (saves images in subfolders in plots, useful for determining which subjects have good/bad data)
-
-`EYE_Stats_Resample.m` Compute resampled stats for eye data (pairwise comparisons only)
-
-`EYE_Stats_Reasmple_Within_ANOVA.m` + job Compute resampled stats for manuscript (ANOVA + Pairwise comparisons)
-
-`EYE_Stats_Resample_Within_ANOVA_Avg.m` Additional analysis averaged across 
-
-`EYE_Convert_to_LF.m` Convert eye-tracker data from wide format to long format for analysis in R
-
-`Self_Report_Stats_Resample.m` Compute resampled stats
-
-`Self_Report_Stats_Resample_Within_Cond.m` Compute resampled stats within condition (??)
-
-
-
-## EEG Analyses
-
-`EEG_Stats_Resample_Within_ANOVA.m` + job Computes permuted stats
-
-`EEG_Stats_Resample_Within_ANOVA_TimeGrad.m` + job Computes permuted stats averaged over time bins [no baseline correction
-
-`EEG_Stats_Resample_Within_ANOVA_TimeGrad_Base.m + job Computes permuted stats averaged over time bins [baseline correction
-
-`Time_Freq_Analysis_ERSP_ICA.m` + job Generate ERSPS (run newtimef on data)
-
-`Time_Freq_Analysis_ERSP_Compile.m` Compile ERSP data from individual subjects
-
-`Time_Freq_Analysis_ERSP_Plot.m` Plot ERSPs 
-
-`Time_Freq_Analysis_ERSP_Plot_Topos*.m` Generate topo plots for manuscript for ANT (anticipatory) and REC (during CPT and recovery)
-
-`Time_Freq_Analysis_Post_Hocs*.m` Post hoc stats for specific bands
-
-`Time_Freq_Analysis_ERSP_Stats_Resample.m` Run resampled stats on data for main analysis
-
-`Time_Freq_Analysis_ERSP_Stats_Resample_1_100Hz.m`+job Broadband analysis (for supplemental info)
